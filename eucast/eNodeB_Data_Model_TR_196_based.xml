@@ -429,7 +429,7 @@
       <Capabilities>
         <SupportedSystems>LTE</SupportedSystems>
         <Beacon>0</Beacon>
-        <MaxTxPower>10</MaxTxPower>
+        <MaxTxPower>40</MaxTxPower>
         <GPSEquipped>1</GPSEquipped> <!-- m.RM#2747 changed from 0 to 1 -->
         <LTE>
           <BandsSupported>41</BandsSupported> <!-- m.RM#2747 changed from 1 to 41 -->
