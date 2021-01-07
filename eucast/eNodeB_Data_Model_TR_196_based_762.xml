@@ -14,10 +14,10 @@
   <LANDeviceNumberOfEntries>1</LANDeviceNumberOfEntries>
   <!-- CRITICAL_PARAMS CHANGES ENDS -->
   <ManagementServer>
-    <URL>http://172.16.102.10:7547</URL>
-    <X_VENDOR_IHEMS_URL>http://172.16.102.10:7547</X_VENDOR_IHEMS_URL>
+    <URL>http://192.168.61.8:48701</URL>
+    <X_VENDOR_IHEMS_URL>http://192.168.61.8:48701</X_VENDOR_IHEMS_URL>
     <X_VENDOR_CONNECT_TO_IHEMS>0</X_VENDOR_CONNECT_TO_IHEMS>
-    <ConnectionRequestURL>http://91.1.15.137:7547</ConnectionRequestURL>
+    <ConnectionRequestURL>http://91.122.117.137:7547</ConnectionRequestURL>
     <EnableCWMP>1</EnableCWMP>
     <Username>abc</Username>
     <Password>xyz</Password>
@@ -37,7 +37,7 @@
     <ModelName>EL-4000</ModelName>
     <Description>eNodeB</Description>
     <ProductClass>LTE</ProductClass>
-    <SerialNumber>EE0C0100207000001</SerialNumber>
+    <SerialNumber>EE0C01002070002</SerialNumber>
     <HardwareVersion>0.0.0</HardwareVersion>
     <SoftwareVersion>02.02.16</SoftwareVersion>
     <ModemFirmwareVersion>0.0.0</ModemFirmwareVersion>
@@ -70,10 +70,10 @@
   	<LocalTimeZoneName>JST</LocalTimeZoneName>
   </Time>
   <LoggerIP>
-   <FAPI_TRACER_IP_ADDRESS>91.1.15.137</FAPI_TRACER_IP_ADDRESS>
-   <PACKET_RELAY_MODULE_HOST_NAME>91.1.15.137</PACKET_RELAY_MODULE_HOST_NAME>
-   <SYSTEM_ANALYSER_IP_ADDRESS>91.1.15.137</SYSTEM_ANALYSER_IP_ADDRESS>
-   <L1_IP_ADDRESS>91.1.15.137</L1_IP_ADDRESS>
+   <FAPI_TRACER_IP_ADDRESS>91.122.117.137</FAPI_TRACER_IP_ADDRESS>
+   <PACKET_RELAY_MODULE_HOST_NAME>91.122.117.137</PACKET_RELAY_MODULE_HOST_NAME>
+   <SYSTEM_ANALYSER_IP_ADDRESS>91.122.117.137</SYSTEM_ANALYSER_IP_ADDRESS>
+   <L1_IP_ADDRESS>91.122.117.137</L1_IP_ADDRESS>
   </LoggerIP>
   <LANDevice>
     <LANHostConfigManagement>
@@ -129,9 +129,9 @@
       <X_VENDOR_VlanEnable>0</X_VENDOR_VlanEnable>
       <IPInterface>
         <Enable>1</Enable>
-        <IPInterfaceIPAddress>91.1.15.137</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.122.117.137</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.240</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address,
@@ -147,10 +147,10 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>91.1.15.137</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.122.117.137</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
         <!-- Parameter not being used by LTE OAM -->
-        <IPInterfaceSubnetMask>255.255.255.240</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <!-- Parameter not being used by LTE OAM -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
@@ -161,7 +161,7 @@
         <!-- value 3223 for S1AP, value 3221 for X2AP, 15210 used by the TR069 agent, not used for eGTPU
      Port Number Should be Comma seperated corresponding to comma seperated values of Interface type -->
         <X_VENDOR_SOURCE_PORT_NUMBER>36412</X_VENDOR_SOURCE_PORT_NUMBER>
-        <X_VENDOR_DEFAULT_GATEWAY>91.122.119.129</X_VENDOR_DEFAULT_GATEWAY>
+        <X_VENDOR_DEFAULT_GATEWAY>91.122.117.129</X_VENDOR_DEFAULT_GATEWAY>
         <X_VENDOR_MTU_SIZE>1500</X_VENDOR_MTU_SIZE>
         <X_VENDOR_PORT_TYPE>0</X_VENDOR_PORT_TYPE>
         <X_VENDOR_VlanTag>5</X_VENDOR_VlanTag>
@@ -169,9 +169,9 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>91.1.15.137</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.122.117.137</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.240</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address,
@@ -190,9 +190,9 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>91.1.15.137</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.122.117.137</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.240</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address, 
@@ -208,9 +208,9 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>91.1.15.137</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.122.117.137</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.240</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address, 
@@ -325,7 +325,7 @@
       </Kpi_info>
       <!-- CRITICAL_PARAMS CHANGES ENDS -->
       <Config>
-        <URL>http://172.16.102.10:7547</URL>
+        <URL>http://192.168.61.8:48701</URL>
         <Username>nimsftp</Username>
         <Password>oss_2012</Password>
         <Enable>0</Enable>
@@ -340,7 +340,7 @@
       <ConfigNumberOfEntries>1</ConfigNumberOfEntries>
       <Config>
         <Enable>0</Enable>
-        <URL>http://172.16.102.10:7547</URL>
+        <URL>http://192.168.61.8:48701</URL>
         <Username>nimsftp</Username>
         <Password>oss_2012</Password>
         <PeriodicUploadInterval>900</PeriodicUploadInterval>
@@ -366,7 +366,7 @@
         <CollectionEntity>192.168.61.8</CollectionEntity>
         <TraceID>1</TraceID>
         <X_VENDOR_EndTime>2014-12-01T00:00:00-09:00</X_VENDOR_EndTime>
-        <URL>http://172.16.102.10:7547</URL>
+        <URL>http://192.168.61.8:48701</URL>
         <Username>hems</Username>
         <Password>hems123</Password>
       </Config>
@@ -429,7 +429,7 @@
       <Capabilities>
         <SupportedSystems>LTE</SupportedSystems>
         <Beacon>0</Beacon>
-        <MaxTxPower>10</MaxTxPower>
+        <MaxTxPower>40</MaxTxPower>
         <GPSEquipped>1</GPSEquipped> <!-- m.RM#2747 changed from 0 to 1 -->
         <LTE>
           <BandsSupported>41</BandsSupported> <!-- m.RM#2747 changed from 1 to 41 -->
@@ -472,7 +472,7 @@
             <X_VENDOR_S1_SIG_LINK_SERVER_TYPE_LIST>1</X_VENDOR_S1_SIG_LINK_SERVER_TYPE_LIST>
             <X_VENDOR_X2AP_PORT>0000</X_VENDOR_X2AP_PORT>
             <!-- Comma separated list of IPv4/IPv6 addresses -->
-            <S1SigLinkServerList>91.1.15.129</S1SigLinkServerList>
+            <S1SigLinkServerList>91.122.117.129</S1SigLinkServerList>
             <S1ConnectionMode>one</S1ConnectionMode>
             <S1SigLinkPort>36412</S1SigLinkPort>
             <!-- Number of streams, range: 2-10, default value: 2  Its comma seperated list for all mme's-->
@@ -629,7 +629,7 @@
           <Tunnel>
             <Enable>0</Enable>
             <TunnelRef>1</TunnelRef>
-            <PLMNID>00F110</PLMNID>
+            <PLMNID>64F818</PLMNID>
           </Tunnel>
           <EPC>
             <!-- To include ZUC ciphering algorithm add 128-EEA3  -->
@@ -646,7 +646,7 @@
             <X_VENDOR_EAID3>0</X_VENDOR_EAID3>
             <X_VENDOR_EAID4>0</X_VENDOR_EAID4>
             <!-- [s.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature start -->
-            <X_VENDOR_UE_INACTIVITY_TIMER>100</X_VENDOR_UE_INACTIVITY_TIMER>
+            <X_VENDOR_UE_INACTIVITY_TIMER>0</X_VENDOR_UE_INACTIVITY_TIMER>
             <!-- [e.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature end -->
             <!-- s.REDIR-4-1, s.REDIR-4-2  PH1.4C Redirect Feature  20170510 by jelee -->
             <X_VENDOR_REDIRECT_ENABLE>1</X_VENDOR_REDIRECT_ENABLE>
@@ -1283,7 +1283,7 @@
             <PLMNList>
               <Enable>1</Enable>                                                     
               <IsPrimary>0</IsPrimary>                                               
-              <PLMNID>00F110</PLMNID>
+              <PLMNID>64F828</PLMNID>                                                
               <CellReservedForOperatorUse>1</CellReservedForOperatorUse>             
               <!-- AC_Barring Bypass_Start kwpark 20161221, patch code for ACBypass of PH1.4 -->
               <ac_BarringPerPLMN_List_Enable>0</ac_BarringPerPLMN_List_Enable>
@@ -1310,7 +1310,7 @@
             <PLMNList>
               <Enable>1</Enable>                                                     
               <IsPrimary>0</IsPrimary>                                               
-              <PLMNID>00F110</PLMNID>
+              <PLMNID>64F838</PLMNID>                                                
               <CellReservedForOperatorUse>1</CellReservedForOperatorUse>             
               <!-- AC_Barring Bypass_Start kwpark 20161221, patch code for ACBypass of PH1.4 -->
               <ac_BarringPerPLMN_List_Enable>0</ac_BarringPerPLMN_List_Enable>
@@ -1337,7 +1337,7 @@
           </EPC>
           <RAN>
             <Common>
-              <CellIdentity>268382720</CellIdentity>
+              <CellIdentity>8451583</CellIdentity>
             </Common>
             <X_VENDOR_ADDITIONAL_OPERATOR_INFO>
               <CELL_CAPACITY_CLASS>20</CELL_CAPACITY_CLASS>
@@ -1423,12 +1423,12 @@
               <DLBandwidth>n50</DLBandwidth>
               <ULBandwidth>n50</ULBandwidth>
               <ReferenceSignalPower>15</ReferenceSignalPower>
-              <PhyCellID>121</PhyCellID>
+              <PhyCellID>158</PhyCellID>
               <PSCHPowerOffset>0</PSCHPowerOffset>
               <SSCHPowerOffset>0</SSCHPowerOffset>
               <PBCHPowerOffset>0</PBCHPowerOffset>
-              <EARFCNDL>47040</EARFCNDL>
-              <EARFCNUL>47040</EARFCNUL>
+              <EARFCNDL>46940</EARFCNDL>
+              <EARFCNUL>46940</EARFCNUL>
               <X_VENDOR_MAX_RS_EPRE>0</X_VENDOR_MAX_RS_EPRE>
               <X_VENDOR_PCFICH_POWER_OFFSET>6000</X_VENDOR_PCFICH_POWER_OFFSET>
               <X_VENDOR_PHICH_POWER_OFFSET>6000</X_VENDOR_PHICH_POWER_OFFSET>
@@ -1448,8 +1448,8 @@
                 <X_VENDOR_ANTENNA_PORT4_ENABLE>0</X_VENDOR_ANTENNA_PORT4_ENABLE>
                 <X_VENDOR_ANTENNA_BAND_LTE>0</X_VENDOR_ANTENNA_BAND_LTE>
                 <X_VENDOR_PA_THRESHOLD>47</X_VENDOR_PA_THRESHOLD>
-                <X_VENDOR_ANTENNA_PORT1_TX_ATTEN>100</X_VENDOR_ANTENNA_PORT1_TX_ATTEN>
-                <X_VENDOR_ANTENNA_PORT2_TX_ATTEN>100</X_VENDOR_ANTENNA_PORT2_TX_ATTEN>
+                <X_VENDOR_ANTENNA_PORT1_TX_ATTEN>0</X_VENDOR_ANTENNA_PORT1_TX_ATTEN>
+                <X_VENDOR_ANTENNA_PORT2_TX_ATTEN>0</X_VENDOR_ANTENNA_PORT2_TX_ATTEN>
                 <X_VENDOR_ANTENNA_PORT3_TX_ATTEN>0</X_VENDOR_ANTENNA_PORT3_TX_ATTEN>
                 <X_VENDOR_ANTENNA_PORT4_TX_ATTEN>0</X_VENDOR_ANTENNA_PORT4_TX_ATTEN>
                 <X_VENDOR_PA_LOW_THRESHOLD>-50</X_VENDOR_PA_LOW_THRESHOLD>
@@ -1458,7 +1458,7 @@
               </AntennaInfo>
               <PDSCH>
                 <Pb>1</Pb>
-                <Pa>0</Pa>
+                <Pa>-300</Pa>
               </PDSCH>
               <SRS>
                 <SRSEnabled>0</SRSEnabled>
@@ -1771,10 +1771,10 @@
                 </IntraFreq>
                 <InterFreq>
                   <MaxCarrierEntries>8</MaxCarrierEntries>
-                  <CarrierNumberOfEntries>1</CarrierNumberOfEntries>
+                  <CarrierNumberOfEntries>0</CarrierNumberOfEntries>
                   <Carrier>
                     <Enable>1</Enable>
-                    <EUTRACarrierARFCN>46840</EUTRACarrierARFCN>
+                    <EUTRACarrierARFCN>5900</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
 <!-- not defined in data-model                    
                     <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
@@ -1804,7 +1804,7 @@
                     <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
                     <!--DataModel v1.43 -->
                     <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
+                    <X_VENDOR_MULTI_BAND_INFO_LIST></X_VENDOR_MULTI_BAND_INFO_LIST>
                     <!--DataModel v1.43 -->
                     <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
                     <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
@@ -2031,7 +2031,7 @@
                   <FilterCoefficientRSRQ>9</FilterCoefficientRSRQ>
                   <A1ThresholdRSRP>97</A1ThresholdRSRP>
                   <A1ThresholdRSRQ>30</A1ThresholdRSRQ>
-                  <A2ThresholdRSRP>60</A2ThresholdRSRP>
+                  <A2ThresholdRSRP>26</A2ThresholdRSRP>
                   <A2ThresholdRSRQ>5</A2ThresholdRSRQ>
                   <A3Offset>3</A3Offset>
                   <!-- [s.L3-17-36][SPICO_DATAMODEL, X_VENDOR_A3OffsetXXXX] kwpark 20150921, PH1.1 new feature start -->
@@ -2129,22 +2129,22 @@
               <!-- e.OAM-25-1,25-2 -->
               <LTECellNumberOfEntries>1</LTECellNumberOfEntries>
               <LTECell>
-                <Enable>0</Enable>
+                <Enable>1</Enable>
                 <MustInclude>1</MustInclude>
-                <PLMNID>00F110</PLMNID>
+                <PLMNID>64F818</PLMNID>
                 <!-- 14692866 -->
                 <!-- s.PH1.2, multiple PLMN supports -->
                 <X_VENDOR_PLMNID2>0</X_VENDOR_PLMNID2>
                 <X_VENDOR_PLMNID3>0</X_VENDOR_PLMNID3>
                 <!-- e.PH1.2, multiple PLMN supports -->
-                <CID>27392</CID>
-                <EUTRACarrierARFCN>46840</EUTRACarrierARFCN>
-                <PhyCellID>107</PhyCellID>
+                <CID>0</CID>
+                <EUTRACarrierARFCN>40940</EUTRACarrierARFCN>
+                <PhyCellID>0</PhyCellID>
                 <QOffset>0</QOffset>
                 <CIO>0</CIO>
                 <RSTxPower>0</RSTxPower>
                 <Blacklisted>0</Blacklisted>
-                <TAC>2304</TAC>
+                <TAC>0</TAC>
                 <X_VENDOR_CSGID>1</X_VENDOR_CSGID>
                 <X_VENDOR_ACCESS_MODE>0</X_VENDOR_ACCESS_MODE>
                 <!-- s.OAM-25-1,25-2 -->
@@ -2173,7 +2173,7 @@
                 <!--For Multiple UMTS to configure set UMTSNumberOfEntries tag to the number of required 
                 tags and make corresponding number of UMTS tags-->
                 <UMTS>
-                  <PLMNID>00F110</PLMNID>
+                  <PLMNID>05F110</PLMNID>
                   <RNCID>4094</RNCID>
                   <CID>33620227</CID>
                   <LAC>513</LAC>
@@ -2203,7 +2203,7 @@
                   <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
                 </UMTS>
                 <UMTS>
-                  <PLMNID>00F110</PLMNID>
+                  <PLMNID>896745</PLMNID>
                   <RNCID>4076</RNCID>
                   <CID>33949700</CID>
                   <LAC>1540</LAC>
@@ -2234,7 +2234,7 @@
                 <!--For Multiple GSM to configure set GSMNumberOfEntries tag to the number of required 
                 tags and make corresponding number of GSM tags-->
                 <GSM>
-                  <PLMNID>00F110</PLMNID>
+                  <PLMNID>896745</PLMNID>
                   <LAC>64</LAC>
                   <CI>2</CI>
                   <BandIndicator>0</BandIndicator>
@@ -2253,7 +2253,7 @@
                   <X_VENDOR_HO_STATUS>0</X_VENDOR_HO_STATUS>
                 </GSM>
                 <GSM>
-                  <PLMNID>00F110</PLMNID>
+                  <PLMNID>896745</PLMNID>
                   <LAC>12</LAC>
                   <CI>35</CI>
                   <BandIndicator>1</BandIndicator>
@@ -2337,7 +2337,7 @@
               <!-- e.OAM-25-1,25-2 -->
               <LTECellNumberOfEntries>0</LTECellNumberOfEntries>
               <LTECell>
-                <PLMNID>00F110</PLMNID>
+                <PLMNID>32</PLMNID>
                 <CID>32</CID>
                 <EUTRACarrierARFCN>32</EUTRACarrierARFCN>
                 <PhyCellID>32</PhyCellID>
@@ -2345,7 +2345,7 @@
                 <CIO>32</CIO>
                 <RSTxPower>32</RSTxPower>
                 <Blacklisted>0</Blacklisted>
-                <TAC>2304</TAC>
+                <TAC>32</TAC>
               </LTECell>
               <InterRATCell>
                 <MaxUMTSEntries>32</MaxUMTSEntries>
@@ -2408,10 +2408,10 @@
               <RSSI>1</RSSI>
             </RF>
             <BCCH>
-              <DLBandwidth>n50</DLBandwidth>
-              <ULBandwidth>n50</ULBandwidth>
+              <DLBandwidth>6,15,25,50,75,100</DLBandwidth>
+              <ULBandwidth>1</ULBandwidth>
               <RSTxPower>1</RSTxPower>
-              <TAC>2304</TAC>
+              <TAC>12849</TAC>
               <CellID>1</CellID>
               <CellBarred>1</CellBarred>
               <CSGIndication>1</CSGIndication>
@@ -2419,7 +2419,7 @@
               <MaxPLMNListEntries>1</MaxPLMNListEntries>
               <PLMNListNumberOfEntries>1</PLMNListNumberOfEntries>
               <PLMNList>
-                <PLMNID>00F110</PLMNID>
+                <PLMNID>896745</PLMNID>
                 <CellReservedForOperatorUse>1</CellReservedForOperatorUse>
               </PLMNList>
               <!--Used to control cell reselection to intra-frequency cells,0:ALLOWED, 1:NOT_ALLOWED-->
@@ -2472,7 +2472,7 @@
         <NCellDeleteEnable>1</NCellDeleteEnable>
         <NCellDeleteCycle>744</NCellDeleteCycle>
         <NCellDeleteCount_HandOut>100</NCellDeleteCount_HandOut>
-        <AND_Reporting_interval>60</AND_Reporting_interval>
+        <AND_Reporting_interval>720</AND_Reporting_interval>
         <!-- e.DataModel v1.80, PH1.4 Automatic Neighbor Deletion, ANR-1-1, ANR-1-2 -->
       </X_VENDOR_SON>
     </FAPService>
