@@ -1,0 +1,14 @@
+** CLI 명령
+
+> cli
+
+-Cell Disable
+> Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE 0
+
+-Frequency Change
+>Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF EARFCNDL 46840
+
+>Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF EARFCNUL 46840
+
+-Cell Enable
+> Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE 1
