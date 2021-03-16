@@ -1427,8 +1427,8 @@
               <PSCHPowerOffset>0</PSCHPowerOffset>
               <SSCHPowerOffset>0</SSCHPowerOffset>
               <PBCHPowerOffset>0</PBCHPowerOffset>
-              <EARFCNDL>47140</EARFCNDL>
-              <EARFCNUL>47140</EARFCNUL>
+              <EARFCNDL>46910</EARFCNDL>
+              <EARFCNUL>46910</EARFCNUL>
               <X_VENDOR_MAX_RS_EPRE>0</X_VENDOR_MAX_RS_EPRE>
               <X_VENDOR_PCFICH_POWER_OFFSET>6000</X_VENDOR_PCFICH_POWER_OFFSET>
               <X_VENDOR_PHICH_POWER_OFFSET>6000</X_VENDOR_PHICH_POWER_OFFSET>
@@ -1647,10 +1647,10 @@
               </SRB2>
             </RLC>
             <RRCTimers>
-              <T300>400</T300>
-              <T301>400</T301>
-              <T302>200</T302>
-              <T304EUTRA>100</T304EUTRA>
+              <T300>2000</T300>
+              <T301>2000</T301>
+              <T302>2000</T302>
+              <T304EUTRA>2000</T304EUTRA>
               <T304IRAT>200</T304IRAT>
               <T310>1000</T310>
               <T311>1000</T311>
@@ -1771,124 +1771,7 @@
                 </IntraFreq>
                 <InterFreq>
                   <MaxCarrierEntries>8</MaxCarrierEntries>
-                  <CarrierNumberOfEntries>5</CarrierNumberOfEntries>
-                  <Carrier>
-                    <Enable>1</Enable>
-                    <EUTRACarrierARFCN>46740</EUTRACarrierARFCN>
-                    <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
-                    <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
-                    <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
-                    <QOffsetFreq>0</QOffsetFreq>
-                    <QRxLevMinSIB5>-63</QRxLevMinSIB5>
-                    <PMax>23</PMax>
-                    <TReselectionEUTRA>1</TReselectionEUTRA>
-                    <TReselectionEUTRASFMedium>25</TReselectionEUTRASFMedium>
-                    <TReselectionEUTRASFHigh>25</TReselectionEUTRASFHigh>
-                    <ThreshXHigh>3</ThreshXHigh>
-                    <ThreshXLow>3</ThreshXLow>
-                    <CellReselectionPriority>4</CellReselectionPriority>
-                    <X_VENDOR_VOLTE_FB_CellReselectionPriority>7</X_VENDOR_VOLTE_FB_CellReselectionPriority>
-                    <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
-                    <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
-                    <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
-                    <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
-                    <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
-                    <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
-                    <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
-                    <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
-                    <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
-                    <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
-                    <!--DataModel v1.43 -->
-                    <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
-                    <!--DataModel v1.43 -->
-                    <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
-                    <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
-                    <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
-                    <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
-                  </Carrier>
-                  <Carrier>
-                    <Enable>1</Enable>
-                    <EUTRACarrierARFCN>46840</EUTRACarrierARFCN>
-                    <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
-                    <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
-                    <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
-                    <QOffsetFreq>0</QOffsetFreq>
-                    <QRxLevMinSIB5>-63</QRxLevMinSIB5>
-                    <PMax>23</PMax>
-                    <TReselectionEUTRA>1</TReselectionEUTRA>
-                    <TReselectionEUTRASFMedium>25</TReselectionEUTRASFMedium>
-                    <TReselectionEUTRASFHigh>25</TReselectionEUTRASFHigh>
-                    <ThreshXHigh>3</ThreshXHigh>
-                    <ThreshXLow>3</ThreshXLow>
-                    <CellReselectionPriority>4</CellReselectionPriority>
-                    <X_VENDOR_VOLTE_FB_CellReselectionPriority>7</X_VENDOR_VOLTE_FB_CellReselectionPriority>
-                    <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
-                    <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
-                    <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
-                    <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
-                    <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
-                    <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
-                    <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
-                    <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
-                    <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
-                    <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
-                    <!--DataModel v1.43 -->
-                    <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
-                    <!--DataModel v1.43 -->
-                    <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
-                    <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
-                    <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
-                    <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
-                  </Carrier>
-                  <Carrier>
-                    <Enable>1</Enable>
-                    <EUTRACarrierARFCN>46940</EUTRACarrierARFCN>
-                    <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
-                    <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
-                    <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
-                    <QOffsetFreq>0</QOffsetFreq>
-                    <QRxLevMinSIB5>-63</QRxLevMinSIB5>
-                    <PMax>23</PMax>
-                    <TReselectionEUTRA>1</TReselectionEUTRA>
-                    <TReselectionEUTRASFMedium>25</TReselectionEUTRASFMedium>
-                    <TReselectionEUTRASFHigh>25</TReselectionEUTRASFHigh>
-                    <ThreshXHigh>3</ThreshXHigh>
-                    <ThreshXLow>3</ThreshXLow>
-                    <CellReselectionPriority>4</CellReselectionPriority>
-                    <X_VENDOR_VOLTE_FB_CellReselectionPriority>7</X_VENDOR_VOLTE_FB_CellReselectionPriority>
-                    <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
-                    <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
-                    <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
-                    <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
-                    <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
-                    <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
-                    <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
-                    <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
-                    <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
-                    <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
-                    <!--DataModel v1.43 -->
-                    <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
-                    <!--DataModel v1.43 -->
-                    <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
-                    <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
-                    <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
-                    <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
-                  </Carrier>
+                  <CarrierNumberOfEntries>2</CarrierNumberOfEntries>
                   <Carrier>
                     <Enable>1</Enable>
                     <EUTRACarrierARFCN>47040</EUTRACarrierARFCN>
@@ -1928,8 +1811,8 @@
                     <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
                     <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
                   </Carrier>
-				  <Carrier>
-                    <Enable>0</Enable>
+                  <Carrier>
+                    <Enable>1</Enable>
                     <EUTRACarrierARFCN>47140</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
 <!-- not defined in data-model                    
