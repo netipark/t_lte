@@ -1427,8 +1427,8 @@
               <PSCHPowerOffset>0</PSCHPowerOffset>
               <SSCHPowerOffset>0</SSCHPowerOffset>
               <PBCHPowerOffset>0</PBCHPowerOffset>
-              <EARFCNDL>46910</EARFCNDL>
-              <EARFCNUL>46910</EARFCNUL>
+              <EARFCNDL>46940</EARFCNDL>
+              <EARFCNUL>46940</EARFCNUL>
               <X_VENDOR_MAX_RS_EPRE>0</X_VENDOR_MAX_RS_EPRE>
               <X_VENDOR_PCFICH_POWER_OFFSET>6000</X_VENDOR_PCFICH_POWER_OFFSET>
               <X_VENDOR_PHICH_POWER_OFFSET>6000</X_VENDOR_PHICH_POWER_OFFSET>
