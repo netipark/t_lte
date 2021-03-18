@@ -640,7 +640,7 @@
 	    <!-- s.SPICO_#2719 -->
             <X_VENDOR_PDCP_INTEGRITY_THRESHOLD_COUNTER>3</X_VENDOR_PDCP_INTEGRITY_THRESHOLD_COUNTER>
 	    <!-- e.SPICO_#2719 -->
-            <TAC>2304</TAC>
+            <TAC>2048</TAC>
             <EAID>21</EAID>
             <X_VENDOR_EAID2>0</X_VENDOR_EAID2>
             <X_VENDOR_EAID3>0</X_VENDOR_EAID3>
@@ -1650,7 +1650,7 @@
               <T300>2000</T300>
               <T301>2000</T301>
               <T302>2000</T302>
-              <T304EUTRA>200</T304EUTRA>
+              <T304EUTRA>2000</T304EUTRA>
               <T304IRAT>200</T304IRAT>
               <T310>1000</T310>
               <T311>1000</T311>
