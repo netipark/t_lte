@@ -662,7 +662,7 @@
             <X_VENDOR_EAID3>0</X_VENDOR_EAID3>
             <X_VENDOR_EAID4>0</X_VENDOR_EAID4>
             <!-- [s.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature start -->
-            <X_VENDOR_UE_INACTIVITY_TIMER>0</X_VENDOR_UE_INACTIVITY_TIMER>
+            <X_VENDOR_UE_INACTIVITY_TIMER>60</X_VENDOR_UE_INACTIVITY_TIMER>
             <!-- [e.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature end -->
             <!-- s.REDIR-4-1, s.REDIR-4-2  PH1.4C Redirect Feature  20170510 by jelee -->
             <X_VENDOR_REDIRECT_ENABLE>1</X_VENDOR_REDIRECT_ENABLE>
@@ -1667,10 +1667,10 @@
               </SRB2>
             </RLC>
             <RRCTimers>
-              <T300>400</T300>
-              <T301>400</T301>
-              <T302>200</T302>
-              <T304EUTRA>100</T304EUTRA>
+              <T300>2000</T300>
+              <T301>2000</T301>
+              <T302>2000</T302>
+              <T304EUTRA>2000</T304EUTRA>
               <T304IRAT>200</T304IRAT>
               <T310>1000</T310>
               <T311>1000</T311>
