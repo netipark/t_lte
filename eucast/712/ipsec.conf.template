@@ -1,0 +1,37 @@
+# /etc/ipsec.conf Configuration Details
+config setup
+	charondebug="IPSEC_INIT_LOG_LEVEL"
+
+conn %default
+	ikelifetime=IKE_REKEY_LIFE_TIMEh
+	lifetime=IPSEC_REKEY_LIFE_TIME_SECh
+	keyingtries=%forever
+	keyexchange=ikev2
+	rekeymargin=9m
+	authby=AUTH_MODE_PSK
+	#fragmentation=SEC_DF_BIT
+	#replay_window=IPSEC_WINDOW_SIZE 
+	type=tunnel
+	esp=ESPENCRYPT-ESPINTEGRITY
+	#ikedscp=DSCP_MARK_POLICY
+	ike=IKEENCRYPT-IKEINTEGRITY-IKEDHIP!
+	#lifebytes=IPSEC_REKEY_LIFE_TIME_BYTES   # lifetime_units=kilobytes (IKEv2 only)
+        reauth=no
+
+# EVM and Peer Config
+conn SGW
+	left=HENB_ADDR
+	leftsubnet=STATIC_TID_ADDR/32
+	leftid=IKEID_DOMAIN_NAME
+	leftfirewall=no
+	right=SEC_GW_ADDR
+	rightsubnet=0.0.0.0/0
+	rightid=uqc.com
+	mobike=no
+        mediation=no
+	closeaction=restart
+	dpdaction=restart
+	dpddelay=30s
+	dpdtimeout=DPD_TIMEOUTs
+	auto=start
+     
