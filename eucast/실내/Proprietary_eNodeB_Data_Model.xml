@@ -18,9 +18,10 @@
   <OAM_PmXmlStoragePath>/logs</OAM_PmXmlStoragePath>
   <!--   Self Address of eNodeB. Used by Operator   -->
   <HeNB_Address>1.1.1.1</HeNB_Address>
+  <BCP_SWITCHOVER_COUNT>9</BCP_SWITCHOVER_COUNT>
   <eNB_HW_Property>
-  	<!--    Allowed values for hw_type; 0 APPLETON, 1 HAWKING  2 LAMARR 3 HERCULES    -->
-		<hw_type>2</hw_type>
+    <!--    Allowed values for hw_type; 0 APPLETON, 1 HAWKING  2 LAMARR 3 HERCULES    -->
+    <hw_type>2</hw_type>
   </eNB_HW_Property>
   <eNB_software_path>/spico</eNB_software_path>
   <eNB_Processes> 
@@ -2845,7 +2846,7 @@
     </power_control_enable>
   </power_control>
   <load_configuration>
-    <Enable>0</Enable>
+    <Enable>1</Enable>
     <!--    Indicate the interval at which the load information is collected from the peer eNodeB    -->
     <!--   Value: 0,1,2,5,10, Default: 2    -->
     <ncl_load_ind_intrvl>2</ncl_load_ind_intrvl>
@@ -3362,10 +3363,10 @@
           <LLIM_CELL_RECONFIG_TIMER_TIMERID_12_VALUE>42000</LLIM_CELL_RECONFIG_TIMER_TIMERID_12_VALUE>
           <!--    L3 LLIM module receives Suspend UE Entity Req from UECC. As part of this procedure, LLIM sends request to LL [PDCP] to suspend the radio bearers and response to this initiating meesage is guarded by this timer value    -->
           <!--    Range: 50-65535, Default: 65535    -->
-          <LLIM_CELL_SUSPEND_UE_ENTITY_TIMER_TIMERID_27_VALUE>1000</LLIM_CELL_SUSPEND_UE_ENTITY_TIMER_TIMERID_27_VALUE>
+          <LLIM_CELL_SUSPEND_UE_ENTITY_TIMER_TIMERID_27_VALUE>65535</LLIM_CELL_SUSPEND_UE_ENTITY_TIMER_TIMERID_27_VALUE>
           <!--    L3 LLIM module receives Re-establish UE Entity Request from UECC module. This timer guards the reestablishment handling at LL    -->
           <!--    Range: 50-65535, Default: 65535    -->
-          <LLIM_REESTABLISH_UE_ENTITY_TIMER_TIMERID_28_VALUE>5000</LLIM_REESTABLISH_UE_ENTITY_TIMER_TIMERID_28_VALUE>
+          <LLIM_REESTABLISH_UE_ENTITY_TIMER_TIMERID_28_VALUE>65535</LLIM_REESTABLISH_UE_ENTITY_TIMER_TIMERID_28_VALUE>
           <!--    L3 LLIM module receives Reconfig UE Security Entity Req from UECC. As part of this procedure, LLIM sends new keys to LL [PDCP] and response from PDCP is guarded by this    -->
           <!--    Range: 50-65535, Default: 65535    -->
           <LLIM_RECONFIG_SECURITY_UE_ENTITY_TIMER_TIMERID_29_VALUE>65535</LLIM_RECONFIG_SECURITY_UE_ENTITY_TIMER_TIMERID_29_VALUE>
@@ -3425,22 +3426,22 @@
           <!--    b. RM#2685   -->
           <!--    Timer to guard ERAB Setup Procedure started when  L3 UECC module receives  ERAB Setup Request from MME    -->
           <!--    Range: 50-65535, Default: 1000    -->
-          <UECC_ERAB_SETUP_TIMER_TIMERID_15_VALUE>4500</UECC_ERAB_SETUP_TIMER_TIMERID_15_VALUE>
+          <UECC_ERAB_SETUP_TIMER_TIMERID_15_VALUE>1000</UECC_ERAB_SETUP_TIMER_TIMERID_15_VALUE>
           <!--    b. RM#2685   -->
           <!--    Timer to guard ERAB Modify Procedure started when  L3 UECC module receives  ERAB Modify Request from MME    -->
           <!--    Range: 50-65535, Default: 1000    -->
-          <UECC_ERAB_MODIFY_TIMER_TIMERID_16_VALUE>4500</UECC_ERAB_MODIFY_TIMER_TIMERID_16_VALUE>
+          <UECC_ERAB_MODIFY_TIMER_TIMERID_16_VALUE>1000</UECC_ERAB_MODIFY_TIMER_TIMERID_16_VALUE>
           <!--    b. RM#2685   -->
           <!--    Timer to guard MME Initiated ERAB RELEASE procedure started when L3 UECC module receives  ERAB Release Command from MME    -->
           <!--    Range: 50-65535, Default: 1000    -->
-          <UECC_ERAB_RELEASE_CMD_TIMER_TIMERID_17_VALUE>4500</UECC_ERAB_RELEASE_CMD_TIMER_TIMERID_17_VALUE>
+          <UECC_ERAB_RELEASE_CMD_TIMER_TIMERID_17_VALUE>1000</UECC_ERAB_RELEASE_CMD_TIMER_TIMERID_17_VALUE>
           <!--    L3 UECC module starts this timer on receiving RRC_RRM_ERB_RELEASE_IND from RRM to guard RRM initiated ERAB Release procedure    -->
           <!--    Range: 50-65535, Default: 65535    -->
-          <UECC_ERAB_RELEASE_IND_TIMER_TIMERID_18_VALUE>4500</UECC_ERAB_RELEASE_IND_TIMER_TIMERID_18_VALUE>
+          <UECC_ERAB_RELEASE_IND_TIMER_TIMERID_18_VALUE>65535</UECC_ERAB_RELEASE_IND_TIMER_TIMERID_18_VALUE>
           <!--    b. RM#2685   -->
           <!--    L3 UECC module starts this timer on receiving Radio link failure from Lower Layers. This timer is used to guard the re-establishment attempt by UE after Radio Link failure has been detected    -->
           <!--    Range: 50-65535, Default: 4000    -->
-          <UECC_RLF_WAIT_FOR_REEST_TIMER_TIMERID_19_VALUE>1000</UECC_RLF_WAIT_FOR_REEST_TIMER_TIMERID_19_VALUE>
+          <UECC_RLF_WAIT_FOR_REEST_TIMER_TIMERID_19_VALUE>4000</UECC_RLF_WAIT_FOR_REEST_TIMER_TIMERID_19_VALUE>
           <!--    b. RM#2685   -->
           <!--    L3 UECC module starts this timer to guard the suspend procedure initiated on receiving RLF. It is started when UECC sends Suspend UE Entity request to LLIM module for suspending the radio bearers at LL    -->
           <!--    Range: 50-65535, Default: 1000    -->
@@ -3809,4 +3810,15 @@
   <max_cell_file_size>500</max_cell_file_size>
 </onesecperfstatsParams> 
 <!-- Redmie 2185 changes - -->
+<!-- Add environmental parameters for CBSD agent -->
+<CBSDParams>
+  <cbsdLogLevel>4</cbsdLogLevel>
+  <cbsdTimerInterval>10</cbsdTimerInterval>
+  <!-- cbsdRegistMode allowed values      1:Full parameters  2:Key parameters -->
+  <cbsdRegistMode>2</cbsdRegistMode>
+  <!-- cbsdProvisionMode allowed values   1:start by default  2:start by QCLI -->
+  <cbsdProvisionMode>1</cbsdProvisionMode>
+  <!-- cbsdProtocolType allowed values    1:HTTPS  2:HTTP -->
+  <cbsdProtocolType>1</cbsdProtocolType>
+</CBSDParams>
 </eNodeBParams>

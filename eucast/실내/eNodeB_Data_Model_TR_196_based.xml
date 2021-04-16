@@ -39,7 +39,7 @@
     <ProductClass>LTE</ProductClass>
     <SerialNumber>EE0C0100207000001</SerialNumber>
     <HardwareVersion>0.0.0</HardwareVersion>
-    <SoftwareVersion>02.02.16</SoftwareVersion>
+    <SoftwareVersion>02.04.06</SoftwareVersion>
     <ModemFirmwareVersion>0.0.0</ModemFirmwareVersion>
     <AdditionalSoftwareVersion>0.0.0</AdditionalSoftwareVersion>
     <UpTime>1</UpTime>
@@ -70,10 +70,10 @@
   	<LocalTimeZoneName>JST</LocalTimeZoneName>
   </Time>
   <LoggerIP>
-   <FAPI_TRACER_IP_ADDRESS>91.1.15.137</FAPI_TRACER_IP_ADDRESS>
-   <PACKET_RELAY_MODULE_HOST_NAME>91.1.15.137</PACKET_RELAY_MODULE_HOST_NAME>
-   <SYSTEM_ANALYSER_IP_ADDRESS>91.1.15.137</SYSTEM_ANALYSER_IP_ADDRESS>
-   <L1_IP_ADDRESS>91.1.15.137</L1_IP_ADDRESS>
+   <FAPI_TRACER_IP_ADDRESS>91.1.0.123</FAPI_TRACER_IP_ADDRESS>
+   <PACKET_RELAY_MODULE_HOST_NAME>91.1.0.123</PACKET_RELAY_MODULE_HOST_NAME>
+   <SYSTEM_ANALYSER_IP_ADDRESS>91.1.0.123</SYSTEM_ANALYSER_IP_ADDRESS>
+   <L1_IP_ADDRESS>91.1.0.123</L1_IP_ADDRESS>
   </LoggerIP>
   <LANDevice>
     <LANHostConfigManagement>
@@ -351,7 +351,7 @@
     <!-- b.RAS-2-1~6 Smart Logging - CR21 -->
     <SmartLog>
       <!-- s.SPICO_#2211 -->
-      <Enable>1</Enable>
+      <Enable>0</Enable>
       <Periodic_Reporting>3600</Periodic_Reporting>
       <!-- e.SPICO_#2211 -->
     </SmartLog>
@@ -417,6 +417,32 @@
 	  <outputOverCurrentThreshold>330</outputOverCurrentThreshold>
 	  <overTemeratureThreshold>900</overTemeratureThreshold>
     </X_VENDOR_RECT>
+    <!-- s.SPICO_CBRS -->
+    <X_VENDOR_CBRS>
+      <Enable>0</Enable>
+      <SASServerURL>https://1.1.1.1:5000</SASServerURL>
+      <!-- additional parameters for CBSD Registration -->
+      <UserId>EUCAST_CBSD_USER</UserId>
+      <FccId>2AXTR-ECL2248-2273</FccId>
+      <CallSign>0</CallSign>
+      <CbsdCategory>A</CbsdCategory>
+      <RadioTechnology>E_UTRA</RadioTechnology>
+      <HeightType>AGL</HeightType>
+      <IndoorDeployment>1</IndoorDeployment>
+      <AntennaAzimuth>90</AntennaAzimuth>
+      <AntennaDowntilt>30</AntennaDowntilt>
+      <AntennaGain>6</AntennaGain>
+      <EirpCapability>28</EirpCapability>
+      <AntennaBeamwidth>90</AntennaBeamwidth>
+      <AntennaModel>EUCAST_ANTENNA</AntennaModel>
+      <MeasCapability>RECEIVED_POWER_WITHOUT_GRANT</MeasCapability>
+      <GroupType>INTERFERENCE_COORDINATION</GroupType>
+      <GroupId>example-group-1</GroupId>
+      <MaxEirp>28</MaxEirp>
+      <LowFrequency>3550</LowFrequency>
+      <HighFrequency>3700</HighFrequency>
+    </X_VENDOR_CBRS>
+    <!-- e.SPICO_CBRS -->
   </FAP>
   <Services>
     <!-- Support for only a single FAPService object -->
@@ -607,7 +633,7 @@
       <AccessMgmt>
         <LTE>
           <AccessMode>OpenAccess</AccessMode>
-          <MaxUEsServed>40</MaxUEsServed>
+          <MaxUEsServed>32</MaxUEsServed>
           <MaxCSGMembers>1</MaxCSGMembers>
           <MaxNonCSGMembers>1</MaxNonCSGMembers>
           <!-- Parameter not being used by LTE OAM -->
@@ -649,12 +675,12 @@
             <X_VENDOR_UE_INACTIVITY_TIMER>60</X_VENDOR_UE_INACTIVITY_TIMER>
             <!-- [e.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature end -->
             <!-- s.REDIR-4-1, s.REDIR-4-2  PH1.4C Redirect Feature  20170510 by jelee -->
-            <X_VENDOR_REDIRECT_ENABLE>0</X_VENDOR_REDIRECT_ENABLE>
+            <X_VENDOR_REDIRECT_ENABLE>1</X_VENDOR_REDIRECT_ENABLE>
             <X_VENDOR_REDIRECT_NUM_USER_CEILING>32</X_VENDOR_REDIRECT_NUM_USER_CEILING>
             <!-- e.REDIR-4-1, e.REDIR-4-2  PH1.4C Redirect Feature -->
             <MaxPLMNListEntries>6</MaxPLMNListEntries>
             <PLMNListNumberOfEntries>3</PLMNListNumberOfEntries>
-            <QoSNumberOfEntries>9</QoSNumberOfEntries>
+            <QoSNumberOfEntries>13</QoSNumberOfEntries>
             <QoS>
 	      <!-- yup add CELLCFGLTE-EPCQOS -->
               <Enable>0</Enable>
@@ -1253,6 +1279,281 @@
               <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>80</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
               <X_VENDOR_SRVCC_OP_REQUIRED>0</X_VENDOR_SRVCC_OP_REQUIRED>
             </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>65</QCI>
+              <Type>GBR</Type>
+              <Priority>2</Priority>
+              <PacketDelayBudget>100</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>2</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>46</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>3</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>3</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>4</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>2</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>1</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>1</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>80</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>80</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>3</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>3</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>1</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>3</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>2</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>60</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>80</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>1</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>66</QCI>
+              <Type>GBR</Type>
+              <Priority>4</Priority>
+              <PacketDelayBudget>100</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>2</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>46</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>3</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>3</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>4</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <!-- Max value among all QCIs is taken -->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>2</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>1</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>1</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>80</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>80</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>3</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>3</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>1</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>3</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>2</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>60</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>80</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>1</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>69</QCI>
+              <Type>Non-GBR</Type>
+              <Priority>1</Priority>
+              <PacketDelayBudget>100</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>6</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>56</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>4</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>6</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>3</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <!-- Max value among all QCIs is taken -->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>2</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>1</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>1</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>80</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>80</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>3</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>4</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>1</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>4</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>3</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>60</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>80</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>0</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>70</QCI>
+              <Type>Non-GBR</Type>
+              <Priority>9</Priority>
+              <PacketDelayBudget>200</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>6</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>8</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>3</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>4</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>3</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>4</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>3</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <!-- Max value among all QCIs is taken -->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>2</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>1</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>1</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>80</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>80</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>3</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>5</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>1</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>4</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>3</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>60</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>80</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>0</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
             <PLMNList>
               <Enable>1</Enable>
               <IsPrimary>1</IsPrimary>
@@ -1473,13 +1774,13 @@
                 <ConfigurationIndex>3</ConfigurationIndex>
                 <HighSpeedFlag>0</HighSpeedFlag>
                 <ZeroCorrelationZoneConfig>4</ZeroCorrelationZoneConfig>
-                <FreqOffset>5</FreqOffset>
+                <FreqOffset>2</FreqOffset>
               </PRACH>
               <PUCCH>
                 <DeltaPUCCHShift>ds1</DeltaPUCCHShift>
-                <NRBCQI>4</NRBCQI>
+                <NRBCQI>1</NRBCQI>
                 <NCSAN>0</NCSAN>
-                <N1PUCCHAN>62</N1PUCCHAN>
+                <N1PUCCHAN>24</N1PUCCHAN>
                 <CQIPUCCHResourceIndex>32</CQIPUCCHResourceIndex>
                 <!-- [SPICO_DATAMODEL, DIS-LTEPHY-PUCCH] kwpark 20150410, added to apply v1.43 -->
                 <K>1</K>
@@ -1589,7 +1890,7 @@
                 <ShortDRXCycle>64</ShortDRXCycle>
                 <DRXShortCycleTimer>1</DRXShortCycleTimer>
                 <!-- Comma saparated list of applicable QCI's for this DRX profile -->
-                <X_VENDOR_APPLICABLE_QCI_LIST>1,2,3,4,5,6,7,8,9</X_VENDOR_APPLICABLE_QCI_LIST>
+                <X_VENDOR_APPLICABLE_QCI_LIST>1,2,3,4,5,6,7,8,9,65,66,69,70</X_VENDOR_APPLICABLE_QCI_LIST>
                 <!--  /*CSR 00053551 FIX START*/ -->
                 <X_VENDOR_DRX_COMMAND>FALSE</X_VENDOR_DRX_COMMAND>
                 <X_VENDOR_DRX_TIMER_PERCENTAGE>50</X_VENDOR_DRX_TIMER_PERCENTAGE>
@@ -1650,7 +1951,7 @@
               <T300>2000</T300>
               <T301>2000</T301>
               <T302>2000</T302>
-              <T304EUTRA>2000</T304EUTRA>
+              <T304EUTRA>100</T304EUTRA>
               <T304IRAT>200</T304IRAT>
               <T310>1000</T310>
               <T311>1000</T311>
@@ -1771,15 +2072,15 @@
                 </IntraFreq>
                 <InterFreq>
                   <MaxCarrierEntries>8</MaxCarrierEntries>
-                  <CarrierNumberOfEntries>2</CarrierNumberOfEntries>
+                  <CarrierNumberOfEntries>1</CarrierNumberOfEntries>
                   <Carrier>
                     <Enable>1</Enable>
                     <EUTRACarrierARFCN>47140</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
+                    <!-- not defined in data-model
                     <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
                     <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
+                    -->
                     <QOffsetFreq>0</QOffsetFreq>
                     <QRxLevMinSIB5>-63</QRxLevMinSIB5>
                     <PMax>23</PMax>
@@ -1793,57 +2094,18 @@
                     <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
                     <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
                     <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
+                    <!-- not defined in data-model
                     <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
                     <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
                     <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
                     <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
                     <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
                     <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
+                    -->
                     <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
                     <!--DataModel v1.43 -->
                     <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
-                    <!--DataModel v1.43 -->
-                    <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
-                    <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
-                    <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
-                    <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
-                  </Carrier>
-                  <Carrier>
-                    <Enable>1</Enable>
-                    <EUTRACarrierARFCN>46940</EUTRACarrierARFCN>
-                    <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
-                    <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
-                    <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
-                    <QOffsetFreq>0</QOffsetFreq>
-                    <QRxLevMinSIB5>-63</QRxLevMinSIB5>
-                    <PMax>23</PMax>
-                    <TReselectionEUTRA>1</TReselectionEUTRA>
-                    <TReselectionEUTRASFMedium>25</TReselectionEUTRASFMedium>
-                    <TReselectionEUTRASFHigh>25</TReselectionEUTRASFHigh>
-                    <ThreshXHigh>3</ThreshXHigh>
-                    <ThreshXLow>3</ThreshXLow>
-                    <CellReselectionPriority>4</CellReselectionPriority>
-                    <X_VENDOR_VOLTE_FB_CellReselectionPriority>7</X_VENDOR_VOLTE_FB_CellReselectionPriority>
-                    <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
-                    <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
-                    <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
-                    <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
-                    <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
-                    <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
-                    <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
-                    <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
-                    <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
-                    <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
-                    <!--DataModel v1.43 -->
-                    <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
+                    <X_VENDOR_MULTI_BAND_INFO_LIST>1</X_VENDOR_MULTI_BAND_INFO_LIST>
                     <!--DataModel v1.43 -->
                     <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
                     <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
@@ -2516,9 +2778,8 @@
       </X_VENDOR_SON>
     </FAPService>
   </Services>
-
-    <FaultMgmt>
-        <SupportedAlarmNumberOfEntries>164</SupportedAlarmNumberOfEntries>
+  <FaultMgmt>
+        <SupportedAlarmNumberOfEntries>172</SupportedAlarmNumberOfEntries>
         <SupportedAlarm>
             <!-- Index #01 -->
             <EventType>Equipment Alarm</EventType>
@@ -3398,7 +3659,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #83 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Input Abnormal</ProbableCause>
+            <ProbableCause>RECT AC Fail</ProbableCause>
             <SpecificProblem>Input voltage of RECT is abnormal.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3409,7 +3670,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #84 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Over Voltage</ProbableCause>
+            <ProbableCause>RECT DC Over Voltage</ProbableCause>
             <SpecificProblem>Output voltage of RECT exceeds threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3420,7 +3681,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #85 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Low Voltage</ProbableCause>
+            <ProbableCause>RECT DC Low Voltage</ProbableCause>
             <SpecificProblem>Output voltage of RECT lower than threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3431,7 +3692,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #86 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Over Current</ProbableCause>
+            <ProbableCause>RECT DC Over Current</ProbableCause>
             <SpecificProblem>Output current of RECT exceeds threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3442,7 +3703,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #87 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Low Battery</ProbableCause>
+            <ProbableCause>RECT Battery Low Voltage</ProbableCause>
             <SpecificProblem>RECT Battery voltage lower than threshold.</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3453,11 +3714,11 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #88 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Battery NFB</ProbableCause>
-            <SpecificProblem>RECT Battery NFB</SpecificProblem>
+            <ProbableCause>RECT Battery Abnormal</ProbableCause>
+            <SpecificProblem>RECT Battery Abnormal</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
-            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryNFB</ManagedObjectInstance>
+            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryAbnormal</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40116</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
         <SupportedAlarm>
@@ -3468,7 +3729,7 @@
             <SpecificProblem>RECTBattery is discharged.</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
-            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryNFB</ManagedObjectInstance>
+            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryDischrged</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40117</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
         <SupportedAlarm>
@@ -4260,6 +4521,86 @@
           <ReportingMechanism>0 Expedited</ReportingMechanism>
           <ManagedObjectInstance>eNB.Hardware.Sysoam.RectFailure</ManagedObjectInstance>
           <X_VENDOR_ALARM_ID>40126</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #165 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Protocol Version Not Supported</ProbableCause>
+          <SpecificProblem>CBSD Protocol Version Not Supported</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.ProtocolVersionError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40150</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #166 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Blacklisted</ProbableCause>
+          <SpecificProblem>CBSD Blacklisted</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.BlacklistedError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40151</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #167 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Missing Parameters</ProbableCause>
+          <SpecificProblem>CBSD Missing Parameters</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.MissingParamError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40152</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #168 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Parameter Invalid</ProbableCause>
+          <SpecificProblem>CBSD Parameter Invalid</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.ParamInvalidError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40153</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #169 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Certification Error</ProbableCause>
+          <SpecificProblem>CBSD Certification Error</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.CertificationError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40154</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #170 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Registration Pending</ProbableCause>
+          <SpecificProblem>CBSD Registration Pending</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.RegistrationPendingError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40155</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #171 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Group Error</ProbableCause>
+          <SpecificProblem>CBSD Group Error</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.GroupError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40156</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+          <!-- Index #172 -->
+          <EventType>Equipment Alarm</EventType>
+          <ProbableCause>CBSD Operation Parameter cause Interference Error</ProbableCause>
+          <SpecificProblem>CBSD Operation Parameter cause Interference Error</SpecificProblem>
+          <PerceivedSeverity>Major</PerceivedSeverity>
+          <ReportingMechanism>0 Expedited</ReportingMechanism>
+          <ManagedObjectInstance>eNB.Software.CBSD.InterferenceError</ManagedObjectInstance>
+          <X_VENDOR_ALARM_ID>40157</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
     </FaultMgmt>
 </InternetGatewayDevice>
