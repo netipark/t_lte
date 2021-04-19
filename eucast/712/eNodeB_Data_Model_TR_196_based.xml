@@ -666,7 +666,7 @@
 	    <!-- s.SPICO_#2719 -->
             <X_VENDOR_PDCP_INTEGRITY_THRESHOLD_COUNTER>3</X_VENDOR_PDCP_INTEGRITY_THRESHOLD_COUNTER>
 	    <!-- e.SPICO_#2719 -->
-            <TAC>2048</TAC>
+            <TAC>2304</TAC>
             <EAID>21</EAID>
             <X_VENDOR_EAID2>0</X_VENDOR_EAID2>
             <X_VENDOR_EAID3>0</X_VENDOR_EAID3>
@@ -2072,49 +2072,10 @@
                 </IntraFreq>
                 <InterFreq>
                   <MaxCarrierEntries>8</MaxCarrierEntries>
-                  <CarrierNumberOfEntries>2</CarrierNumberOfEntries>
+                  <CarrierNumberOfEntries>1</CarrierNumberOfEntries>
                   <Carrier>
                     <Enable>1</Enable>
                     <EUTRACarrierARFCN>47040</EUTRACarrierARFCN>
-                    <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
-                    <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
-                    <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
-                    <QOffsetFreq>0</QOffsetFreq>
-                    <QRxLevMinSIB5>-63</QRxLevMinSIB5>
-                    <PMax>23</PMax>
-                    <TReselectionEUTRA>1</TReselectionEUTRA>
-                    <TReselectionEUTRASFMedium>25</TReselectionEUTRASFMedium>
-                    <TReselectionEUTRASFHigh>25</TReselectionEUTRASFHigh>
-                    <ThreshXHigh>3</ThreshXHigh>
-                    <ThreshXLow>3</ThreshXLow>
-                    <CellReselectionPriority>4</CellReselectionPriority>
-                    <X_VENDOR_VOLTE_FB_CellReselectionPriority>7</X_VENDOR_VOLTE_FB_CellReselectionPriority>
-                    <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
-                    <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
-                    <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
-                    <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
-                    <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
-                    <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
-                    <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
-                    <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
-                    <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
-                    <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
-                    <!--DataModel v1.43 -->
-                    <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
-                    <X_VENDOR_MULTI_BAND_INFO_LIST>0</X_VENDOR_MULTI_BAND_INFO_LIST>
-                    <!--DataModel v1.43 -->
-                    <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
-                    <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
-                    <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
-                    <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
-                  </Carrier>
-                  <Carrier>
-                    <Enable>1</Enable>
-                    <EUTRACarrierARFCN>47140</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
 <!-- not defined in data-model                    
                     <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
@@ -2371,7 +2332,7 @@
                   <FilterCoefficientRSRQ>9</FilterCoefficientRSRQ>
                   <A1ThresholdRSRP>97</A1ThresholdRSRP>
                   <A1ThresholdRSRQ>30</A1ThresholdRSRQ>
-                  <A2ThresholdRSRP>26</A2ThresholdRSRP>
+                  <A2ThresholdRSRP>60</A2ThresholdRSRP>
                   <A2ThresholdRSRQ>5</A2ThresholdRSRQ>
                   <A3Offset>3</A3Offset>
                   <!-- [s.L3-17-36][SPICO_DATAMODEL, X_VENDOR_A3OffsetXXXX] kwpark 20150921, PH1.1 new feature start -->
