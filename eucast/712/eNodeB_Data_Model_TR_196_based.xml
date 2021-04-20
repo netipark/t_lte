@@ -14,8 +14,8 @@
   <LANDeviceNumberOfEntries>1</LANDeviceNumberOfEntries>
   <!-- CRITICAL_PARAMS CHANGES ENDS -->
   <ManagementServer>
-    <URL>http://192.168.61.8:48701</URL>
-    <X_VENDOR_IHEMS_URL>http://192.168.61.8:48701</X_VENDOR_IHEMS_URL>
+    <URL>http://172.16.102.10:7547</URL>
+    <X_VENDOR_IHEMS_URL>http://172.16.102.10:7547</X_VENDOR_IHEMS_URL>
     <X_VENDOR_CONNECT_TO_IHEMS>0</X_VENDOR_CONNECT_TO_IHEMS>
     <ConnectionRequestURL>http://91.122.118.137:7547</ConnectionRequestURL>
     <EnableCWMP>1</EnableCWMP>
@@ -325,7 +325,7 @@
       </Kpi_info>
       <!-- CRITICAL_PARAMS CHANGES ENDS -->
       <Config>
-        <URL>http://192.168.61.8:48701</URL>
+        <URL>http://172.16.102.10:7547</URL>
         <Username>nimsftp</Username>
         <Password>oss_2012</Password>
         <Enable>0</Enable>
@@ -340,7 +340,7 @@
       <ConfigNumberOfEntries>1</ConfigNumberOfEntries>
       <Config>
         <Enable>0</Enable>
-        <URL>http://192.168.61.8:48701</URL>
+        <URL>http://172.16.102.10:7547</URL>
         <Username>nimsftp</Username>
         <Password>oss_2012</Password>
         <PeriodicUploadInterval>900</PeriodicUploadInterval>
@@ -366,7 +366,7 @@
         <CollectionEntity>192.168.61.8</CollectionEntity>
         <TraceID>1</TraceID>
         <X_VENDOR_EndTime>2014-12-01T00:00:00-09:00</X_VENDOR_EndTime>
-        <URL>http://192.168.61.8:48701</URL>
+        <URL>http://172.16.102.10:7547</URL>
         <Username>hems</Username>
         <Password>hems123</Password>
       </Config>
@@ -672,15 +672,15 @@
             <X_VENDOR_EAID3>0</X_VENDOR_EAID3>
             <X_VENDOR_EAID4>0</X_VENDOR_EAID4>
             <!-- [s.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature start -->
-            <X_VENDOR_UE_INACTIVITY_TIMER>0</X_VENDOR_UE_INACTIVITY_TIMER>
+            <X_VENDOR_UE_INACTIVITY_TIMER>60</X_VENDOR_UE_INACTIVITY_TIMER>
             <!-- [e.L3-8-3][SPICO_DATAMODEL, UE_INACTIVITY_TIMER] kwpark 20150908, PH1.1 new feature end -->
             <!-- s.REDIR-4-1, s.REDIR-4-2  PH1.4C Redirect Feature  20170510 by jelee -->
-            <X_VENDOR_REDIRECT_ENABLE>0</X_VENDOR_REDIRECT_ENABLE>
+            <X_VENDOR_REDIRECT_ENABLE>1</X_VENDOR_REDIRECT_ENABLE>
             <X_VENDOR_REDIRECT_NUM_USER_CEILING>32</X_VENDOR_REDIRECT_NUM_USER_CEILING>
             <!-- e.REDIR-4-1, e.REDIR-4-2  PH1.4C Redirect Feature -->
             <MaxPLMNListEntries>6</MaxPLMNListEntries>
             <PLMNListNumberOfEntries>3</PLMNListNumberOfEntries>
-            <QoSNumberOfEntries>9</QoSNumberOfEntries>
+            <QoSNumberOfEntries>13</QoSNumberOfEntries>
             <QoS>
 	      <!-- yup add CELLCFGLTE-EPCQOS -->
               <Enable>0</Enable>
@@ -1538,7 +1538,7 @@
               <X_VENDOR_MAX_HARQ_TX>4</X_VENDOR_MAX_HARQ_TX>
               <!-- Maximum DL HARQ retransmissions-->
               <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
-              <!-- Below parameter is not currently used by RRM-->  
+              <!-- Below parameter is not currently used by RRM-->
               <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
               <!--Mapping of logical channel to logical channel group for BSR reporting-->
               <!--INTEGER (0..3)-->
@@ -2077,10 +2077,10 @@
                     <Enable>1</Enable>
                     <EUTRACarrierARFCN>47040</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
-<!-- not defined in data-model                    
+                    <!-- not defined in data-model
                     <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
                     <X_VENDOR_NEIGHBOR_CELL_CONFIG>1</X_VENDOR_NEIGHBOR_CELL_CONFIG>
--->
+                    -->
                     <QOffsetFreq>0</QOffsetFreq>
                     <QRxLevMinSIB5>-63</QRxLevMinSIB5>
                     <PMax>23</PMax>
@@ -2094,14 +2094,14 @@
                     <X_VENDOR_Q_QUAL_MIN_R9>-22</X_VENDOR_Q_QUAL_MIN_R9>
                     <X_VENDOR_THRESHX_HIGHQ_R9>25</X_VENDOR_THRESHX_HIGHQ_R9>
                     <X_VENDOR_THRESHX_LOWQ_R9>25</X_VENDOR_THRESHX_LOWQ_R9>
-<!-- not defined in data-model                    
+                    <!-- not defined in data-model
                     <X_VENDOR_OPEN_PHY_CELLID_START>1</X_VENDOR_OPEN_PHY_CELLID_START>
                     <X_VENDOR_OPEN_PHY_CELLID_RANGE>0</X_VENDOR_OPEN_PHY_CELLID_RANGE>
                     <X_VENDOR_CSG_PHY_CELLID_START>5</X_VENDOR_CSG_PHY_CELLID_START>
                     <X_VENDOR_CSG_PHY_CELLID_RANGE>0</X_VENDOR_CSG_PHY_CELLID_RANGE>
                     <X_VENDOR_HYBRID_PHY_CELLID_START>20</X_VENDOR_HYBRID_PHY_CELLID_START>
                     <X_VENDOR_HYBRID_PHY_CELLID_RANGE>4</X_VENDOR_HYBRID_PHY_CELLID_RANGE>
--->
+                    -->
                     <X_VENDOR_VOLTE_FB_IsTargetCarrier>1</X_VENDOR_VOLTE_FB_IsTargetCarrier>
                     <!--DataModel v1.43 -->
                     <X_VENDOR_IS_TARGET_SIB5>1</X_VENDOR_IS_TARGET_SIB5>
@@ -2778,9 +2778,8 @@
       </X_VENDOR_SON>
     </FAPService>
   </Services>
-
-    <FaultMgmt>
-        <SupportedAlarmNumberOfEntries>164</SupportedAlarmNumberOfEntries>
+  <FaultMgmt>
+        <SupportedAlarmNumberOfEntries>172</SupportedAlarmNumberOfEntries>
         <SupportedAlarm>
             <!-- Index #01 -->
             <EventType>Equipment Alarm</EventType>
@@ -3660,7 +3659,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #83 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Input Abnormal</ProbableCause>
+            <ProbableCause>RECT AC Fail</ProbableCause>
             <SpecificProblem>Input voltage of RECT is abnormal.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3671,7 +3670,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #84 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Over Voltage</ProbableCause>
+            <ProbableCause>RECT DC Over Voltage</ProbableCause>
             <SpecificProblem>Output voltage of RECT exceeds threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3682,7 +3681,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #85 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Low Voltage</ProbableCause>
+            <ProbableCause>RECT DC Low Voltage</ProbableCause>
             <SpecificProblem>Output voltage of RECT lower than threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3693,7 +3692,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #86 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Over Current</ProbableCause>
+            <ProbableCause>RECT DC Over Current</ProbableCause>
             <SpecificProblem>Output current of RECT exceeds threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3704,7 +3703,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #87 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Low Battery</ProbableCause>
+            <ProbableCause>RECT Battery Low Voltage</ProbableCause>
             <SpecificProblem>RECT Battery voltage lower than threshold.</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3715,11 +3714,11 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #88 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Battery NFB</ProbableCause>
-            <SpecificProblem>RECT Battery NFB</SpecificProblem>
+            <ProbableCause>RECT Battery Abnormal</ProbableCause>
+            <SpecificProblem>RECT Battery Abnormal</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
-            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryNFB</ManagedObjectInstance>
+            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryAbnormal</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40116</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
         <SupportedAlarm>
@@ -3730,7 +3729,7 @@
             <SpecificProblem>RECTBattery is discharged.</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
-            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryNFB</ManagedObjectInstance>
+            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryDischrged</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40117</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
         <SupportedAlarm>
