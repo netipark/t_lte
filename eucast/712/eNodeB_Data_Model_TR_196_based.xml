@@ -2149,7 +2149,7 @@
                     <!-- s.REDIR-4-4  PH1.4C Redirect feature 20170510 by jelee -->
                     <X_VENDOR_REDIRECT_CellReselectionPriority>4</X_VENDOR_REDIRECT_CellReselectionPriority>
                     <!-- e.REDIR-4-4  PH1.4C Redirect feature -->
-                    <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
+                    <X_VENDOR_INSTANCE_ID>2</X_VENDOR_INSTANCE_ID>
                   </Carrier>
                 </InterFreq>
                 <IRAT>
