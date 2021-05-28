@@ -1638,7 +1638,7 @@
           </EPC>
           <RAN>
             <Common>
-              <CellIdentity>27392</CellIdentity>
+              <CellIdentity>11535872</CellIdentity>
             </Common>
             <X_VENDOR_ADDITIONAL_OPERATOR_INFO>
               <CELL_CAPACITY_CLASS>20</CELL_CAPACITY_CLASS>
@@ -2075,7 +2075,7 @@
                   <CarrierNumberOfEntries>2</CarrierNumberOfEntries>
                   <Carrier>
                     <Enable>1</Enable>
-                    <EUTRACarrierARFCN>47040</EUTRACarrierARFCN>
+                    <EUTRACarrierARFCN>47140</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
                     <!-- not defined in data-model
                     <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
@@ -2114,7 +2114,7 @@
                   </Carrier>
                   <Carrier>
                     <Enable>1</Enable>
-                    <EUTRACarrierARFCN>47140</EUTRACarrierARFCN>
+                    <EUTRACarrierARFCN>47040</EUTRACarrierARFCN>
                     <X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>3</X_VENDOR_MEAS_BANDWIDTH_FOR_EARFCN>
                     <!-- not defined in data-model
                     <X_VENDOR_PRESENCE_ANTENNA_PORT1>1</X_VENDOR_PRESENCE_ANTENNA_PORT1>
