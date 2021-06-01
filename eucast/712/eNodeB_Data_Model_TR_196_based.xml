@@ -2469,27 +2469,27 @@
               <!-- e.OAM-25-1,25-2 -->
               <LTECellNumberOfEntries>1</LTECellNumberOfEntries>
               <LTECell>
-                <Enable>0</Enable>
+                <Enable>1</Enable>
                 <MustInclude>1</MustInclude>
-                <PLMNID>64F818</PLMNID>
+                <PLMNID>00F110</PLMNID>
                 <!-- 14692866 -->
                 <!-- s.PH1.2, multiple PLMN supports -->
                 <X_VENDOR_PLMNID2>0</X_VENDOR_PLMNID2>
                 <X_VENDOR_PLMNID3>0</X_VENDOR_PLMNID3>
                 <!-- e.PH1.2, multiple PLMN supports -->
-                <CID>0</CID>
-                <EUTRACarrierARFCN>40940</EUTRACarrierARFCN>
-                <PhyCellID>0</PhyCellID>
+                <CID>14682368</CID>
+                <EUTRACarrierARFCN>47140</EUTRACarrierARFCN>
+                <PhyCellID>158</PhyCellID>
                 <QOffset>0</QOffset>
                 <CIO>0</CIO>
                 <RSTxPower>0</RSTxPower>
                 <Blacklisted>0</Blacklisted>
-                <TAC>0</TAC>
-                <X_VENDOR_CSGID>1</X_VENDOR_CSGID>
-                <X_VENDOR_ACCESS_MODE>0</X_VENDOR_ACCESS_MODE>
+                <TAC>2304</TAC>
+                <X_VENDOR_CSGID>0</X_VENDOR_CSGID>
+                <X_VENDOR_ACCESS_MODE>2</X_VENDOR_ACCESS_MODE>
                 <!-- s.OAM-25-1,25-2 -->
-                <X_VENDOR_BROADCAST_STATUS>2</X_VENDOR_BROADCAST_STATUS>
-                <X_VENDOR_MODLIST_STATUS>2</X_VENDOR_MODLIST_STATUS>
+                <X_VENDOR_BROADCAST_STATUS>1</X_VENDOR_BROADCAST_STATUS>
+                <X_VENDOR_MODLIST_STATUS>1</X_VENDOR_MODLIST_STATUS>
                 <!-- e.OAM-25-1,25-2 -->
                 <X_VENDOR_X2_STATUS>1</X_VENDOR_X2_STATUS>
                 <X_VENDOR_X2_IP_ADDRESS>0</X_VENDOR_X2_IP_ADDRESS>
