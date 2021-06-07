@@ -831,6 +831,9 @@
         <!-- e.Cell Traffic Trace -->
         <xs:element ref="Tunnel"/>
         <xs:element ref="X_VENDOR_RECT"/>
+		<!-- s.SPICO_CBRS -->
+        <xs:element ref="X_VENDOR_CBRS"/>
+		<!-- e.SPICO_CBRS -->
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -1319,7 +1322,6 @@
 <xs:element name="ConfigNumberOfEntries" default="1">
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
-
         <xs:minInclusive value="0"/>
         <xs:maxInclusive value="65535"/>
       </xs:restriction>
@@ -2661,7 +2663,7 @@
         <xs:element ref="MaxPLMNListEntries"/>
         <xs:element ref="PLMNListNumberOfEntries"/>
         <xs:element ref="QoSNumberOfEntries"/>
-        <xs:element ref="QoS" minOccurs="1" maxOccurs="9"/>
+        <xs:element ref="QoS" minOccurs="1" maxOccurs="13"/>
         <xs:element ref="PLMNList" minOccurs="1" maxOccurs="6"/>
       </xs:sequence>
     </xs:complexType>
@@ -2769,40 +2771,39 @@
         <xs:element ref="X_VENDOR_IMPLICIT_RELEASE_AFTER" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_LOSSLESS_HO_REQUIRED" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_UE_INACTIVITY_TIMER_CONFIG" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SUPPORTED_RAT" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_UE_INACTIVITY_TIMER_CONFIG" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SUPPORTED_RAT" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_RLC_MODE" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_SN_LEN_DL_RLC" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_SN_LEN_UL_RLC" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_DL_PARAM_T_REORDERING_AM"/> 
         <xs:element ref="X_VENDOR_DL_PARAM_T_REORDERING_UM"/> 
-	<xs:element ref="X_VENDOR_UL_AM_POLL_BYTE" />
-	<xs:element ref="X_VENDOR_MAX_RETX_THRESHOLD"/> 
-	<xs:element ref="X_VENDOR_DISCARD_TIMER"/>
-	<xs:element ref="X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED"/>
-	<xs:element ref="X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED"/> 
-    <xs:element ref="X_VENDOR_RLC_UM_PDCP_SN_SIZE" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_ROHC_PARAMS" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_MAX_HARQ_TX" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_MAX_HARQ_RETRANS" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUP" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_MASK_FLAG" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_PROHIBIT_TIMER_R9" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_PERIODICITY_START_VAL" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_PERIODICITY_END_VAL" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_DSR_MAX_TRANSMISSIONS" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_UL_AM_POLL_BYTE" />
+        <xs:element ref="X_VENDOR_MAX_RETX_THRESHOLD"/> 
+        <xs:element ref="X_VENDOR_DISCARD_TIMER"/>
+        <xs:element ref="X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED"/>
+        <xs:element ref="X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED"/> 
+        <xs:element ref="X_VENDOR_RLC_UM_PDCP_SN_SIZE" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_ROHC_PARAMS" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_MAX_HARQ_TX" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_MAX_HARQ_RETRANS" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUP" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_MASK_FLAG" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_PROHIBIT_TIMER_R9" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_PERIODICITY_START_VAL" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_PERIODICITY_END_VAL" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_DSR_MAX_TRANSMISSIONS" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_DDL_PARAM_T_POLL_PDU" />
         <xs:element ref="X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT"/>
         <xs:element ref="X_VENDOR_SRVCC_OP_REQUIRED"/>
-   </xs:sequence>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="Alias" default="1">
   <xs:simpleType>
       <xs:restriction base="xs:string">
-
         <xs:maxLength value="255"/>
         <xs:minLength value="1"/>
       </xs:restriction>
@@ -2812,7 +2813,7 @@
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
         <xs:minInclusive value="0"/>
-        <xs:maxInclusive value="9"/>
+        <xs:maxInclusive value="70"/>
       </xs:restriction>
     </xs:simpleType>
  </xs:element>
@@ -2855,6 +2856,8 @@
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
    <xs:enumeration value='50'/>
+   <xs:enumeration value='60'/>
+   <xs:enumeration value='75'/>
    <xs:enumeration value='100'/>
    <xs:enumeration value='150'/>
    <xs:enumeration value='200'/>
@@ -3226,7 +3229,7 @@
       <xs:enumeration value="0"/>
       <xs:enumeration value="5"/>
       <xs:enumeration value="10"/>
-          <xs:enumeration value="15"/>
+      <xs:enumeration value="15"/>
       <xs:enumeration value="20"/>
       <xs:enumeration value="25"/>
       <xs:enumeration value="30"/>
@@ -5082,7 +5085,7 @@
     </xs:simpleType>
  </xs:element>
 
- <xs:element name="X_VENDOR_APPLICABLE_QCI_LIST" default="1,2,3,4,5,6,7,8,9">
+ <xs:element name="X_VENDOR_APPLICABLE_QCI_LIST" default="1,2,3,4,5,6,7,8,9,65,66,69,70">
     <xs:simpleType>
       <xs:restriction base="xs:string">
         <xs:maxLength value="255"/>
@@ -6514,7 +6517,6 @@
 <xs:element name="TReselectionUTRA" default="0">
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
-
            <xs:minInclusive value="0"/>
            <xs:maxInclusive value="7"/>
       </xs:restriction>
@@ -9057,10 +9059,10 @@
         <xs:maxInclusive value="65535"/>
       </xs:restriction>
     </xs:simpleType>
-</xs:element>
+  </xs:element>
+
   <xs:element name="LAC" default="1">
   <xs:simpleType>
-
    <xs:restriction base="xs:unsignedInt">
         <xs:minInclusive value="0"/>
         <xs:maxInclusive value="65535"/>
@@ -9683,5 +9685,66 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <!-- s.SPICO_CBRS -->
+  <xs:element name="X_VENDOR_CBRS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Enable"/>
+        <xs:element ref="SASServerURL"/>
+        <!-- additional parameters for CBSD Registration -->
+        <xs:element ref="UserId"/>
+        <xs:element ref="FccId"/>
+        <xs:element ref="CallSign"/>
+        <xs:element ref="CbsdCategory"/>
+        <xs:element ref="RadioTechnology"/>
+        <xs:element ref="HeightType"/>
+        <xs:element ref="IndoorDeployment"/>
+        <xs:element ref="AntennaAzimuth"/>
+        <xs:element ref="AntennaDowntilt"/>
+        <xs:element ref="AntennaGain"/>
+        <xs:element ref="EirpCapability"/>
+        <xs:element ref="AntennaBeamwidth"/>
+        <xs:element ref="AntennaModel"/>
+        <xs:element ref="MeasCapability"/>
+        <xs:element ref="GroupType"/>
+        <xs:element ref="GroupId"/>
+        <xs:element ref="MaxEirp"/>
+        <xs:element ref="LowFrequency"/>
+        <xs:element ref="HighFrequency"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SASServerURL"  default="https://1.1.1.1:5000">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="256"/>
+        <xs:minLength value="1"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+    
+    <xs:element name="UserId" type="xs:string" default=""/>
+    <xs:element name="FccId" type="xs:string" default=""/>
+    <xs:element name="CallSign"  type="xs:string" default=""/>
+    <xs:element name="CbsdCategory"  type="xs:string" default="A"/>
+    <xs:element name="RadioTechnology"  type="xs:string" default="E_UTRA"/>
+    <xs:element name="HeightType" type="xs:string" default=""/>
+    <xs:element name="IndoorDeployment" type="xs:string" default="1"/>
+    <xs:element name="AntennaAzimuth" type="xs:unsignedInt" default="0"/>
+    <xs:element name="AntennaDowntilt" type="xs:integer" default="0"/>
+    <xs:element name="AntennaGain" type="xs:integer" default="0"/>
+    <xs:element name="EirpCapability" type="xs:integer" default="0"/>
+    <xs:element name="AntennaBeamwidth" type="xs:unsignedInt" default="0"/>
+    <xs:element name="AntennaModel" type="xs:string" default=""/>
+    <xs:element name="MeasCapability" type="xs:string" default=""/>
+    <xs:element name="GroupType" type="xs:string" default=""/>
+    <xs:element name="GroupId" type="xs:string" default=""/>
+    <xs:element name="MaxEirp" type="xs:integer" default="0"/>
+    <xs:element name="LowFrequency" type="xs:integer" default="3550"/>
+    <xs:element name="HighFrequency" type="xs:integer" default="3700"/>
+  <!-- e.SPICO_CBRS -->
+
 </xs:schema>
 
