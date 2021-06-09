@@ -3746,7 +3746,7 @@
             <!--    Indicates Public Land Mobile Network Identity    -->
             <PLMNID>64F818</PLMNID>
             <!--   Comma Seperated list for Ipv4/V6 ADDRESS Max Two    -->
-            <myAddr>10.124.0.12</myAddr>
+            <myAddr>91.1.0.200</myAddr>
             <!--    Indicates Tracking Area Code    -->
             <TAC>4368</TAC>
             <!--    Indicates whether X2 connection can be used for HO or not with the corresponding eNB    -->

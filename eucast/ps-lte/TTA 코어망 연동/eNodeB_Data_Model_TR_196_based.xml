@@ -17,7 +17,7 @@
     <URL>http://172.16.102.10:7547</URL>
     <X_VENDOR_IHEMS_URL>http://172.16.102.10:7547</X_VENDOR_IHEMS_URL>
     <X_VENDOR_CONNECT_TO_IHEMS>0</X_VENDOR_CONNECT_TO_IHEMS>
-    <ConnectionRequestURL>http://10.124.0.12:7547</ConnectionRequestURL>
+    <ConnectionRequestURL>http://91.1.0.200:7547</ConnectionRequestURL>
     <EnableCWMP>1</EnableCWMP>
     <Username>abc</Username>
     <Password>xyz</Password>
@@ -70,10 +70,10 @@
   	<LocalTimeZoneName>JST</LocalTimeZoneName>
   </Time>
   <LoggerIP>
-    <FAPI_TRACER_IP_ADDRESS>10.124.0.12</FAPI_TRACER_IP_ADDRESS>
-    <PACKET_RELAY_MODULE_HOST_NAME>10.124.0.12</PACKET_RELAY_MODULE_HOST_NAME>
-    <SYSTEM_ANALYSER_IP_ADDRESS>10.124.0.12</SYSTEM_ANALYSER_IP_ADDRESS>
-    <L1_IP_ADDRESS>10.124.0.12</L1_IP_ADDRESS>
+    <FAPI_TRACER_IP_ADDRESS>91.1.0.200</FAPI_TRACER_IP_ADDRESS>
+    <PACKET_RELAY_MODULE_HOST_NAME>91.1.0.200</PACKET_RELAY_MODULE_HOST_NAME>
+    <SYSTEM_ANALYSER_IP_ADDRESS>91.1.0.200</SYSTEM_ANALYSER_IP_ADDRESS>
+    <L1_IP_ADDRESS>91.1.0.200</L1_IP_ADDRESS>
   </LoggerIP>
   <LANDevice>
     <LANHostConfigManagement>
@@ -129,9 +129,9 @@
       <X_VENDOR_VlanEnable>0</X_VENDOR_VlanEnable>
       <IPInterface>
         <Enable>1</Enable>
-        <IPInterfaceIPAddress>10.124.0.12</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.1.0.200</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.248</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address,
@@ -147,10 +147,10 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>10.124.0.12</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.1.0.200</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
         <!-- Parameter not being used by LTE OAM -->
-        <IPInterfaceSubnetMask>255.255.255.248</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <!-- Parameter not being used by LTE OAM -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
@@ -161,7 +161,7 @@
         <!-- value 3223 for S1AP, value 3221 for X2AP, 15210 used by the TR069 agent, not used for eGTPU
           Port Number Should be Comma seperated corresponding to comma seperated values of Interface type -->
         <X_VENDOR_SOURCE_PORT_NUMBER>36412</X_VENDOR_SOURCE_PORT_NUMBER>
-        <X_VENDOR_DEFAULT_GATEWAY>10.124.0.9</X_VENDOR_DEFAULT_GATEWAY>
+        <X_VENDOR_DEFAULT_GATEWAY>91.1.0.1</X_VENDOR_DEFAULT_GATEWAY>
         <X_VENDOR_MTU_SIZE>1500</X_VENDOR_MTU_SIZE>
         <X_VENDOR_PORT_TYPE>0</X_VENDOR_PORT_TYPE>
         <X_VENDOR_VlanTag>5</X_VENDOR_VlanTag>
@@ -169,9 +169,9 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>10.124.0.12</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.1.0.200</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.248</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address,
@@ -190,9 +190,9 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>10.124.0.12</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.1.0.200</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.248</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address, 
@@ -208,9 +208,9 @@
       <IPInterface>
         <Enable>1</Enable>
         <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceIPAddress>10.124.0.12</IPInterfaceIPAddress>
+        <IPInterfaceIPAddress>91.1.0.200</IPInterfaceIPAddress>
         <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
-        <IPInterfaceSubnetMask>255.255.255.248</IPInterfaceSubnetMask>
+        <IPInterfaceSubnetMask>255.255.255.0</IPInterfaceSubnetMask>
         <!-- only one value 'Static' is stupported -->
         <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
         <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address, 
