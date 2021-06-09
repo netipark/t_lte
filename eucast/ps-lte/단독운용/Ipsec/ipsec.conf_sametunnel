@@ -1,0 +1,66 @@
+config setup
+    strictcrlpolicy=no
+    charondebug=all
+    plutostart=no
+
+# Add connections here.
+conn %default
+    # EVM IP Address
+    left=10.203.194.109
+    leftcert=/home/root/running/cfg/alphaCert.der
+    leftid="C=US, O=Test, CN=alpha.test.org"
+    # EPC Machine IP Address
+    right=10.203.194.116
+    rightid="C=US, O=Test, CN=beta.test.org"
+    keyexchange=ikev2
+    ike=aes128-sha1-modp2048!
+    #type=tunnel
+    pfs=yes
+    esp=aes128ctr-sha1-modp2048-noesn!
+    #Time based lifetime
+    ikelifetime=168h #1 week
+    #margintime=1h
+    #lifetime=168h   #1 week
+    #Packet/byte count based lifetime
+    #lifebytes=200000
+    #lifepackets=20000
+    #marginbytes=500
+    #marginpackets=5
+    reauth=no
+
+conn Alpha-Udp1
+   leftsubnet=10.203.194.109/32
+   rightsubnet=172.16.4.91/32
+   type=tunnel
+   auto=start
+
+conn Alpha-Udp2                      
+   leftprotoport=udp                 
+   # EVM IP Address                  
+   leftsubnet=10.203.194.109/32       
+   # L1 IP ADDRESS             
+   rightsubnet=10.203.194.109/32
+   rightprotoport=udp          
+   type=passthrough            
+   auto=route                  
+                               
+conn Alpha-Udp3                
+   leftprotoport=udp           
+   # EVM IP Address            
+   leftsubnet=10.203.194.109/32 
+   # FAPI TRACER IP ADDRESS    
+   rightsubnet=10.203.194.208/32
+   rightprotoport=udp          
+   type=passthrough            
+   auto=route                  
+                               
+conn Alpha-Udp4                
+   leftprotoport=udp           
+   # EVM IP Address            
+   leftsubnet=10.203.194.109/32 
+   # SYTEM ANALYSER IP ADDRESS 
+   rightsubnet=10.203.194.208/32
+   rightprotoport=udp          
+   type=passthrough            
+   auto=route    
+
