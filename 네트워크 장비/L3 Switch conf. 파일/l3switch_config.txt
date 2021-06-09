@@ -1,0 +1,353 @@
+!
+service password-encryption
+service password-security
+!
+username root password 8 $5$793408d247164a0c20df077541f7792e184ab0b7a6ec3cf35b0151f449856a06b83df573
+!
+debug ospf ifsm
+debug ospf nfsm
+debug ospf lsa
+debug ospf nsm
+debug ospf events
+debug ospf route
+debug ospf packet hello detail
+debug ospf packet dd detail
+debug ospf packet ls-request detail
+debug ospf packet ls-update detail
+debug ospf packet ls-ack detail
+!
+no ip domain-lookup
+!
+!
+bridge 1 protocol pvstp
+!
+vlan database
+ vlan range 2-4 bridge 1
+!
+bridge 1 pvstp vlan 1
+no bridge 1 pvstp enable bridge-forward bpdu-flood
+!
+mds enable ge1-22 detect
+mds uplink ge23-28
+mds syslog enable
+mds auto-config config-save
+!
+maximum-paths 8
+mls qos enable
+login-fail auto-deny 5
+!
+interface ge1
+!
+interface ge2
+!
+interface ge3
+!
+interface ge4
+!
+interface ge5
+!
+interface ge6
+!
+interface ge7
+ switchport access vlan 2
+!
+interface ge8
+ switchport access vlan 2
+!
+interface ge9
+ switchport access vlan 2
+!
+interface ge10
+ switchport access vlan 2
+!
+interface ge11
+ switchport access vlan 2
+!
+interface ge12
+ switchport access vlan 2
+!
+interface ge13
+ switchport access vlan 3
+!
+interface ge14
+ switchport access vlan 3
+!
+interface ge15
+ switchport access vlan 3
+!
+interface ge16
+ switchport access vlan 3
+!
+interface ge17
+ switchport access vlan 3
+!
+interface ge18
+ switchport access vlan 3
+!
+interface ge19
+ switchport access vlan 4
+!
+interface ge20
+ switchport access vlan 4
+!
+interface ge21
+ switchport access vlan 4
+!
+interface ge22
+ switchport access vlan 4
+!
+interface ge23
+ switchport access vlan 4
+!
+interface ge24
+ switchport access vlan 4
+!
+interface ge25
+ switchport access vlan 4
+!
+interface ge26
+ switchport access vlan 4
+!
+interface ge27
+ switchport access vlan 4
+!
+interface ge28
+ switchport access vlan 4
+!
+interface lo
+ ip address 127.0.0.1/8
+ ipv6 address ::1/128
+!
+interface vlan1.1
+ ip address 91.1.0.1/24
+!
+interface vlan1.2
+ ip address 91.122.208.2/30
+ ip ospf network point-to-point
+ ip ospf cost 22
+ ip ospf hello-interval 5
+!
+interface vlan1.3
+ ip address 91.122.209.2/30
+ ip ospf network point-to-point
+ ip ospf cost 22
+ ip ospf hello-interval 5
+!
+interface vlan1.4
+ ip address 90.96.0.1/24
+!
+router ospf
+ ospf router-id 91.122.208.2
+ redistribute connected
+ redistribute static
+ redistribute rip
+ network 91.122.208.0/30 area 0
+ network 91.122.209.0/30 area 0
+!
+router rip
+ network 91.1.0.0/24
+ redistribute connected
+ redistribute static
+ redistribute ospf
+!
+ip route 90.96.11.0/24 90.96.0.122
+!
+snmp-server disable
+!
+timezone GMT+9
+!
+!
+service dhcp
+service sshd
+no service telnetd
+line con 0
+ login local
+line vty 0 5
+ login local
+!
+end
+
+SG2128G#
+SG2128G#
+SG2128G#show running-config 
+!
+service password-encryption
+service password-security
+!
+username root password 8 $5$793408d247164a0c20df077541f7792e184ab0b7a6ec3cf35b0151f449856a06b83df573
+!
+debug ospf ifsm
+debug ospf nfsm
+debug ospf lsa
+debug ospf nsm
+debug ospf events
+debug ospf route
+debug ospf packet hello detail
+debug ospf packet dd detail
+debug ospf packet ls-request detail
+debug ospf packet ls-update detail
+debug ospf packet ls-ack detail
+!
+no ip domain-lookup
+!
+!
+bridge 1 protocol pvstp
+!
+vlan database
+ vlan range 2-4,1000 bridge 1
+!
+bridge 1 pvstp vlan 1
+no bridge 1 pvstp enable bridge-forward bpdu-flood
+!
+mds enable ge1-22 detect
+mds uplink ge23-28
+mds syslog enable
+mds auto-config config-save
+!
+maximum-paths 8
+mls qos enable
+login-fail auto-deny 5
+!
+interface ge1
+!
+interface ge2
+!
+interface ge3
+!
+interface ge4
+!
+interface ge5
+!
+interface ge6
+!
+interface ge7
+ switchport access vlan 2
+!
+interface ge8
+ switchport access vlan 2
+!
+interface ge9
+ switchport access vlan 2
+!
+interface ge10
+ switchport access vlan 2
+!
+interface ge11
+ switchport access vlan 2
+!
+interface ge12
+ switchport access vlan 2
+!
+interface ge13
+ switchport access vlan 3
+!
+interface ge14
+ switchport access vlan 3
+!
+interface ge15
+ switchport access vlan 3
+!
+interface ge16
+ switchport access vlan 3
+!
+interface ge17
+ switchport access vlan 3
+!
+interface ge18
+ switchport access vlan 3
+!
+interface ge19
+ switchport access vlan 4
+!
+interface ge20
+ switchport access vlan 4
+!
+interface ge21
+ switchport access vlan 4
+!
+interface ge22
+ switchport access vlan 1000
+!
+interface ge23
+ mirror interface ge1 direction both
+ switchport access vlan 1000
+!
+interface ge24
+ switchport access vlan 1000
+!
+interface ge25
+ switchport access vlan 1000
+!
+interface ge26
+ switchport access vlan 1000
+!
+interface ge27
+ switchport access vlan 1000
+!
+interface ge28
+ switchport access vlan 1000
+!
+interface lo
+ ip address 127.0.0.1/8
+ ipv6 address ::1/128
+!
+interface vlan1.1
+ ip address 91.1.0.1/24
+ ip ospf network point-to-point
+ ip ospf cost 22
+ ip ospf hello-interval 5
+!
+interface vlan1.2
+ ip address 91.122.208.2/30
+ ip ospf network point-to-point
+ ip ospf cost 22
+ ip ospf hello-interval 5
+!
+interface vlan1.3
+ ip address 91.122.209.2/30
+ ip ospf network point-to-point
+ ip ospf cost 22
+ ip ospf hello-interval 5
+!
+interface vlan1.4
+ ip address 90.96.0.1/24
+!
+interface vlan1.1000
+ ip address 10.124.0.14/29
+!
+router ospf
+ ospf router-id 91.122.208.2
+ redistribute connected
+ redistribute static
+ redistribute rip
+ network 91.122.208.0/30 area 0
+ network 91.122.209.0/30 area 0
+!
+router rip
+ network 91.1.0.0/24
+ redistribute connected
+ redistribute static
+ redistribute ospf
+!
+ip route 10.10.0.0/16 10.124.0.9
+ip route 10.64.0.0/16 10.124.0.9
+ip route 10.124.0.0/29 10.124.0.9
+ip route 10.124.1.0/24 10.124.0.9
+ip route 10.124.7.0/24 10.124.0.9
+ip route 90.96.11.0/24 90.96.0.122
+ip route 90.96.15.128/28 90.96.0.122
+!
+snmp-server disable
+!
+timezone GMT+9
+!
+!
+service dhcp
+service sshd
+no service telnetd
+line con 0
+ login local
+line vty 0 5
+ login local
+!
+end
