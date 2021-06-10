@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PCC_RULE_LIST>
+   <PCC_RULE_INFO>
+        <PCC_RULE_NAME> default_bearer </PCC_RULE_NAME>
+        <SERVICE_IDENTIFIER> 1 </SERVICE_IDENTIFIER>
+        <RATING_GROUP> 1 </RATING_GROUP>
+        <FLOW_STATUS> 1 </FLOW_STATUS>
+        <QOS_RULE_T>
+                <QCI> 1 </QCI>
+                <PRIORITY_LEVEL> 1 </PRIORITY_LEVEL>
+                <PRE_EMPTION_CAPABILITY> 0 </PRE_EMPTION_CAPABILITY>
+                <PRE_EMPTION_VULNERABILITY> 0 </PRE_EMPTION_VULNERABILITY>
+                <BITRATE_T> mbr
+                        <DOWNLINK> 1024000 </DOWNLINK>
+                        <UPLINK> 1024000 </UPLINK>
+                </BITRATE_T>
+                <BITRATE_T> gbr
+                        <DOWNLINK> 1024000 </DOWNLINK>
+                        <UPLINK> 1024000 </UPLINK>
+                </BITRATE_T>
+        </QOS_RULE_T>
+        <PRECEDENCE> 1 </PRECEDENCE>
+        <ONLINE> 0 </ONLINE>
+        <OFFLINE> 0 </OFFLINE>
+        <PCC_FLOW_LIST>
+                <PCC_FLOW_INFO>
+                        <DESCRIPTION type="opaque"> permit out ip from any to any </DESCRIPTION>
+                </PCC_FLOW_INFO>
+                <PCC_FLOW_INFO>
+                        <DIRECTION> 1 </DIRECTION>
+                        <DESCRIPTION type="opaque"> permit in ip from any to any </DESCRIPTION>
+                </PCC_FLOW_INFO>
+        </PCC_FLOW_LIST>
+   </PCC_RULE_INFO>
+</PCC_RULE_LIST>
+
