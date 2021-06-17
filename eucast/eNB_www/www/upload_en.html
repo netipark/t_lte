@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>File Upload</title>
+	<script type="text/javascript" src="javascripts/prototype.js"></script>
+	<link rel="icon" href="eucasticon.ico" type="image/x-icon"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+</head>
+<body>
+	<h3>File Upload</h3>
+	<hr>
+	<form  id="upload_form" method="POST" enctype="multipart/form-data">
+		파일명: <input type="file" name="file" id="file" onchange="uploadFile()">
+	</form>
+	<progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
+	<p id="loaded_n_total"></p>
+	<div id="status"></div>
+	<hr>
+	<div style="text-align:center;">
+		<span style="position: relative; right: -3px; top: -3px;">
+			<button type="button" id='closewin' onclick="close_win()">Close</button>
+		</span>
+	</div>
+
+	<script>
+		function _(el) {
+		  return document.getElementById(el);
+		}
+
+		function uploadFile() {
+			var file = _("file").files[0];
+			var formdata = new FormData();
+			formdata.append("file", file);
+			var ajax = new XMLHttpRequest();
+			ajax.upload.addEventListener("progress", progressHandler, false);
+			ajax.addEventListener("load", completeHandler, false);
+			ajax.addEventListener("error", errorHandler, false);
+			ajax.addEventListener("abort", abortHandler, false);
+			ajax.open("POST", "cgi-bin/upload_en");
+			ajax.send(formdata);
+		}
+
+		function progressHandler(event) {
+			_("loaded_n_total").innerHTML = "Upload " + event.loaded + " bytes of " + event.total;
+			var percent = (event.loaded / event.total) * 100;
+			_("progressBar").value = Math.round(percent);
+			_("status").innerHTML = Math.round(percent) + "% Uploading... Wait a minute...";
+		}
+
+		function completeHandler(event) {
+			_("status").innerHTML = event.target.responseText;
+			_("progressBar").value = 0; //wil clear progress bar after successful upload
+			_("loaded_n_total").innerHTML = "Upload success.";
+		}
+
+		function errorHandler(event) {
+			_("status").innerHTML = "Uload Failed";
+		}
+
+		function abortHandler(event) {
+			_("status").innerHTML = "Upload Cacelled";
+		}
+
+		function fin_install(sts) {
+			$('file').enable();
+			$('install_pkg').enable();
+			if (sts == 1) {
+				$("upload_message").update("PKG installation failed!!");
+				alert("PKG Installation failed!!");
+			}
+			else {
+				$("upload_message").update("PKG installation success.");
+				$("install_message").update("<button type=\"button\" id=\"restart_install\" onclick=\"upload_cmd('reboot');\">Restart</button>");
+			}
+		}
+
+		function fin_conf_apply(sts) {
+			$('install_pkg').enable();
+			if (sts == 1) {
+				$("upload_message").update("Failt to aplly the kitting file!!");
+			}
+			else {
+				$("upload_message").update("Successful applied the kitting file.");
+				$("install_message").update("<button type=\"button\" id=\"restart_install\" onclick=\"upload_cmd('reboot');\">Restart</button>");
+			}
+		}
+
+		function run_install(ver) {
+			var version = ver;
+			$('file').disable();
+			$('install_pkg').disable();
+			$("upload_message").update("<img src=\"images/progress.gif\"> PKG installing... Wait a minute...");
+			params = {install: version};
+			new Ajax.Request(
+				'/cgi-bin/kitting',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+							fin_install(1);
+						}
+						else {
+							fin_install(0);
+						}
+					},
+					onFailure: function() {
+						fin_install(1);
+					},
+					onComplete: function() {
+						fin_install(0);
+					}
+				}
+			);
+		}
+
+		function upload_cmd(command) {
+			if (command == "confApply") {
+				$("upload_message").update("<img src=\"images/progress.gif\"> Appling the kitting file... Wati a minute...");
+				$('install_pkg').disable();
+				params = {cmd: 'apply'};
+			}
+			else if (command == "reboot") {
+				$('file').disable();
+				$('install_pkg').disable();
+				params = {cmd: 'reboot'};
+			}
+			else {
+				retrun;
+			}
+			new Ajax.Request(
+				'/cgi-bin/kitting',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+						}
+						else {
+							if (command == "confApply") {
+								fin_conf_apply();
+							}
+						}
+					},
+					onFailure: function() {
+						alert("an error occured while restat system.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+
+		function close_win() {
+			window.close();
+			self.close();
+		}
+	</script>
+</body>
+</html>

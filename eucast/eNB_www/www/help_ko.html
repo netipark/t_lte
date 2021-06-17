@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+	<title>LTE 기지국 관리 도움말</title>
+	<script type="text/javascript" src="javascripts/prototype.js"></script>
+	<link rel="icon" href="eucasticon.ico" type="image/x-icon"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+	<style>
+		table {
+			border-collapse: collapse;
+		}
+		table, th {
+			padding: 10px;
+			align: center;
+			text-align: center;
+			background: #ccc;
+			border: 1px solid black;
+		}
+		table, td {
+			padding: 10px;
+			align: center;
+			text-align: center;
+			background: #efefef;
+			border: 1px solid #ccc;
+		}
+		/* switch box */
+		.switch {
+			position: relative;
+			display: inline-block;
+			width: 50px;
+			height: 24px;
+		}
+		.switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #ccc;
+			-webkit-transition: .4s;
+			transition: .4s;
+		}
+		.slider:before {
+			position: absolute;
+			content: "";
+			height: 16px;
+			width: 16px;
+			left: 4px;
+			bottom: 4px;
+			background-color: white;
+			-webkit-transition: .4s;
+			transition: .4s;
+		}
+		input:checked + .slider {
+			background-color: #2196F3;
+		}
+		input:focus + .slider {
+			box-shadow: 0 0 1px #2196F3;
+		}
+		input:checked + .slider:before {
+			-webkit-transform: translateX(26px);
+			-ms-transform: translateX(26px);
+			transform: translateX(26px);
+		}
+		/* Rounded sliders */
+		.slider.round {
+			border-radius: 34px;
+		}
+		.slider.round:before {
+			border-radius: 50%;
+		}
+	</style>
+</head>
+
+<body style='display: block'>
+	<h1 style="position: relative;">
+		LTE기지국 관리 도움말
+	</h1>
+	<hr>
+	<span style="position: absolute; top:20px; right:20px; text-align:right;">
+		<button "button" id='closeNbr' onclick="close_help()">창 닫기</button>
+	</span>
+	<!-- Main Help -->
+	<section id="helpHome" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">메인 화면</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_main.png">
+			<p>
+				&#8227; 메인 화면에서는 전체적인 기지국의 상태를 확인하실 수 있습니다.<br/>
+				&#8227; 모든 기능을 사용하시려면 먼저 로그인을 하시기 바랍니다.<br/>
+				&#9786; 로그인를 하시려면 사용자와 비밀번호를 입력하고 로그인 버튼을 클릭하십시오.<br/>
+				<img align="center" style="height:auto; width:500px;" src="images/help/help_login_before.png"><br/>
+				&#9786; 로그인를 완료하면 아래와 같이 표시되며 좌우키로 다른 페이지로 자유로이 이동하실 수있습니다.<br/>
+				<img align="center" style="height:auto; width:500px;" src="images/help/help_login_after.png"><br/>
+				&#8227; 기지국의 전체상태는 상태바에 나타는 색깔로 된 아이콘으로 확인하실수 있습니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 무선상태<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점등: 무선출력이 ON된 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 깜빡임: 무선출력을 방사하기 위하여 초기화 진행중인 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점멸: 무선출력이 OFF된 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 서비스상태<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점등: 서비스 상태가 ON된 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점멸: 서비스 상태가 OFF된 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 장애상태<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점등: 장애가 발생하지 않음.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 빨간색 점등: 장애가 발생함.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 동기상태<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점등: GPS Lock 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 깜빡임: GPS 추적중인 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점멸: GPS Unlock 상태.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; GPS 상태는 GPS 상태바와에서 상세하게 확인하실 수 있습니다.<br/>
+				<img align="center" style="position:relative; left:50px; height:auto; width:600px;" src="images/help/help_main_gps.png"><br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 백홀링크<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 초록색 점등: 백홀 링크상태, (IOPS운용시) Pulic망과 연결.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; 빨간색 점등: (IOPS운용시) Loca 망과 연결된 상태<br/>
+				&#8227; 페이지 하단을 부가정보를 위한 체크박스가 있습니다.<br/>
+				<img align="center" style="position:relative; left:50px; height:auto; width:300px;" src="images/help/help_kitting_checked.png"><br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 기지국 설치를 위한 파라미터창은 메인창에서 "설치정보 표시하기(마지막 슬라이드)" 체크박스를 체크하여야 이동하여 보실수 있습니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; 장애발생시에 장애내역은 "장애정보 표시하기" 체크박스를 체크하시면 보실수 있습니다.<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Config Help -->
+	<section id="helpConfig" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">기지국 기본 설정 정보</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_basic_info.png">
+			<p>
+				&#8227; 설정창에서는 기지국의 기본적인 설정값을 확인하거난 변경하실 수 있습니다.<br/>
+				&#8227; 기지국의 IP주소, 운용주파수, ECI(CellIdentity), PCI(PhyCellID)등을 조회할 수 있으며,<br/>
+				&nbsp;&nbsp;&nbsp; 인접셀정보 버튼을 클릭하시면 인접셀 설정정보를 확인하실 수 있습니다.<br/>
+				&nbsp;&nbsp;&nbsp; 인접셀 정보를 아래와 같이 별도의 창이 팝업됩니다.<br/>
+				<img align="center" style="height:auto; width:300px;" src="images/help/help_config_nbr.png"><br/>
+				&#8227; 또한, 기지국을 EMS와 접속할 수 없는 경우, 기지국내부 파라미터로 운용시 사용합니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 기지국의 주파수, ECI, PCI등의 파라미터 변경할 수 있습니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 변경후 적용하기 위하여서는 "저장"&#8594;"적용(재기동)"버튼을 차례로 수행하십시오.<br/>
+				&#8227; 설정값변경없이 기지국을 재기동하고자 하실때에는 "시스템 재기동"버튼을 클릭하십시오.<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Alarm Help -->
+	<section id="helpAlarm" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">기지국 장애 상태 및 로그</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_alarm.png">
+			<p>
+				&#8227; 장애창에서는 기지국의 현재 발생한 장애내역을 확인하실 수 있으며, 또한 장애 이력을 조회하실 수 있습니다.<br/>
+				&#8227; 장애상태를 갱신히려면 우측상단읠 "장애갱신" 버튼을 클릭하십시오.<br/>
+				&#8227; 현재의 알람정보와 장애이력정보를 파일로 저장할 수도 있습니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 현재장애 정보를 저장하려면 "현재장애 저장"버튼을 클릭하십시오.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 장애이력 정보를 저장하려면 "장애이력 저장"버튼을 클릭하십시오.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 파일은 csv 파일로 저장됩니다.<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Status Help -->
+	<section id="helpStatus" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">기지국 무선 상태</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_radio.png">
+			<p>
+				&#8227; 상태창에서는 기지국의 무선 송출 상태를 확인할 수 있습니다.
+				또한, 무선송출을 정지하거나 출력을 조절할 수도 있습니다.<br/>
+				&#8227; 무선상태를 갱신히려면 우측상단읠 "상태 갱신" 버튼을 클릭하십시오.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; "Status"에 표시되는 내용이 현재의 무선출력 상태입니다..<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 무선출력 상태는 "Reset", "Initialized", "ON", 그리고 "OFF"로 표시됩니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 무선출력 상태가 "ON"으로 표시되어야 무선송출이 되고 있는 상태입니다.<br/>
+				&#8227; Cell상태를 변경하시려면 아래 테이블에서 값을 입력후 설정버튼을 클릭하십시오<br/>
+				<img align="center" style="height:auto; width:500px;" src="images/help/help_radio_cell_conf.png"><br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 설정버튼은 각 항목별로 변경값을 입력하면 활성화됩니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 무선송출을 On/Off하시려면 "Enable"항목값을 1(On)) 혹은 0(off)를 입력하시기 바랍니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; 송신출력 레벨을 조절하시려면 안테나별로 감쇄값을 입력하시기 바랍니다.<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Eucast Help -->
+	<section id="helpTrademark" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">(주) 유캐스트</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_eucast_log.png">
+			<p>&#8227; 유캐스트를 소개하는 창입니다.</p>
+		</div>
+	</section>
+	<!-- Kitting Help -->
+	<section id="helpKitting" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">기지국 설치 파라미터</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_kitting.png">
+			<p>
+				&#8227; 설치파라미터창에서는 기지국을 설치할때 설치에 필요한 정보를 설정하기 위한 것입니다.<br/>
+				&#8227; 설치파라미터창은 메인창에서 "설치정보 표시하기(마지막 슬라이드)" 체크박스를 체크하여야 이동하여 보실수 있습니다.<br/>
+				<img align="center" style="position:relative; left:50px; height:auto; width:300px;" src="images/help/help_kitting_checked.png"><br/>
+				&#8227; 기지국을 설치할때 주로 설정하여야 하는 파라미터는 아래와 같습니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; EMS URL: 기지국이 등록될 EMS의 URL<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv4인 경우: http://192.168.61.8:48708<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv6인 경우: http://<span style="color:red;">[</span>2001:db8:1000:baba:ae16:2dff:fe8c:179d<span style="color:red;">]</span>:48708<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; IPAddress: 기지국의 IP 주소<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv4인 경우: 192.168.61.141<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv6인 경우: 2001:db8:1000:baba:cc4:7e00:100:742 혹은 2001:db8:1000:baba:cc4:7e00:100:742<span style="color:red;">/120</span><br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Default Gateway: 게이트웨어 IP 주소<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv4인 경우: 192.168.61.1<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv6인 경우: 2001:db8:1000:baba::1<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Subnt Mask(IPv4인 경우): 기지국의 IP 서브넷 마스크(예: 255.255.255.0)<br/>
+				&#8227; 기타 파라미터들은 설치 네트워크 환경에 맞게 설정하시면 됩니다.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; VLAN 설정이 필요한 곳은 VLAN 파라미터들을 설정.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; IPsec 환경이면 IPsec 파라미터들을 설정.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; IOPS, 정류기 관리, 혹은 RET관리가 필요한 경우, Local Interface파라미터들을 설정. 보통은 기본값으로 설정된 파라미터를 사용하시면 됩니다.<br/>
+				&#8227; 변경할 파라미터변경후에는 "파일저장"&#8594;"설정적용"&#8594;"재기동"버튼을 차례로 클릭하여 적용하시면 됩니다.<br/>
+			</p>
+		</div>
+	</section>
+	<hr>
+	<div class='source' id='help_message'>
+		<a>&#169; 모든권한은 (주)유캐스트에 있습니다.</a>
+	</div>
+
+	<script>
+		var helpIndex = 0;
+
+		var queryString = decodeURIComponent(window.location.search);
+		queryString = queryString.substring(1);
+		var queries = queryString.split("&");
+		for (var i = 0; i < queries.length; i++) {
+			var query = queries[i].split("=");
+			if(query[0] == 'slide') {
+				helpIndex = Number(query[1]);
+			}
+		}
+		showHelp(helpIndex);
+
+		function plusHelp(n) {
+			var sIndex = helpIndex += n;
+
+			if(sIndex < 1) helpIndex = 6;
+			else if(sIndex > 6) helpIndex = 1;
+
+			showHelp(helpIndex);
+		}
+		function currentHelp(n) {
+			showHelp(helpIndex = n);
+		}
+
+		function showHelp(n) {
+			if(n < 1) helpIndex = 6;
+			else if(n > 6) helpIndex = 1;
+
+			// First Hide all help
+			$("helpHome").hide();
+			$("helpConfig").hide();
+			$("helpAlarm").hide();
+			$("helpStatus").hide();
+			$("helpTrademark").hide();
+			$("helpKitting").hide();
+
+			if(helpIndex == 1) { $("helpHome").show(); }
+			else if(helpIndex == 2) { $("helpConfig").show(); }
+			else if(helpIndex == 3) { $("helpAlarm").show(); }
+			else if(helpIndex == 4) { $("helpStatus").show(); }
+			else if(helpIndex == 5) { $("helpTrademark").show(); }
+			else if(helpIndex == 6) { $("helpKitting").show(); }
+			else { $("helpHome").show(); }
+		}
+
+		document.onkeydown = checkKey;
+		function checkKey(e) {
+			e = e || window.event;
+			if (e.keyCode == '37') { // left arrow
+				plusHelp(-1);
+			}
+			else if (e.keyCode == '39') { // right arrow
+				plusHelp(1);
+			}
+		}
+
+		function close_help() {
+			window.close();
+			self.close();
+		}
+	</script>
+</body>
+</html>

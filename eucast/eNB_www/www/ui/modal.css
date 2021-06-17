@@ -1,0 +1,112 @@
+/* Normal styles for the modal */
+#select {
+	font-family: 'Open Sans', Arial, sans-serif;
+	left:50%;
+	margin:-250px 0 0 -20%;
+	opacity: 1;
+	position:absolute;
+	/* top:-50%; */
+	top: 50%;
+	display: none;
+	width:40%;
+	box-shadow:0 3px 7px rgba(0,0,0,.25);
+	box-sizing:border-box;
+	transition: all 0.4s ease-in-out;
+	-moz-transition: all 0.4s ease-in-out;
+	-webkit-transition: all 0.4s ease-in-out;
+}
+#select:visible {
+	top: 50%;
+}
+/* Make the modal appear when targeted */
+#select .header,#select .footer {
+	border-bottom: 1px solid #e7e7e7;
+	border-radius: 5px 5px 0 0;
+}
+#select .footer {
+	border:none;
+	border-top: 1px solid #e7e7e7;
+	border-radius: 0 0 5px 5px;
+}
+#select h2 {
+	margin:0;
+}
+#select .copy,#select .header, #select .footer {
+	padding:15px;
+}
+.select-content {
+	background: #f7f7f7;
+	position: relative;
+	z-index: 20;
+	border-radius:5px;
+}
+#select .copy {
+	background: #fff;
+}
+
+#select .overlay {
+	background-color: #000;
+	background: rgba(0,0,0,.5);
+	height: 100%;
+	left: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+}
+/* Normal styles for the modal */
+#tddconfig {
+	font-family: 'Open Sans', Arial, sans-serif;
+	left:50%;
+	margin:-250px 0 0 -20%;
+	opacity: 1;
+	position:absolute;
+	/* top:-50%; */
+	top: 50%;
+	display: none;
+	width:40%;
+	box-shadow:0 3px 7px rgba(0,0,0,.25);
+	box-sizing:border-box;
+	transition: all 0.4s ease-in-out;
+	-moz-transition: all 0.4s ease-in-out;
+	-webkit-transition: all 0.4s ease-in-out;
+}
+#tddconfig:visible {
+	top: 50%;
+}
+/* Make the modal appear when targeted */
+#tddconfig .header,#tddconfig .footer {
+	border-bottom: 1px solid #e7e7e7;
+	border-radius: 5px 5px 0 0;
+}
+#tddconfig .footer {
+	border:none;
+	border-top: 1px solid #e7e7e7;
+	border-radius: 0 0 5px 5px;
+}
+#tddconfig h2 {
+	margin:0;
+}
+#tddconfig .copy,#tddconfig .header, #tddconfig .footer {
+	padding:15px;
+}
+.tddconfig-content {
+	background: #f7f7f7;
+	position: relative;
+	z-index: 20;
+	border-radius:5px;
+}
+#tddconfig .copy {
+	background: #fff;
+}
+
+#tddconfig .overlay {
+	background-color: #000;
+	background: rgba(0,0,0,.5);
+	height: 100%;
+	left: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+}

@@ -1,0 +1,114 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+
+import os
+import sys
+import logging
+import time
+import os.path
+import crypt
+import spwd
+import urllib
+import csv
+import datetime
+
+import session
+
+WWW_LOG_DIR = '/var/log/www/'
+WWW_USER_DATA = '/srv/www/data/user.csv'
+
+usr = 'root'
+pw = 'root'
+unquote_pw='' # to accept the escpaed charactres
+username = 'admin'
+user=[["root", 0,0],["puser",0,0],["none",0,0]]
+ 
+def report_success(result, message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"result\": %d," % result
+    print "   \"user\": \"%s\"," % usr
+    print "   \"passwd\": \"%s\"" % unquote_pw
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def check_user(username):
+    global user
+    for i in range(0, 3):
+        if username == user[i][0]:
+            return True
+
+    return False
+
+def check_passwd(username, password):
+    try:
+        user_info = spwd.getspnam(username)
+        enc_pwd = user_info.sp_pwd
+        if crypt.crypt(password, enc_pwd) == enc_pwd:
+            return True
+        else:
+            return False
+    except KeyError:
+        return False
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'user.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/user =================================")
+
+query = {}
+if "QUERY_STRING" in os.environ:
+	query_string = os.environ['QUERY_STRING']
+	for element in query_string.split("&"):
+		(var, val) = element.split("=")
+		query[var] = val
+
+session.read_user()
+
+if "cmd" in query and query['cmd'] in ['login', 'logout']:
+    try:
+        if query['cmd'] == 'login':
+            usr = query['user']
+            pw = query['passwd']
+            unquote_pw = urllib.unquote(pw)
+            if (len(usr) > 0):
+                if (session.check_login(usr) == True):
+                    report_success(3, "User %s is logined." % usr)
+                elif (session.check_locked(usr) == True):
+                    report_success(2, "User %s is locked." % usr)
+                elif (check_user(usr) == False):
+                    report_success(0, "User is not verified. %s" % unquote_pw)
+                elif check_passwd(usr, unquote_pw) == True:
+                    session.update_user(usr, True)
+                    report_success(1, "User %s is verified." %usr)
+                else:
+                    session.update_user(usr, False)
+                    report_success(0, "User is not verified. %s" % unquote_pw)
+            else:
+                report_success(0, "User is not verified.")
+        elif query['cmd'] == 'logout':
+                usr = query['user']
+                session.update_user(usr, False)
+                report_success(4, "User %s is logouted" % usr)
+        else:
+            report_error("You must specify a valid command for the user command.")
+    except:
+        report_error("An error occured during the execution of the user command.")
+
+else:
+    report_error("You must specify a valid command for the user command.")
+
+logging.shutdown()

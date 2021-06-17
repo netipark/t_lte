@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!--
+  Based on Google HTML5 slide template
+  URL: http://code.google.com/p/html5slides/
+-->
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>EUCAST LTE eNodeB Managemnet</title>
+		<script type="text/javascript" src="javascripts/prototype.js"></script>
+		<link rel="icon" href="eucasticon.ico" type="image/x-icon"/>
+		<meta http-equiv="refresh" content="60">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+		<style>
+		/* Your individual styles here, or just use inline styles if that's what you want. */
+			table#t01 tr:nth-child(even) {
+				background-color: #eee;
+			}
+			table#t01 tr:nth-child(odd) {
+				background-color: #fff;
+			}
+			table#t01 th {
+				color: white;
+				background-color: black;
+			}
+			/* switch box */
+			.switch {
+				position: relative;
+				display: inline-block;
+				width: 50px;
+				height: 24px;
+			}
+			.switch input {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #ccc;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 16px;
+				width: 16px;
+				left: 4px;
+				bottom: 4px;
+				background-color: white;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+			input:checked + .slider {
+				background-color: #2196F3;
+			}
+			input:focus + .slider {
+				box-shadow: 0 0 1px #2196F3;
+			}
+			input:checked + .slider:before {
+				-webkit-transform: translateX(26px);
+				-ms-transform: translateX(26px);
+				transform: translateX(26px);
+			}
+			/* Rounded sliders */
+			.slider.round {
+				border-radius: 34px;
+			}
+			.slider.round:before {
+				border-radius: 50%;
+			}
+		</style>
+	</head>
+
+	<body style='display: block'>
+		<section id="nbrHome"> 
+			<h3 style="position: relative;">
+				eNodeB LTE Neighbor Lists
+			</h3>
+			<div style="text-align:left;">
+				<span style="position: relative; right: -3px; top: -3px;">
+					<button "button" id='refreshNbr' onclick="refresh_nbr()">Refresh Neighbor</button>
+				</span>
+			</div>
+			<iframe name="currentNbr" id="currentNbr" style="width: 100%; border:2px solid red; font-size: small;" src='data/nbr_list.csv'></iframe>
+			<div id='nbrList' style="font-size:smaller"># neighbor lists</div>
+			<div class='source' id='nbr_message'></div>
+			<div style="text-align:left;">
+				<span style="position: relative; right: -3px; top: -3px;">
+					<button "button" id='closeNbr' onclick="close_nbr()">Close</button>
+				</span>
+			</div>
+		</section>
+
+		<script>
+			var currentNbrCnt = 0;
+			var myTimer;
+
+			function update_nbr(nbr) {
+				if(nbr.status == 1) {
+					currentNbrCnt = nbr.nbrCount;
+					$("nbrList").update(currentNbrCnt+" Neighbor List registered");
+				}
+				else {
+					$("nbrList").update("not get the registerd NBR List");
+					alert("Fail to update neighbor list!!");
+				}
+			}
+			function get_nbr() {
+				$("refreshNbr").disable();
+				$("nbr_message").update("<img src=\"images/progress.gif\"> Neighbor list refresh in progress...");
+				request = new Ajax.Request(
+					'/cgi-bin/nbrlist',
+					{
+						method: 'get',
+						requestHeaders: {Accept: 'application/json'},
+						onSuccess: function(transport, json) {
+							var response = transport.responseText || "no response text";
+							var json = JSON.parse(response);
+							update_nbr(json);
+						},
+						onFailure: function() {
+							alert("an error occured while getting neighbor list.")
+						},
+						onComplete: function() {
+							document.getElementById("currentNbr").contentWindow.location.reload(true);
+							$("refreshNbr").enable();
+							$("nbr_message").update();
+						}
+					}
+				);
+				$("refreshNbr").enable();
+			}
+			function refresh_nbr(nbr) {
+				get_nbr();
+			}
+
+			function close_nbr() {
+				var result = confirm("Confirm ?");
+				if(result) {
+					window.close();
+					self.close();
+				}
+			}
+
+			// 1st execution
+			get_nbr();
+		</script>
+	</body>
+</html>
+

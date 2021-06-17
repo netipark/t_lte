@@ -1,0 +1,199 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+import os
+import sys
+import logging
+import json
+import os.path
+import filecmp
+import shutil
+import subprocess
+import csv
+import tempfile
+import time
+from datetime import datetime
+
+import session
+
+WWW_LOG_DIR = '/var/log/www/'
+
+CURRENT_NBR_FILE = '/srv/www/data/nbr_list.csv'
+#CLI_NBR_CMD = '/srv/www/data/cli_nbr_list.cmd'
+CLI_NBR_CMD = 'Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+        'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN NeighborList LTECell\n'
+
+nbr_cnt = 0
+#L = [[0 for cols in range(m)]for rows in range(n)]
+nbr_list = [[0 for cols in range(22)] for rows in range(128)]
+
+def decode_conf_value(para, value):
+    conv = 0
+    if para == 'CellIdentity':
+	temp = int(value)
+	conv = conv + ((temp >> 24) & 0x0000000F)
+	conv = conv + ((temp >> 12 ) & 0x00000FF0)
+	conv = conv + ((temp << 4 ) & 0x000FF000)
+	conv = conv + ((temp << 20) & 0x0FF00000)
+	return str(conv)
+    elif para == 'TAC':
+	temp = int(value)
+        conv = conv + ((temp >> 8) & 0x000000FF);
+        conv = conv + ((temp << 8) & 0x0000FF00);
+	return str(conv)
+    elif para == 'PLMNID':
+        length = len(value)
+        conv = list('000000')
+        temp_value = list(value)
+        if length == 5:
+            conv[0] = temp_value[1]
+            conv[1] = temp_value[0]
+            conv[2] = temp_value[2]
+            conv[3] = temp_value[4]
+            conv[4] = temp_value[3]
+            conv[5] =  '';
+            return (''.join(conv))
+        elif length == 6:
+            conv[0] = temp_value[1]
+            conv[1] = temp_value[0]
+            conv[2] = temp_value[3]
+            conv[3] = temp_value[5]
+            conv[4] = temp_value[4]
+            if temp_value[2] == 'F' or temp_value[2] =='f':
+                conv[5] = ''
+            else:
+                conv[5] = temp_value[2]
+            return (''.join(conv))
+        else:
+	    return '000000'
+    else:
+	return '0'
+
+def report_success(nbr_list, message):
+    global nbr_cnt
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    if nbr_cnt > 0:
+        print "   \"nbrCount\": %d," % (nbr_cnt)
+        for index in range(0, nbr_cnt):
+            print "    \"%d\": {" % (index+1)
+            print "        \"Enable\": \"%s\"," % (nbr_list[index][0])
+            #print "        \"MustInclude\": \"%s\"," % (nbr_list[index][1])
+            print "        \"PLMNID\": \"%s\"," % (decode_conf_value("PLMNID", str(nbr_list[index][2])))
+            print "        \"CID\": \"%s\"," % (decode_conf_value("CellIdentity", nbr_list[index][5]))
+            print "        \"EARFCN\": \"%s\"," % (nbr_list[index][6])
+            print "        \"PhyCellID\": \"%s\"," % (nbr_list[index][7])
+            #print "        \"QOffset\": \"%s\"," % (nbr_list[index][8])
+            #print "        \"CIO\": \"%s\"," % (nbr_list[index][9])
+            #print "        \"RSTxPower\": \"%s\"," % (nbr_list[index][10])
+            #print "        \"BlackList\": \"%s\"," % (nbr_list[index][11])
+            print "        \"TAC\": \"%s\"," % (decode_conf_value("TAC", nbr_list[index][12]))
+            print "        \"CSGID\": \"%s\"," % (nbr_list[index][13])
+            #print "        \"ACCESS_MODE\": \"%s\"," % (nbr_list[index][14])
+            #print "        \"BROADCAST_STATUS\": \"%s\"," % (nbr_list[index][15])
+            #print "        \"MODLIST_STATUS\": \"%s\"," % (nbr_list[index][16])
+            #print "        \"X2_STATUS\": \"%s\"," % (nbr_list[index][17])
+            #print "        \"X2_IP_ADDRESS\": \"%s\"," % (nbr_list[index][18])
+            #print "        \"X2_PORT\": \"%s\"," % (nbr_list[index][19])
+            print "        \"AND_TIME\": \"%s\"," % (nbr_list[index][20])
+            print "        \"AND_CNT\": \"%s\"" % (nbr_list[index][21])
+            if index == (nbr_cnt - 1) :
+                print "    }"
+            else:
+                print "    },"
+    else:
+        print "   \"nbrCount\": 0"
+    print "}"
+
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def read_current_nbr():
+    global nbr_cnt
+    global nbr_list
+    
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_NBR_CMD);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        idx = -1 
+        cnt = 0
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'InternetGatewayDevice':
+                idx = int(temp[9]) - 1
+                value = temp[10].split('=')
+                value[0] = value[0].replace(" ","")
+                value[0] = value[0].replace("\t","")
+                value[1] = value[1].strip()
+                value[1] = value[1].replace("\t","")
+                cnt = int(value[0])
+                nbr_list[idx][cnt] = value[1]
+            nbr_cnt = idx + 1
+
+        os.remove(tmpcmd)
+
+        f = open(CURRENT_NBR_FILE, 'w')
+        wr = csv.writer(f)
+        wr.writerow(["%3s" % 'IDX', "%6s" % 'Enable', 'PLMNID', '   CID   ', 'EARFCN', 'PhyCellID',' TAC '])
+        wr.writerow(['---', '------', '------', '----------', '------', '---------','-----'])
+
+        for cnt in range(0, nbr_cnt):
+            if int(nbr_list[cnt][0]):
+                #andtime = str(datetime.fromtimestamp(int(nbr_list[cnt][20])))
+                wr.writerow(["%3d" % (cnt+1), "%6s" % nbr_list[cnt][0], "%6s" % (decode_conf_value("PLMNID", nbr_list[cnt][2])), "%10s" % (decode_conf_value("CellIdentity",nbr_list[cnt][5])), "%6s" % nbr_list[cnt][6], "%9s" % nbr_list[cnt][7], "%5s" % (decode_conf_value("TAC", nbr_list[cnt][12]))])
+        wr.writerow(["Updated: "+time.strftime('%c', time.localtime(time.time()))])
+        f.close()
+        os.chmod(CURRENT_NBR_FILE, 0o644)
+
+        report_success(nbr_list, "Current Neighbor List was gathered.")
+
+    except OSError:
+        report_error("An OS error occured during the execution of the nbr command.")
+    except:
+        report_error("An error occured during the execution of the nbr command.")
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'config.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/nbrlist =================================")
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and 'verified' in query:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the nbr")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+# read neighbor list
+read_current_nbr()
+
+logging.shutdown()

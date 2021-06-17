@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!--
+  Based on Google HTML5 slide template
+  URL: http://code.google.com/p/html5slides/
+-->
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>EUCAST LTE eNodeB Managemnet</title>
+		<script type="text/javascript" src="javascripts/prototype.js"></script>
+		<link rel="icon" href="eucasticon.ico" type="image/x-icon"/>
+		<!--meta http-equiv="refresh" content="60"-->
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+		<style>
+			table {
+				border-collapse: collapse;
+			}
+			table, th {
+				padding: 10px;
+				align: center;
+				text-align: center;
+				background: #ccc;
+				border: 1px solid black;
+			}
+			table, td {
+				padding: 10px;
+				align: center;
+				text-align: center;
+				background: #efefef;
+				border: 1px solid #ccc;
+			}
+			/* switch box */
+			.switch {
+				position: relative;
+				display: inline-block;
+				width: 50px;
+				height: 24px;
+			}
+			.switch input {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #ccc;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 16px;
+				width: 16px;
+				left: 4px;
+				bottom: 4px;
+				background-color: white;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+			input:checked + .slider {
+				background-color: #2196F3;
+			}
+			input:focus + .slider {
+				box-shadow: 0 0 1px #2196F3;
+			}
+			input:checked + .slider:before {
+				-webkit-transform: translateX(26px);
+				-ms-transform: translateX(26px);
+				transform: translateX(26px);
+			}
+			/* Rounded sliders */
+			.slider.round {
+				border-radius: 34px;
+			}
+			.slider.round:before {
+				border-radius: 50%;
+			}
+		</style>
+	</head>
+
+	<body style='display: block' onload="get_nbr();">
+		<section id="nbrHome">
+			<h3 style="position: relative;">
+				LTE 基地局 隣接セルリスト
+			</h3>
+			<div style="text-align:left;">
+				<span style="position: relative; right: -3px; top: -3px;">
+					<button "button" id='refreshNbr' onclick="get_nbr()" disabled>隣接するセルの情報更新</button>
+					<button "button" id='closeNbr' onclick="close_nbr()">ウィンドウを閉じる</button>
+				</span>
+			</div>
+			<div id='showNbrList'></div>
+			<div id='nbrList' style="font-size:smaller"># neighbor lists</div>
+			<div class='source' id='nbr_message'></div>
+		</section>
+
+		<script>
+			var currentNbrCnt = 0;
+			var myTimer;
+			var pci_list = new Array();
+			var myPCI = "0";
+			var queryString = decodeURIComponent(window.location.search);
+			queryString = queryString.substring(1);
+			var queries = queryString.split("&");
+			for (var i = 0; i < queries.length; i++) {
+				var query = queries[i].split("=");
+				if(query[0] == 'mypci') {
+					myPCI = query[1];
+				}
+			}
+
+			function refreshTable(period) {
+				if(myTimer != 0) {
+					clearInterval(myTimer);
+				}
+				myTimer = setInterval(myClock, 1000);
+				var c = period;
+
+				function myClock() {
+					--c;
+					if (c == 0) {
+						clearInterval(myTimer);
+						refresh_nbr();
+					}
+				}
+			}
+
+		    function createTableFromJSON(nbr) {
+				// EXTRACT VALUE FOR HTML HEADER. 
+				var col = ["ID", "Enable", "PLMNID", "CID", "EARFCN", "PCI", "TAC"];
+				var count = nbr.nbrCount;
+
+		        // CREATE DYNAMIC TABLE.
+				var table = document.createElement("table");
+
+		        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+		        var tr = table.insertRow(-1);                   // TABLE ROW.
+		        for (var i = 0; i < col.length; i++) {
+					var th = document.createElement("th");      // TABLE HEADER.
+					th.innerHTML = col[i];
+					tr.appendChild(th);
+				}
+
+		        // ADD JSON DATA TO THE TABLE AS ROWS.
+		        for (var i = 1; i <= count; i++) {
+					var tabCell;
+					tr = table.insertRow(-1);
+
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = i;
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = nbr[i+""].Enable;
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = nbr[i+""].PLMNID;
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = nbr[i+""].CID;
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = nbr[i+""].EARFCN;
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = nbr[i+""].PhyCellID;
+					tabCell = tr.insertCell(-1);
+					tabCell.innerHTML = nbr[i+""].TAC;
+					pci_list[i-1] = nbr[i+""].PhyCellID;
+				}
+
+				// FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+				var divContainer = document.getElementById("showNbrList");
+				divContainer.innerHTML = "";
+				divContainer.appendChild(table);
+		    }
+			function display_nbr(nbr) {
+				if(nbr.status == 1) {
+		    		createTableFromJSON(nbr);
+					$("nbrList").update(nbr.nbrCount+"つの隣接するセルが登録されています。");
+					if (currentNbrCnt != nbr.nbrCount) {
+						currentNbrCnt = nbr.nbrCount;
+						alert(currentNbrCnt + "つの隣接するセルが登録されています!\nPCI["+pci_list+"]");
+					}
+					if (currentNbrCnt > 0) {
+						$("nbr_message").update("PCI [" + pci_list + "]\n基地局のPCIは " + myPCI + "です。");
+					}
+					else {
+						$("nbr_message").update("PCIが検出されませんでした！\n基地局のPCIは "+ myPCI +"です。");
+					}
+				}
+				else {
+					$("nbrList").update("隣接するセルの情報を取得するのに失敗しました！");
+					$("nbr_message").update();
+				}
+				$("refreshNbr").enable();
+			}
+			function update_nbr(nbr) {
+				if(nbr.status == 1) {
+					display_nbr(nbr);
+				}
+				else {
+					alert("隣接するセルの情報を取得するのに失敗しました！");
+				}
+			}
+			function get_nbr() {
+				$("refreshNbr").disable();
+				$("nbr_message").update("<img src=\"images/progress.gif\"> 隣接するセルの情報更新中です...");
+				new Ajax.Request(
+					'/cgi-bin/nbrlist',
+					{
+						method: 'get',
+						requestHeaders: {Accept: 'application/json'},
+						onSuccess: function(transport, json) {
+							var response = transport.responseText || "no response text";
+							var json = JSON.parse(response);
+							update_nbr(json);
+						},
+						onFailure: function() {
+							alert("隣接するセルの情報を取得するのに失敗しました！");
+						},
+						onComplete: function() {
+						}
+					}
+				);
+				$("refreshNbr").enable();
+			}
+			function refresh_nbr() {
+				get_nbr();
+				refreshTable(60);
+			}
+			refresh_nbr();
+
+			function close_nbr() {
+				var result = confirm("本当にウィンドウを閉じますか？");
+				if(result) {
+					window.close();
+					self.close();
+				}
+			}
+		</script>
+	</body>
+</html>
+

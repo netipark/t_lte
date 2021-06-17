@@ -1,0 +1,816 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+import os
+import sys
+import logging
+import time
+import os.path
+import filecmp
+import shutil
+import re
+import subprocess
+import tempfile
+import urllib
+
+import session
+ 
+WWW_LOG_DIR = '/var/log/www/'
+
+FS_SPICO = '/spico/'
+ENB_CONFIG_DIR = FS_SPICO + 'config/'                                                                                                
+ENB_RUNNING_CFG_DIR = FS_SPICO + 'running/cfg/'
+ENB_RUNNING_L3_DIR = FS_SPICO + 'running/L3/'
+
+CONFIG_TEMP_FILE = '/srv/www/data/enb_conf.cfg'
+ENB_CONFIG_FILE = ENB_CONFIG_DIR + 'eNodeB_systemsetup.cfg'
+ENB_XML_CONFIG_FILE = ENB_RUNNING_CFG_DIR + 'eNodeB_Data_Model_TR_196_based.xml'
+ENB_XML_PROPRIETARY_FILE = ENB_RUNNING_CFG_DIR + 'Proprietary_eNodeB_Data_Model.xml'
+CLI_BATCH_CMD='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF FreqBandIndicator\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF DLBandwidth\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF ULBandwidth\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF EARFCNDL\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF EARFCNUL\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF PhyCellID\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN Common CellIdentity\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE EPC TAC\n' \
+    'Show Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE\n' \
+    'Show Config InternetGatewayDevice Services FAPService FAPControl LTE Gateway S1SigLinkServerList\n' \
+    'Show Config InternetGatewayDevice Services FAPService CellConfig LTE EPC-PLMNList\n' \
+    'Show Config InternetGatewayDevice FAP X_VENDOR_TIMESYNC MODE\n'
+
+CLI_GET_CELL_ENABLE ='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+    'Show Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE\n'
+
+CLI_CELL_ON='Set OAM_USER_INTF_RESP_TIMEOUT 60\n' \
+    'Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE 1\n'
+CLI_CELL_OFF='Set OAM_USER_INTF_RESP_TIMEOUT 10\n' \
+    'Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE 0\n'
+CLI_TIME_SYNC='Set OAM_USER_INTF_RESP_TIMEOUT 10\n' \
+    'Config InternetGatewayDevice FAP X_VENDOR_TIMESYNC Mode '
+
+CLI_SET_FREQ_DL='Set OAM_USER_INTF_RESP_TIMEOUT 60\n' \
+    'Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF EARFCNDL '
+
+CLI_SET_FREQ_UL='Set OAM_USER_INTF_RESP_TIMEOUT 60\n' \
+    'Config InternetGatewayDevice Services FAPService CellConfig LTE RAN RF EARFCNUL '
+
+enb_mgmt='0'
+enb_ip=''
+enb_gw=''
+enb_bands=''
+enb_ul_earfcn=''
+enb_ul_bw=''
+enb_dl_earfcn=''
+enb_dl_bw=''
+enb_eci=''
+enb_eci_i=''
+enb_pci=''
+enb_tac=''
+enb_tac_i=''
+enb_version='01.01.01'
+enb_cell1_enable=''
+ant1_tx_atten=''
+ant2_tx_atten=''
+plmnid=''
+plmnid_i=''
+s1siglinks=''
+sync_mode=''
+ImasterIp=''
+IslaveIp=''
+IgateWay=''
+
+def report_success(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    print "   \"ManagementMode\": %d," % int(enb_mgmt)
+    print "   \"Bands\": %d," % int(enb_bands)
+    print "   \"ECI\": %d," % int(enb_eci_i)
+    print "   \"PCI\": %d," % int(enb_pci)
+    print "   \"TAC\": %d," % int(enb_tac_i)
+    print "   \"Uplink\": {"
+    print "       \"EARFCN\": %d," % int(enb_ul_earfcn)
+    print "       \"Bandwidth\": \"%s\"" % (enb_ul_bw)
+    print "   },"
+    print "   \"Downlink\": {"
+    print "       \"EARFCN\": %d," % int(enb_dl_earfcn)
+    print "       \"Bandwidth\": \"%s\"" % (enb_dl_bw)
+    print "   },"
+    print "   \"Network\": {"
+    print "       \"ip\": \"%s\"," % (enb_ip)
+    print "       \"gw\": \"%s\"" % (enb_gw)
+    print "   },"
+    print "   \"Cell\": {"
+    print "       \"enable\": %d," % int(enb_cell1_enable)
+    print "       \"atten1\": \"%s\"," % (ant1_tx_atten)
+    print "       \"atten2\": \"%s\"" % (ant2_tx_atten)
+    print "   },"
+    print "   \"EPC\": {"
+    print "       \"PLMNID\": \"%s\"," % (plmnid_i)
+    print "       \"S1SigLinkServerList\": \"%s\"" % (s1siglinks)
+    print "   },"
+    print "   \"SYNC\": {"
+    print "       \"MODE\": %d," % int(sync_mode)
+    print "       \"Master\": \"%s\"," % (ImasterIp)
+    print "       \"Slave\": \"%s\"," % (IslaveIp)
+    print "       \"Gateway\": \"%s\"" % (IgateWay)
+    print "   },"
+    print "   \"Version\": \"%s\"" % (enb_version)
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def decode_conf_value(para, value):
+    conv = 0
+    if para == 'CellIdentity':
+        temp = int(value)
+        conv = conv + ((temp >> 24) & 0x0000000F)
+        conv = conv + ((temp >> 12 ) & 0x00000FF0)
+        conv = conv + ((temp << 4 ) & 0x000FF000)
+        conv = conv + ((temp << 20) & 0x0FF00000)
+        return str(conv)
+    elif para == 'TAC':
+        temp = int(value)
+        conv = conv + ((temp >> 8) & 0x000000FF)
+        conv = conv + ((temp << 8) & 0x0000FF00)
+        return str(conv)
+    elif para == 'PLMNID':
+        length = len(value)
+        conv = list('000000')
+        temp_value = list(value)
+        if length == 5:
+            conv[0] = temp_value[1]
+            conv[1] = temp_value[0]
+            conv[2] = temp_value[2]
+            conv[3] = temp_value[4]
+            conv[4] = temp_value[3]
+            conv[5] =  ''
+            return (''.join(conv))
+        elif length >= 6:
+            conv[0] = temp_value[1]
+            conv[1] = temp_value[0]
+            conv[2] = temp_value[3]
+            conv[3] = temp_value[5]
+            conv[4] = temp_value[4]
+            if temp_value[2] == 'F' or temp_value[2] =='f':
+                conv[5] = ''
+            else:
+                conv[5] = temp_value[2]
+            return (''.join(conv))
+        else:
+            return str(value)
+    else:
+        return '0'
+
+def encode_conf_value(para, value):
+    conv = 0
+    if para == 'CellIdentity':
+        temp = int(value)
+        conv = conv + ((temp >> 20) & 0x000000FF)
+        conv = conv + ((temp >> 4 ) & 0x0000FF00)
+        conv = conv + ((temp << 12 ) & 0x00FF0000)
+        conv = conv + ((temp << 24) & 0x0F000000)
+        return str(conv)
+    elif para == 'TAC':
+        temp = int(value)
+        conv = conv + ((temp >> 8) & 0x000000FF)
+        conv = conv + ((temp << 8) & 0x0000FF00)
+        return str(conv)
+    elif para == 'PLMNID':
+        length = len(value)
+        conv = list('000000')
+        temp_value = list(value)
+        if length == 5:
+            conv[0] = temp_value[1]
+            conv[1] = temp_value[0]
+            conv[2] = 'F'
+            conv[3] = temp_value[2]
+            conv[4] = temp_value[4]
+            conv[5] = temp_value[3]
+            return (''.join(conv))
+        elif length >= 6:
+            conv[0] = temp_value[1]
+            conv[1] = temp_value[0]
+            conv[2] = temp_value[5]
+            conv[3] = temp_value[2]
+            conv[4] = temp_value[4]
+            conv[5] = temp_value[3]
+            return (''.join(conv))
+        else:
+            return str(value)
+    elif para == 'PLMNID_CLI':
+        length = len(value)
+        conv = list('000000')
+        temp_value = list(value)
+        if length == 5:
+            conv[0] = temp_value[0]
+            conv[1] = temp_value[1]
+            conv[2] = 'F'
+            conv[3] = temp_value[2]
+            conv[4] = temp_value[3]
+            conv[5] = temp_value[4]
+            return (''.join(conv))
+        elif length >= 6:
+            conv[0] = temp_value[0]
+            conv[1] = temp_value[1]
+            conv[2] = temp_value[2]
+            conv[3] = temp_value[3]
+            conv[4] = temp_value[4]
+            conv[5] = temp_value[5]
+            return (''.join(conv))
+        else:
+            return str(value)
+    else:
+        return '0'
+
+def get_enb_config_value(fname, para):
+    f = open(fname, 'r')
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        line = line.strip('\n')
+        line = line.split('=')
+        if not '#' in line[0] and para == line[0]:
+            return line[1]
+    return ""
+
+def get_xml_first_conf_value(fname, para):
+    f = open(fname, 'r')
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        line = line.strip('\n')
+        if ('<' + para) in line and (para +'>') in line:
+            line = line.split('>')
+            line = line[1].split('<')
+            return line[0]
+    return ""
+
+def get_xml_nth_conf_value(fname, para, nth):
+    cnt = 0
+    f = open(fname, 'r')
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        line = line.strip('\n')
+        if ('<' + para) in line and (para +'>') in line:
+            cnt += 1
+            if cnt == int(nth) :
+                line = line.split('>')
+                line = line[1].split('<')
+                return line[0]
+    return ""
+
+def reset_conf_file():
+    global enb_bands, enb_ul_earfcn, enb_dl_earfcn, enb_ul_bw, enb_dl_bw
+    global enb_pci, enb_tac, enb_tac_i, enb_eci, enb_eci_i, enb_ip, enb_gw, enb_mgmt, enb_version
+    global enb_cell1_enable, ant1_tx_atten, ant2_tx_atten
+    global plmnid, plmnid_i, s1siglinks
+    global sync_mode, ImasterIp, IslaveIp, IgateWay
+
+    enb_mgmt = get_xml_first_conf_value(ENB_XML_PROPRIETARY_FILE, "ManagementMode")
+    if enb_mgmt == "":
+        enb_mgmt = '0'
+    enb_bands = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "FreqBandIndicator")
+    if enb_bands == "":
+        enb_bands = '0'
+    enb_dl_bw = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "DLBandwidth")
+    if enb_dl_bw == "":
+        enb_dl_bw = '0'
+    enb_ul_bw = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "ULBandwidth")
+    if enb_ul_bw == "":
+        enb_ul_bw = '0'
+    enb_ul_earfcn = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "EARFCNUL")
+    if enb_ul_earfcn == "":
+        enb_ul_earfcn = '0'
+    enb_dl_earfcn = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "EARFCNDL")
+    if enb_dl_earfcn == "":
+        enb_dl_earfcn = '0'
+    enb_pci = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "PhyCellID")
+    if enb_pci == "":
+        enb_pci = '0'
+    enb_eci = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "CellIdentity")
+    if enb_eci == "":
+        enb_eci = '0'
+    enb_eci_i = decode_conf_value('CellIdentity', enb_eci)
+    enb_tac = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "TAC")
+    if enb_tac == "":
+        enb_tac = '0'
+    enb_tac_i = decode_conf_value('TAC', enb_tac)
+    s1siglinks = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "S1SigLinkServerList")
+    if s1siglinks == "":
+        s1siglinks = '0.0.0.0'
+    #plmnid = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "PLMNID")
+    plmnid = get_xml_nth_conf_value(ENB_XML_CONFIG_FILE, "PLMNID", 2)
+    if plmnid == "":
+        plmnid = '00F110'
+    plmnid_i = decode_conf_value('PLMNID', plmnid)
+    enb_ip = get_enb_config_value(ENB_CONFIG_FILE, "IPInterfaceIPAddress")
+    if enb_ip == "":
+        enb_ip = '0.0.0.0'
+    enb_gw = get_enb_config_value(ENB_CONFIG_FILE, "X_VENDOR_DEFAULT_GATEWAY")
+    if enb_gw == "":
+        enb_gw = '0.0.0.0'
+    enb_version = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "SoftwareVersion")
+    if enb_version == "":
+        enb_version = '01.01.01'
+    enb_cell1_enable = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "X_VENDOR_CELL1_ENABLE")
+    if enb_cell1_enable == "":
+        enb_cell1_enable = '0'
+    ant1_tx_atten = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "X_VENDOR_ANTENNA_PORT1_TX_ATTEN")
+    if ant1_tx_atten == "":
+        ant1_tx_atten = '0'
+    ant2_tx_atten = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "X_VENDOR_ANTENNA_PORT2_TX_ATTEN")
+    if ant2_tx_atten == "":
+        ant2_tx_atten = '0'
+    sync_mode = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "MODE")
+    if sync_mode == "":
+        sync_mode = '0'
+
+def read_conf_file():
+    global enb_bands, enb_ul_earfcn, enb_dl_earfcn, enb_ul_bw, enb_dl_bw
+    global enb_pci, enb_tac, enb_tac_i, enb_eci, enb_eci_i, enb_ip, enb_gw, enb_mgmt, enb_version
+    global enb_cell1_enable, ant1_tx_atten, ant2_tx_atten
+    global plmnid, plmnid_i, s1siglinks
+    global sync_mode, ImasterIp, IslaveIp, IgateWay
+
+    enb_mgmt = get_xml_first_conf_value(ENB_XML_PROPRIETARY_FILE, "ManagementMode")
+    if enb_mgmt == "":
+        enb_mgmt = '0'
+    enb_bands = get_enb_config_value(CONFIG_TEMP_FILE, "FreqBandIndicator")
+    if enb_bands == "":
+        enb_bands = '0'
+    enb_dl_bw = get_enb_config_value(CONFIG_TEMP_FILE, "DLBandwidth")
+    if enb_dl_bw == "":
+        enb_dl_bw = '0'
+    enb_ul_bw = get_enb_config_value(CONFIG_TEMP_FILE, "ULBandwidth")
+    if enb_ul_bw == "":
+        enb_ul_bw = '0'
+    enb_ul_earfcn = get_enb_config_value(CONFIG_TEMP_FILE, "EARFCNUL")
+    if enb_ul_earfcn == "":
+        enb_ul_earfcn = '0'
+    enb_dl_earfcn = get_enb_config_value(CONFIG_TEMP_FILE, "EARFCNDL")
+    if enb_dl_earfcn == "":
+        enb_dl_earfcn = '0'
+    enb_pci = get_enb_config_value(CONFIG_TEMP_FILE, "PhyCellID")
+    if enb_pci == "":
+        enb_pci = '0'
+    enb_eci = get_enb_config_value(CONFIG_TEMP_FILE, "CellIdentity")
+    if enb_eci == "":
+        enb_eci = '0'
+    enb_eci_i = decode_conf_value('CellIdentity', enb_eci)
+    enb_tac = get_enb_config_value(CONFIG_TEMP_FILE, "TAC")
+    if enb_tac == "":
+        enb_tac = '0'
+    enb_tac_i = decode_conf_value('TAC', enb_tac)
+    enb_ip = get_enb_config_value(CONFIG_TEMP_FILE, "IPInterfaceIPAddress")
+    if enb_ip == "":
+        enb_ip = '0.0.0.0'
+    enb_gw = get_enb_config_value(CONFIG_TEMP_FILE, "X_VENDOR_DEFAULT_GATEWAY")
+    if enb_gw == "":
+        enb_gw = '0.0.0.0'
+    enb_version = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "SoftwareVersion")
+    if enb_version == "":
+        enb_version = '01.01.01'
+    enb_cell1_enable = get_enb_config_value(CONFIG_TEMP_FILE, "X_VENDOR_CELL1_ENABLE")
+    if enb_cell1_enable == "":
+        enb_gw = '0'
+    ant1_tx_atten = get_enb_config_value(CONFIG_TEMP_FILE, "X_VENDOR_ANTENNA_PORT1_TX_ATTEN")
+    if ant1_tx_atten == "":
+        ant1_tx_atten = '0'
+    ant2_tx_atten = get_enb_config_value(CONFIG_TEMP_FILE, "X_VENDOR_ANTENNA_PORT2_TX_ATTEN")
+    if ant2_tx_atten == "":
+        ant2_tx_atten = '0'
+    s1siglinks = get_enb_config_value(CONFIG_TEMP_FILE, "S1SigLinkServerList")
+    if s1siglinks == "":
+        s1siglinks = '0.0.0.0'
+    plmnid = get_enb_config_value(CONFIG_TEMP_FILE, "PLMNID")
+    if plmnid == "":
+        plmnid = '00F110'
+    plmnid_i = decode_conf_value('PLMNID', plmnid)
+    sync_mode = get_enb_config_value(CONFIG_TEMP_FILE, "MODE")
+    if sync_mode == "":
+        sync_mode = '0'
+    ImasterIp = "1.1.1.1"
+    IslaveIp = "1.1.1.1"
+    IgateWay = "1.1.1.1"
+
+def read_cell_enable():
+    global enb_cell1_enable
+
+    try:
+        # create temporary CLI Command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_GET_CELL_ENABLE);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'InternetGatewayDevice':
+                value = line.split('=')
+                value[0] = value[0].replace(" ","")
+                value[0] = value[0].replace("\t","")
+                value[1] = value[1].strip()
+                value[1] = value[1].replace(" ","")
+                value[1] = value[1].replace("\t","")
+                if 'X_VENDOR_CELL1_ENABLE' in value[0]:
+                    enb_cell1_enable = value[1]
+
+        # remove temporary CLI Command file
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An error occured during the execution of the config command1.")
+    except:
+        report_error("An error occured during the execution of the config command2.")
+
+def reset_conf_value():
+    global enb_bands, enb_ul_earfcn, enb_dl_earfcn, enb_ul_bw, enb_dl_bw
+    global enb_pci, enb_tac, enb_tac_i, enb_eci, enb_eci_i, enb_ip, enb_gw, enb_mgmt, enb_version
+    global enb_cell1_enable, ant1_tx_atten, ant2_tx_atten
+    global plmnid, plmnid_i, s1siglinks
+    global sync_mode, ImasterIp, IslaveIp, IgateWay
+
+    enb_version = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "SoftwareVersion")
+    if enb_version == "":
+        enb_version = '01.01.01'
+    ant1_tx_atten = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "X_VENDOR_ANTENNA_PORT1_TX_ATTEN")
+    if ant1_tx_atten == "":
+        ant1_tx_atten = '0'
+    ant2_tx_atten = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "X_VENDOR_ANTENNA_PORT2_TX_ATTEN")
+    if ant2_tx_atten == "":
+        ant2_tx_atten = '0'
+    sync_mode = get_xml_first_conf_value(ENB_XML_CONFIG_FILE, "MODE")
+    if sync_mode == "":
+        sync_mode = '0'
+
+    try:
+        # create temporary CLI Command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_BATCH_CMD);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'InternetGatewayDevice':
+                value = line.split('=')
+                value[0] = value[0].replace(" ","")
+                value[0] = value[0].replace("\t","")
+                value[1] = value[1].strip()
+                value[1] = value[1].replace(" ","")
+                value[1] = value[1].replace("\t","")
+                if 'FreqBandIndicator' in value[0]:
+                    enb_bands = value[1]
+                elif 'DLBandwidth' in value[0]:
+                    enb_dl_bw = value[1]
+                elif 'ULBandwidth' in value[0]:
+                    enb_ul_bw = value[1]
+                elif 'EARFCNDL' in value[0]:
+                    enb_dl_earfcn = value[1]
+                elif 'EARFCNUL' in value[0]:
+                    enb_ul_earfcn = value[1]
+                elif 'PhyCellID' in value[0]:
+                    enb_pci = value[1]
+                elif 'CellIdentity' in value[0]:
+                    enb_eci = value[1]
+                    enb_eci_i = decode_conf_value('CellIdentity', enb_eci)
+                elif 'TAC' in value[0]:
+                    enb_tac = value[1]
+                    enb_tac_i = decode_conf_value('TAC', enb_tac)
+                elif 'X_VENDOR_CELL1_ENABLE' in value[0]:
+                    enb_cell1_enable = value[1]
+                elif 'S1SigLinkServerList' in value[0]:
+                    s1siglinks = value[1]
+                elif 'PLMNList.1.PLMNID' in value[0]:
+                    plmnid_temp = value[1]
+                    plmnid = encode_conf_value('PLMNID_CLI', plmnid_temp)
+                    plmnid_i = decode_conf_value('PLMNID', plmnid)
+                elif 'MODE' in value[0]:
+                    sync_mode = value[1]
+
+        # remove temporary CLI Command file
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An error occured during the execution of the config command1.")
+    except:
+        report_error("An error occured during the execution of the config command2.")
+
+def update_enb_config_value(fname, para, value):
+    subprocess.call(['/srv/www/shellscripts/config_value_update.sh', para, value, fname])
+    return value
+
+def update_xml_config_value(fname, para, value):
+    subprocess.call(['/srv/www/shellscripts/xml_value_update.sh', para, value, fname])
+    return value
+
+def update_conf_file():
+    global enb_bands, enb_ul_earfcn, enb_dl_earfcn, enb_ul_bw, enb_dl_bw
+    global enb_pci, enb_tac, enb_eci, enb_ip, enb_gw
+    global enb_cell1_enable, ant1_tx_atten, ant2_tx_atten
+    global plmnid, plmnid_i, s1siglinks
+    global sync_mode, ImasterIp, IslaveIp, IgateWay
+
+    update_enb_config_value(CONFIG_TEMP_FILE, 'FreqBandIndicator', enb_bands)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'DLBandwidth', enb_dl_bw)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'ULBandwidth', enb_ul_bw)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'EARFCNUL', enb_ul_earfcn)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'EARFCNDL', enb_dl_earfcn)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'PhyCellID', enb_pci)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'TAC', enb_tac)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'CellIdentity', enb_eci)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'IPInterfaceIPAddress', enb_ip)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'X_VENDOR_DEFAULT_GATEWAY', enb_gw)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'X_VENDOR_CELL1_ENABLE', enb_cell1_enable)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'X_VENDOR_ANTENNA_PORT1_TX_ATTEN', ant1_tx_atten)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'X_VENDOR_ANTENNA_PORT2_TX_ATTEN', ant2_tx_atten)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'S1SigLinkServerList', s1siglinks)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'PLMNID', plmnid)
+    update_enb_config_value(CONFIG_TEMP_FILE, 'MODE', sync_mode)
+
+def write_conf_file(fname):
+    subprocess.call(['/srv/www/shellscripts/enb_conf_update.sh', fname])
+
+def reboot_system():
+    os.system('/sbin/reboot')
+    #os.system('sync;sync;sync;reboot')
+
+def set_cell_status(enable):
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        if enable == '1':
+            tn.write(CLI_CELL_ON);
+        else:
+            tn.write(CLI_CELL_OFF);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        time.sleep(10)
+        os.remove(tmpcmd)
+
+    except OSError:
+        proc.terminate()
+        report_error("An OS error occured during the execution of the cell status command.")
+    except:
+        proc.terminate()
+        report_error("An error occured during the execution of the cell status command.")
+
+def set_afe_atten(index, att):
+    try:
+        if os.path.exists('/usr/bin/radio'):
+            if index == 0:
+                cmdline = '/usr/bin/radio set afe[0].tx[0].attenuation ' + att
+            else:
+                cmdline = '/usr/bin/radio set afe[0].tx[1].attenuation ' + att
+
+            proc = subprocess.Popen(cmdline,
+                shell=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE
+                )
+
+    except OSError:
+        proc.terminate()
+        report_error("An OS error occured during the execution of the cell status command.")
+    except:
+        proc.terminate()
+        report_error("An error occured during the execution of the cell status command.")
+
+def set_sync_mode(mode):
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        if mode == '0':
+            tn.write(CLI_TIME_SYNC + '0\n');
+        elif mode == '1':
+            tn.write(CLI_TIME_SYNC + '1\n');
+        else:
+            tn.write(CLI_TIME_SYNC + '2\n');
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        time.sleep(10)
+        os.remove(tmpcmd)
+
+    except OSError:
+        proc.terminate()
+        report_error("An OS error occured during the execution of the sync mode command.")
+    except:
+        proc.terminate()
+        report_error("An error occured during the execution of the sync mode command.")
+
+def set_cell_freq(direction, earfcn):
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        if direction == 'UP':
+            tn.write(CLI_SET_FREQ_UL + str(earfcn) + '\n');
+        else:
+            tn.write(CLI_SET_FREQ_DL + str(earfcn) + '\n');
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        # wait [Y/N] prompt
+        #if 'Do you want to proceed(Y/N)' in outs:
+        #    print('Y\n')
+        outs, errs = proc.communicate('Y\n')
+ 
+        #proc.terminate()
+        os.remove(tmpcmd)
+
+    except OSError:
+        proc.terminate()
+        print("An OS error occured during the execution of earfn change command.")
+    except:
+        proc.terminate()
+        print("An error occured during the execution of earfcn change command.")
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'config.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/config =================================")
+
+read_conf_file()
+read_cell_enable()
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and 'verified' in query:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the config")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+if "cmd" in query and query['cmd'] in ['reset', 'refresh', 'write', 'apply']:
+    try:
+        if query['cmd'] == 'reset':
+            if not os.path.exists(ENB_CONFIG_FILE):
+                report_error("Not exists the configuration files")
+            elif not os.path.exists(ENB_XML_CONFIG_FILE):
+                report_error("Not exists the xml cfg files.")
+            else:
+                reset_conf_file()
+                if enb_mgmt == '1' or enb_mgmt == '2' :
+                    reset_conf_value()
+                if not os.path.exists(CONFIG_TEMP_FILE):
+                    report_error("Configuration Reset Failed.")
+                else:
+                    update_conf_file()
+                    report_success("Configuration Reset")
+        elif query['cmd'] == 'refresh':
+            if not os.path.exists(CONFIG_TEMP_FILE):
+                report_error("Not exists the template conf file.")
+            else:
+                read_conf_file()
+                if enb_mgmt == '1' or enb_mgmt == '2' :
+                    reset_conf_value()
+                report_success("Configuration Refresh")
+        elif query['cmd'] == 'write':
+            if not os.path.exists(CONFIG_TEMP_FILE):
+                report_error("Not exists the template conf file.")
+            else:
+                report_success("Configuration Write")
+                write_conf_file(CONFIG_TEMP_FILE)
+        elif query['cmd'] == 'apply':
+                report_success("Configuration Appy")
+                reboot_system()
+        else:
+            report_error("This should never happen. Please report that there is a bug in the 'config' CGI script.")
+    except KeyboardInterrupt:
+        report_error("The execution of the config command timed out after 30 seconds.")
+    except:
+        report_error("An error occured during the execution of the config command3.")
+
+elif "UL" in query and "DL" in query and "ECI" in query and "PCI" in query and "TAC" in query and "IP" in query and "GW" in query:
+    logging.info("CELL(" + str(enb_cell1_enable) + "), UL("+ query['UL'] + "," + str(enb_ul_earfcn) + "), DL(" + query['DL'] + "," + str(enb_dl_earfcn) + ") config")
+    logging.info("ECI("+ query['ECI'] + "," + str(enb_eci_i) + "), PCI(" + query['PCI'] + "," + str(enb_pci) + ") config")
+    try:
+        if enb_cell1_enable == '0':
+            if enb_ul_earfcn != query['UL']:
+                set_cell_freq('UP', int(query['UL']))
+            if enb_dl_earfcn != query['DL']:
+                set_cell_freq('DL', int(query['DL']))
+
+        # write to temp file
+        enb_ul_earfcn = query['UL']
+        enb_dl_earfcn = query['DL']
+        enb_pci = query['PCI']
+        enb_tac_i = query['TAC']
+        enb_tac = encode_conf_value('TAC', enb_tac_i)
+        enb_eci_i = query['ECI']
+        enb_eci = encode_conf_value('CellIdentity', enb_eci_i)
+        enb_ip = urllib.unquote(query['IP'].encode('ascii')).decode('utf-8')
+        enb_gw = urllib.unquote(query['GW'].encode('ascii')).decode('utf-8')
+        if not os.path.exists(CONFIG_TEMP_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file()
+            report_success("Configuration Change")
+    except:
+        report_error("An error occured during the execution of the config change command.")
+
+elif "CELL1_ENABLE" in query and "TX1_ATTEN" in query and "TX2_ATTEN" in query:
+    try:
+        enable = query['CELL1_ENABLE']
+        tx1 = query['TX1_ATTEN']
+        tx2 = query['TX2_ATTEN']
+        if enable != enb_cell1_enable :
+            enb_cell1_enable = enable
+            set_cell_status(enb_cell1_enable)
+        if tx1 != ant1_tx_atten :
+            ant1_tx_atten = tx1
+            set_afe_atten(0, float("{0:.2f}".format(ant1_tx_atten/10)))
+        if tx2 != ant2_tx_atten :
+            ant2_tx_atten = tx2
+            set_afe_atten(1, float("{0:.2f}".format(ant2_tx_atten/10)))
+        if not os.path.exists(CONFIG_TEMP_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file()
+            report_success("Configuration Change")
+    except:
+        report_error("An error occured during the execution of the config change command.")
+
+elif "PLMNID" in query and "S1SigLinkServerList" in query:
+    try:
+        plmnid_i = query['PLMNID']
+        plmnid = encode_conf_value('PLMNID', plmnid_i)
+        s1siglinks = urllib.unquote(query['S1SigLinkServerList'].encode('ascii')).decode('utf-8')
+        if not os.path.exists(CONFIG_TEMP_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file()
+            report_success("Configuration Change")
+    except:
+        report_error("An error occured during the execution of the PLMNID or S1SigLinkServerLists change command.")
+#elif "SyncMode" in query and "MaserIP" in query and "SlaveIP" in query and "IGateway" in query:
+elif "SyncMode" in query:
+    try:
+        enb_sync = query['SyncMode']
+        if enb_sync != sync_mode:
+            sync_mode = enb_sync
+            update_xml_config_value(ENB_XML_CONFIG_FILE, "MODE", sync_mode)
+            set_sync_mode(sync_mode)
+        if not os.path.exists(CONFIG_TEMP_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file()
+            report_success("Configuration Change")
+    except:
+        report_error("An error occured during the execution of the sync mode change command.")
+else:
+    report_error("You must specify a valid command for the Configuration.")
+
+logging.shutdown()

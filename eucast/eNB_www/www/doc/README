@@ -1,0 +1,15 @@
+To enable Web sever.
+
+Copy "thttp" scrip to /etc/init.d/thttpd and type
+ > update-rc.d thttpd defaults 60
+
+pls check the follwing files
+-. /etc/init.d/thttpd
+
+-. rc0.d/K20thttpd
+-. rc1.d/K20thttpd
+-. rc2.d/S20thttpd
+-. rc3.d/S20thttpd
+-. rc4.d/S20thttpd
+-. rc5.d/S20thttpd
+-. rc6.d/K20thttpd

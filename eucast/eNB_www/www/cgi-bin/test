@@ -1,0 +1,98 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+
+import os
+import sys
+import logging
+import rfsdk
+import json
+import time
+import os.path
+import filecmp
+import shutil
+import re
+import subprocess
+import tempfile
+
+CLI_GET_S1AP_STATUS='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+        'Show Stats L3 S1AP All\n'
+
+active_mme=0
+mme_status=[[0 for col in range(15)] for row in range(5)]
+
+
+def report_s1ap_status(message):
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    if active_mme > 0 :
+        print "   \"active\": %d," % (active_mme)
+        if active_mme > 0 :
+            print "   \"mme\": ["
+            for i in range(0, active_mme):
+                print "       {"
+                print "           \"ID\": %d," % int(mme_status[i][0])
+                print "           \"Name\": \"%s\"," % (mme_status[i][1])
+                print "           \"NumOfUE\": %d," % int(mme_status[i][2])
+                print "           \"ServedGummies\": %d," % int(mme_status[i][3])
+                print "           \"RelateiveMMECapacity\": %d" % int(mme_status[i][4])
+                if (i+1) == active_mme :
+                   print "       }"
+                else:
+                   print "       },"
+            print "   ]"
+    else:
+        print "   \"active\": %d" % (active_mme)
+    print "}"
+
+def read_s1ap_status():
+    global active_mme
+    try:
+        # create tempoary CLI command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_GET_S1AP_STATUS);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+        i = 0
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'Show':
+                value = temp[4].split('=')
+                value[0] = value[0].replace(" ","")
+                value[1] = value[1].replace(" ","")
+                if value[0] == 'ActiveMME':
+                    active_mme = int(value[1])
+                if active_mme > 0:
+                    if value[0] == 'MMEId':
+                        mme_status[i][0] = int(value[1])
+                    if value[0] == 'MMEName':
+                        mme_status[i][1] = value[1]
+                    if value[0] == 'NumberofActiveUE':
+                        mme_status[i][2] = int(value[1])
+                    if value[0] == 'NumberofServedGUMMEIs':
+                        mme_status[i][3] = int(value[1])
+                    if value[0] == 'RelativeMMECapacity':
+                        mme_status[i][4] = int(value[1])
+                        i = i+1
+
+        # remove tempoary CLI command file
+        os.remove(tmpcmd)
+
+    except OSError:
+        print("An OS error occured during the execution of the s1ap status command.")
+    except:
+        print("An error occured during the execution of the s1ap status command.")
+
+read_s1ap_status()
+report_s1ap_status("S1AP Status")

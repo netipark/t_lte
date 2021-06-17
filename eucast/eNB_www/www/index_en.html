@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+	<title>EUCAST LTE eNodeB Management</title>
+	<script type="text/javascript" src="javascripts/prototype.js"></script>
+	<link rel="icon" href="eucasticon.ico" type="image/x-icon"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+	<style>
+		* {box-sizing: border-box}
+		body {font-family: Verdana, sans-serif; margin:0}
+		.mySlides {display: none}
+		img {vertical-align: middle;}
+
+		/* Slideshow container */
+		.slideshow-container {
+			max-width: 1000px;
+			position: relative;
+			margin: auto;
+			width: 1000px;
+			height: 600;
+			overflow: auto;
+		}
+
+		/* Next & previous buttons */
+		.prev, .next {
+			cursor: pointer;
+			position: absolute;
+			top: 50%;
+			width: auto;
+			padding: 16px;
+			margin-top: -22px;
+			color: white;
+			font-weight: bold;
+			font-size: 18px;
+			transition: 0.6s ease;
+			border-radius: 0 3px 3px 0;
+			user-select: none;
+		}
+
+		/* Position the "next button" to the right */
+		.next {
+			right: 0;
+			border-radius: 3px 0 0 3px;
+		}
+
+		/* On hover, add a black background color with a little bit see-through */
+		.prev:hover, .next:hover {
+			background-color: rgba(0,0,0,0.8);
+		}
+
+		/* Caption text */
+		.text {
+			color: #f2f2f2;
+			font-size: 15px;
+			padding: 8px 12px;
+			position: absolute;
+			bottom: 8px;
+			width: 100%;
+			text-align: center;
+		}
+
+		/* Number text (1/6 etc) */
+		.numbertext {
+			color: #f2f2f2;
+			font-size: 12px;
+			padding: 8px 12px;
+			position: absolute;
+			top: 0;
+		}
+
+		/* The dots/bullets/indicators */
+		.dot {
+			cursor: pointer;
+			height: 15px;
+			width: 15px;
+			margin: 0 2px;
+			background-color: #bbb;
+			border-radius: 50%;
+			display: inline-block;
+			transition: background-color 0.6s ease;
+		}
+
+		.active, .dot:hover {
+			background-color: #717171;
+		}
+
+		/* Fading animation */
+		.fade {
+			-webkit-animation-name: fade;
+			-webkit-animation-duration: 1.5s;
+			animation-name: fade;
+			animation-duration: 1.5s;
+		}
+
+		@-webkit-keyframes fade {
+			from {opacity: .4} 
+			to {opacity: 1}
+		}
+
+		@keyframes fade {
+			from {opacity: .4} 
+			to {opacity: 1}
+		}
+
+		/* On smaller screens, decrease text size */
+		@media only screen and (max-width: 300px) {
+			.prev, .next,.text {font-size: 11px}
+		}
+
+		/* table */
+		table#t01 tr:nth-child(even) {
+			background-color: white;
+		}
+		table#t01 tr:nth-child(odd) {
+			background-color: #EAECEE;
+		}
+		table#t01 th {
+			color: white;
+			background-color: black;
+		}
+		/* switch box */
+		.switch {
+			position: relative;
+			display: inline-block;
+			width: 50px;
+			height: 24px;
+		}
+		.switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #ccc;
+			-webkit-transition: .4s;
+			transition: .4s;
+		}
+		.slider:before {
+			position: absolute;
+			content: "";
+			height: 16px;
+			width: 16px;
+			left: 4px;
+			bottom: 4px;
+			background-color: white;
+			-webkit-transition: .4s;
+			transition: .4s;
+		}
+		input:checked + .slider {
+			background-color: #2196F3;
+		}
+		input:focus + .slider {
+			box-shadow: 0 0 1px #2196F3;
+		}
+		input:checked + .slider:before {
+			-webkit-transform: translateX(26px);
+			-ms-transform: translateX(26px);
+			transform: translateX(26px);
+		}
+		/* Rounded sliders */
+		.slider.round {
+			border-radius: 34px;
+		}
+		.slider.round:before {
+			border-radius: 50%;
+		}
+	</style>
+</head>
+
+<body>
+	<!--iframe id="audio" src="sounds/silence.mp3" allow="autoplay" style="display:none"></iframe-->
+	<div class="slideshow-container">
+		<div id="at_home" class="mySlides fade" >
+			<h1 style="position: relative;">
+				LTE eNodeB Site Management
+				<img style="position: absolute; top: 10px; right: 20px; height: 30px; width: auto;" src=images/operator_logo.jpg>
+				<label class="switch" style="position: absolute; top: 50px; right: 0px;">
+					<input id="soundOnOff" type="checkbox" checked onclick="audioonoff();"//><span class="slider round"></span>
+				</label>
+			</h1>
+			<hr>
+			<table align="center" width="100%" id="t01" style="text-align:align:center; line-height: 15px; font-size: 12px;">
+				<tr>
+					<th colspan="5" width="20%"><div style="color:white; text-align:center;">Radio State</div></th>
+					<th width="20%"><div style="color:white; text-align:center;">Service State</div></th>
+					<th width="20%"><div style="color:white; text-align:center;">Alarm State</div></th>
+					<th width="20%"><div style="color:white; text-align:center;">Sync State</div></th>
+					<th width="20%"><div style="color:white; text-align:center;">Link State</div></th>
+				</tr>
+				<tr>
+					<td colspan="5" height="140" id="radioStatus" size='3' style="color:white; text-align:center;" title="Radio State">...</td>
+					<td id="stsLed" size='3' style="color:green; text-align:center;" title="Service State">...</td>
+					<td id="almLed" size='3' style="color:red; text-align:center;" title="Alarm State">...</td>
+					<td id="syncLed"size='3' style="color:purple; text-align:center;" title="Sync State">...</td>
+					<td id="bhLed" size='3' style="color:blue; text-align:center;" title="Link State">...</td>
+				</tr>
+			</table>
+			<div style="font-size:smaller; text-align:center;">
+				<span id='alarmCnt' style="color:grey; text-align:center;"></span>
+				[Critical<span id='criticalAlarm' style="color:red; text-align:center;"></span>
+				Major<span id='majorAlarm' style="color:purple; text-align:center;"></span>
+				Minor<span id='minorAlarm' style="color:blue; text-align:center;"></span>]
+			</div>
+			<audio id="alarmAudio" autoplay loop><source src=""></source></audio>
+			<hr>
+			<small>&#x025C9; <span id="login_done">User</span> Left(&#10094;) Right(&#10095;) Key to move pages.</small>
+			<br><br>
+			<div style="text-align:center;">
+			<small>User: </small><input id="username" type="text" name="user"/>
+			<small>Password: </small><input id="userpasswd" type="password" name="pwd" maxlength="16" onkeyup="pw_enterkey()"/> <button type="button" id="usersubmit" value="Login" onclick="verify_user();">Login</button>
+			</div>
+			<small>User was <span id="user_verified" style="color:red;">not yet </span>verified.</small>
+			<iframe id="gpsStatus" style="width: 100%; height: 55px; border:2px solid Tomato; font-size: small;" src='data/gps_status.csv' scrolling="no"></iframe>
+			<iframe id="ieee1588Status" style="display:none; width: 100%; height: 55px; border:2px solid Tomato; font-size: small;" src='data/ieee1588_status.csv' scrolling="no"></iframe>
+			<div style="height:20px;">
+			<a id="alarmDisplay" style="color:red; display:none">
+				<marquee id="alarmList" behavior="scroll" height="30" bgcolor="MediumSeaGreen" onMouseOver="this.setAttribute('scrollamount', 0, 0);this.stop();" OnMouseOut="this.setAttribute('scrollamount', 2, 0);this.start();" scrollamount="2">...</marquee>
+			</a>
+			</div>
+			<div class='source'>
+				<p style="color:red; font-size:70%;">
+					<input type="checkbox" id="enable_kitting" onclick="enable_kitting();"/>
+					<label for="enable_kitting">Kitting Enable(last slide)</label>
+					<br>
+					<input type="checkbox" id="enableAlarmScroll" onclick="enable_alarm_scroll();"/>
+					<label for="enableAlarmScroll">Alarm bar enable</label>
+					<br>
+					<input type="checkbox" id="enableIeeeStatus" onclick="enable_ieee1588_enable();"/>
+					<label for="enableIeeeStatus">Display IEEE1588 Status</label>
+				</p>
+			</div>
+		</div>
+
+		<!-- Configuration Page -->
+		<div id="at_config" class="mySlides fade">
+			<h1 style="position: relative;">
+				LTE eNodeB Basic Information
+				<img style="position: absolute; top: -30px; right: 0px;height: 100px; width: auto;" src="images/navigation.png" usemap="#navmap">
+			</h1>
+			<hr>
+			<div style="text-align:right;">
+				<span style="position:relative;">Configurateion
+					<button type="button" id="refreshConf" onclick="config_refresh();" disabled>Refresh</button>
+					<button type="button" id="reset_conf" onclick="config_reset();" disabled>Reset</button>
+					<button type="button" id="write_conf" onclick="config_write();" disabled>Save</button>
+					<button type="button" id="apply_conf" onclick="config_apply();" disabled>Apply(Restart)</button>
+				</span>
+			</div>
+			<table align="center" width="100%" id="t01" style="line-height: 15px; font-size: 12px;">
+				<tr>
+					<th colspan="2" width="20%%">
+						<div style="position: relative;">Paramter
+						</div>
+					</th>
+					<th width="80%">Value</th>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">Freq Band</td>
+					<td><span id="enb_bands">...</span></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">EARFCN UL</td>
+					<td><input id="enb_earfcn_ul" size="6" maxlength="6" type="text" onchange="config_change('enb_earfcn_ul');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">EARFCN DL</td>
+					<td><input id="enb_earfcn_dl" size="6" maxlength="6" type="text" onchange="config_change('enb_earfcn_dl');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">UL Bandwidth</td>
+					<td><span id="enb_bw_ul">...</span></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">DL Bandwidth</td>
+					<td><span id="enb_bw_dl">...</span></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">CellIdentity</td>
+					<td><input id="enb_eci" size="10" maxlength="9" type="text" pattern="[0-9]" onchange="config_change('enb_eci');" value=""/>
+					<small>eNBID: <span id="enb_enbID">...</span></small>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">PhyCellID</td>
+					<td><input id="enb_pci" size="10" maxlength="3" type="text" pattern="[0-9]" onchange="config_change('enb_pci');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">TAC</td>
+					<td><input id="enb_tac" size="10" maxlength="5" type="text" pattern="[0-9]" onchange="config_change('enb_tac');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">PLMNID</td>
+					<td><input id="plmnid" size="10" maxlength="6" type="text" pattern="[0-9]" onchange="config_change('plmnid');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">S1SigLinkServerList</td>
+					<td><input id="s1siglinks" size="64" maxlength="40" type="text" onchange="config_change('s1siglinks');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">eNodeB IP address</td>
+					<td><input id="enb_ip_addr" size="64" maxlength="40" type="text" onchange="config_change('enb_ip_addr');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">eNodeB Gateway</td>
+					<td><input id="enb_def_gw" size="64" maxlength="40" type="text" onchange="config_change('enb_def_gw');" value=""/></td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">CELL Enable</td>
+					<td>
+					<!--input id="enb_cell1_enable" size="3" maxlength="1" type="text" onchange="config_change('enb_cell1_enable');" value="">0 or 1 -->
+					<select id="enb_cell1_enable" type="text" onchange="config_change('enb_cell1_enable');">
+						<option value="" selected disabled>[Cell Enable]</option>
+						<option value="0">Disable</option>
+						<option value="1">Enable</option>
+					</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">Tx Atten</td>
+					<td>Tx1<input id="enb_tx1_atten" size="10" maxlength="3" type="text" onchange="config_change('enb_tx1_atten');" value=""/>
+					TX2<input id="enb_tx2_atten" size="10" maxlength="3" type="text" onchange="config_change('enb_tx2_atten');" value=""/>0.1step(100=10.0dB)</td>
+				</tr>
+				<tr>
+					<td colspan="2" width="20%">Software Version</td>
+					<td><span id="enb_sw_version">...</span></td>
+				</tr>
+			</table>
+			<div style="text-align:left;">
+				<span style="position: relative;">
+					<button type="button" id="showNbrWin" onclick="popup_nbrwin();" disabled>Neighbor Cell</button>
+				</span>
+				<span style="position: relative;">
+					<button type="button" id="restartSystem" onclick="popup_restart();" disabled>System Restart</button>
+				</span>
+			</div>
+			<div class='source' id='config_message'>
+			</div>
+		</div>
+
+		<!-- Alarm Page -->
+		<div id="at_alarm" class="mySlides fade">
+			<h1 style="position: relative;">
+				LTE eNodeB Alarm Information
+				<img style="position: absolute; top: -30px; right: 0px;height: 100px; width: auto;" src="images/navigation.png" usemap="#navmap">
+			</h1>
+			<hr>
+			<div style="text-align:right;">
+				<span style="position: relative;">
+					<button type="button" id="refreshAlarm" onclick="refresh_alarm();" disabled>Alarm Refresh</button>
+				</span>
+			</div>
+			<iframe id="cur_alarm" style="width: 100%; height: 40%; border:2px solid red; font-size: small;" src='data/CurrentAlarm.csv'>Current Alarm</iframe>
+			<div style="text-align:left;">
+				<span style="position: relative;">
+					<button type="button" id="saveCurrAlarm" onclick="popup_savefile('CurrentAlarm.csv');" disabled>Save Current Alarm</button>
+				</span>
+			</div>
+			<iframe id="file_alarm" style="width: 100%; height: 50%; border:2px solid red; font-size: small;" src='data/AlarmLog.csv'>Alarm History</iframe>
+			<div style="text-align:left;">
+				<span style="position: relative;">
+					<button type="button" id="saveHistAlarm" onclick="popup_savefile('AlarmLog.csv');" disabled>Save Alarm History</button>
+				</span>
+			</div>
+			<div class='source' id='alarm_message'></div>
+		</div>
+
+		<!-- Status Page -->
+		<div id="at_status" class="mySlides fade">
+			<h1 style="position: relative;">
+				LTE eNodeB Radio Status
+				<img style="position: absolute; top: -30px; right: 0px;height: 100px; width: auto;" src="images/navigation.png" usemap="#navmap">
+			</h1>
+			<hr>
+			<div style="text-align:right;">
+				<span style="position: relative;">
+					<button type="button" id="refreshAntenna" onclick="update_status('antenna');">Antenna Refresh</button>
+					<button type="button" id="refreshStatus" onclick="update_status('radio');" disabled>Status Refresh</button>
+				</span>
+			</div>
+			<table align="center" width="100%" id="t01" style="line-height: 15px; font-size: 12px;">
+				<tr>
+					<th colspan="2" width="50%"><div style="color:white; text-align:center;">ANTENNA 1</div></th>
+					<th width="50%"><div style="color:white; text-align:center;">ANTENNA 2</div></th>
+				</tr>
+				<tr>
+					<td colspan="2" height="30" style="color:green; text-align:center; font-size:20px;">
+						<select name="ant1en" id="ant1en" type="text" onchange="change_and_update_antenna('ant1En');">
+							<option value="" selected disabled>[OnOff]</option>
+							<option value="0" style="color:red; text-align:center">OFF</option>
+							<option value="1" style="color:blue; text-align:center">ON</option>
+						</select>
+					</td>
+					<td style="color:green; text-align:center; font-size:20px;">
+						<select name="ant2en" id="ant2en" type="text" onchange="change_and_update_antenna('ant2En');">
+							<option value="" selected disabled>[OnOff]</option>
+							<option value="0" style="color:red; text-align:center">OFF</option>
+							<option value="1" style="color:blue; text-align:center">ON</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" height="140" id="ant1pwr" size='3' style="color:red; text-align:center; font-size:100px;">...</td>
+					<td id="ant2pwr" size='3' style="color:red; text-align:center; font-size:100px;">...</td>
+				</tr>
+				<!-- Not used
+				<tr>
+					<th colspan="4" width="20%">
+						<div style="position: relative;">Name
+						</div>
+					</th>
+					<th width="80%">Status</th>
+				</tr>
+				<tr>
+					<td colspan="4">RFSDK Software Revision</td>
+					<td><span id="rfsdk_revision">...</span></td>
+				</tr>
+				<tr>
+					<td colspan="4">RFSDK Configuration</td>
+					<td><span id="rfsdk_configuration">...</span></td> </tr>
+				<tr>
+					<td colspan="4">DFE Clock</td>
+					<td><span id="dfe_clock">...</span> MHz</td>
+				</tr>
+				<tr>
+					<td colspan="4">CFR Rate</td>
+					<td><span id="dfe_cfr_rate">...</span></td>
+				</tr>
+				<tr>
+					<td colspan="4">DPD Rate</td>
+					<td><span id="dfe_dpd_rate">...</span></td>
+				</tr>
+				<tr>
+					<td colspan="4">JESD Rate</td>
+					<td><span id="dfe_jesd_rate">...</span></td>
+				</tr>
+				-->
+			</table>
+			<table align="center" width="100%" id="t01" style="text-align:center; line-height: 15px; font-size: 12px;">
+				<tr>
+					<th colspan="4" width="50%">
+						<div style="position: relative;">Radio Status
+							<span style="position: absolute;">
+							</span>
+						</div>
+					</th>
+					<td><span id="radio_status" style="border:2px solid Tomato;">...</span></td>
+				</tr>
+				<tr>
+					<th rowspan="3">RADIO</th>
+					<th>Link</th>
+					<th>Band</th>
+					<th>Channel #</th>
+					<th>Frequency</th>
+				</tr>
+				<tr>
+					<th>Uplink</th>
+					<td><span id="ul_band">...</span></td>
+					<td><span id="ul_cn">...</span></td>
+					<td><span id="ul_freq">...</span> MHz</td>
+				</tr>
+				<tr>
+					<th>Downlink</th>
+					<td><span id="dl_band">...</span></td>
+					<td><span id="dl_cn">...</span></td>
+					<td><span id="dl_freq">...</span> MHz</td>
+				</tr>
+			</table>
+			<table align="center" width="100%" id="t01" style="line-height: 15px; font-size: 12px;">
+				<tr>
+					<th rowspan="3">Cell Status
+						<div style="position: relative;">
+							<button type="button" id="refresh_cell" onclick="update_status('cell');" disabled>Refresh</button>
+						</div>
+					</th>
+					<th>Enable</th>
+					<th>Tx1 Atten</th>
+					<th>Tx2 Atten</th>
+				</tr>
+				<tr>
+					<td>
+					<!--input id="cellEnable" size="10" maxlength="1" type="text" onchange="change_cell_set('cellEnableSet');" value=""-->
+					<select id="cellEnable" type="text" onchange="change_cell_set('cellEnableSet');">
+						<option value="" selected disabled>[Cell Enable]</option>
+						<option value="0">Disable</option>
+						<option value="1">Enable</option>
+					</select>
+					</td>
+					<td><input id="tx1Atten" size="20" maxlength="5" type="text" onchange="change_cell_set('tx1AttenSet');" value=""/>dB</td>
+					<td><input id="tx2Atten" size="20" maxlength="5" type="text" onchange="change_cell_set('tx2AttenSet');" value=""/>dB</td>
+				</tr>
+				<tr>
+					<th><button type="Sumit" id="cellEnableSet" onclick="change_status('cellEnable');" disabled>Set</button></th>
+					<th><button type="Sumit" id="tx1AttenSet" onclick="change_status('tx1Atten');" disabled>Set</button></th>
+					<th><button type="Sumit" id="tx2AttenSet" onclick="change_status('tx2Atten');" disabled>Set</button></th>
+				<tr>
+				</tr>
+			</table>
+			<div class='source' id='status_message'></div>
+		</div>
+
+		<!-- Trademark Page -->
+		<div id="at_trademark" class="mySlides fade">
+			<h1 style="position: relative;">
+				EUCAST
+				<img style="position: absolute; top: -30px; right: 0px;height: 100px; width: auto;" src="images/navigation.png" usemap="#navmap">
+			</h1>
+			<hr>
+			<br>
+			<div style="text-align:center;">
+				<a style="text-align:center;" href="http://www.eu-cast.com"><img src="images/eucast-stacked-logo-scaled.png" height="200px" alt="www.eu-cast.com"></a>
+			</div>
+			<br>
+			<div class="txtBox" style="position: relative; line-height: 1.0em; font-size:70%">
+				<a>EUCAST</a>
+				<ul>
+					<li>Address: (13595) 4F Sungok Bldg, 262, Hwangsaeul-ro, Bundang-gu, Senongnam-si, Gyeonggi-do, Korea</li>
+					<li>Tel: +82-31-706-5261</li>
+					<li>Fax: +82-31-706-5226</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- Kitting Page -->
+		<div id="at_kitting" class="mySlides fade" style="display:none">
+			<h1 style="position: relative;">
+				LTE eNodeB Kitting Parameter
+				<img style="position: absolute; top: -30px; right: 0px;height: 100px; width: auto;" src="images/navigation.png" usemap="#navmap">
+			</h1>
+			<hr>
+			<div style="text-align:right;">
+				<span style="position: relative;">
+					<button type="button" id="read_kitting" style="font-size: 10px;" onclick="kitting_read();" disabled>Refresh</button>
+					<button type="button" id="write_kitting" style="font-size: 10px;" onclick="kitting_write();" disabled>Save</button>
+					<button type="button" id="apply_kitting" style="font-size: 10px;" onclick="kitting_apply();" disabled>Apply</button>
+					<button type="button" id="restart_kitting" style="font-size: 10px;" onclick="kitting_restart();" disabled>Restart</button>
+				</span>
+			</div>
+			<table align="left" width="100%" id="t01" style="line-height: 15px; font-size: 10px;">
+				<tr>
+					<th rowspan="2">EMS</th>
+					<th >URL</th>
+					<th >User</th>
+					<th >Password</th>
+				</tr>
+				<tr>
+					<td><input id="emsURL" type="url" style="font-size: 10px;" size="64" maxlength="64" onchange="kitting_change('emsURL');" value=""/></td>
+					<td><input id="emsUser" type="text" style="font-size: 10px;" size="24" maxlength="20" onchange="kitting_change('emsUser');" value=""/></td>
+					<td><input id="emsPass" type="text" style="font-size: 10px;" size="24" maxlength="20" onchange="kitting_change('emsPass');" value=""></td>
+				</tr>
+			</table>
+			<table align="left" width="100%" id="t01" style="line-height: 15px; font-size: 10px;">
+				<tr>
+					<th rowspan="2">Network
+						<div style="position: relative;">
+							<!--input id="enbIfEnable" style="font-size: 10px;" size="2" maxlength="1" type="text" pattern="[0-1]" onchange="kitting_change('enbIfEnable');" value=""-->
+							<select id="enbIfEnable" type="text" onchange="kitting_change('enbIfEnable');">
+								<option value="" selected disabled>[Network]</option>
+								<option value="0">Disable</option>
+								<option value="1">Enable</option>
+							</select>
+						</div>
+					</th>
+					<th width="50%">IP Address</th>
+					<th width="20%">Subnet Mask</th>
+					<th width="20%">Default Gateway</th>
+				</tr>
+				<tr>
+					<td><input id="enbIP" style="font-size: 10px;" size="40" maxlength="40" type="text" onchange="kitting_change('enbIP');" value=""/></td>
+					<td><input id="enbNetMask" style="font-size: 10px;" size="40" maxlength="40" type="text" onchange="kitting_change('enbNetMask');" value=""/></td>
+					<td><input id="enbGW" style="font-size: 10px;" size="40" maxlength="40" type="text" onchange="kitting_change('enbGW');" value=""/></td>
+				</tr>
+				<tr>
+					<th width="20%">VLAN</th>
+					<td width="10%">
+						<div style="position: relative;">
+						<!--input id="vlanEnable" style="font-size: 10px;" size="2" maxlength="1" type="text" pattern="[0-1]" onchange="kitting_change('vlanEnable');" value=""-->
+						<select id="vlanEnable" type="text" onchange="kitting_change('vlanEnable');">
+							<option value="" selected disabled>[VLAN]</option>
+							<option value="0">Disable</option>
+							<option value="1">Enable</option>
+						</select>
+						</div>
+					</td>
+					<th width="40%">VLAN ID</th>
+					<td width="30">
+						<span style="position:relative;">
+							<input id="vlanID" style="font-size: 10px;" size="10" maxlength="3" type="text" onchange="kitting_change('vlanID');" value=""/>
+						</span>
+					</td>
+				</tr>
+			</table>
+			<table align="left" width="100%" id="t01" style="line-height: 15px; font-size: 10px;">
+				<tr>
+					<th rowspan="4" width="10%">IPsec
+						<div style="position: relative;">
+							<!--input id="ipsecEnable" style="font-size: 10px;" size="2" maxlength="1" type="text" pattern="[0-1]" onchange="kitting_change('ipsecEnable');" value=""-->
+							<select id="ipsecEnable" type="text" onchange="kitting_change('ipsecEnable');">
+								<option value="" selected disabled>[IPSec]</option>
+								<option value="0">Disable</option>
+								<option value="1">Enable</option>
+							</select>
+						</div>
+					</th>
+					<th width="30%">SecGW 1</th>
+					<th width="30%">SecGW 2</th>
+					<th width="30%">SecGW 3</th>
+				</tr>
+				<tr>
+					<td><input id="SGW1" style="font-size: 10px;" size="40" maxlength="40" type="text" onchange="kitting_change('SGW1');" value=""/></td>
+					<td><input id="SGW2" style="font-size: 10px;" size="40" maxlength="40" type="text" onchange="kitting_change('SGW2');" value=""/></td>
+					<td><input id="SGW3" style="font-size: 10px;" size="40" maxlength="40" type="text" onchange="kitting_change('SGW3');" value=""/></td>
+				</tr>
+				<tr>
+					<th width="30%">rightid</th>
+					<th width="30%">IKE ID Domain</th>
+					<th width="30%">StaticTia</th>
+				</tr>
+				<tr>
+					<td><input id="enbRightID" style="font-size: 10px;" size="20" maxlength="20" type="text" onchange="kitting_change('enbRightID');" value=""/></td>
+					<td><input id="ikdeIdDomain" style="font-size: 10px;" size="20" maxlength="20" type="text" onchange="kitting_change('ikdeIdDomain');" value=""/></td>
+					<td><input id="enbStaticTia" style="font-size: 10px;" size="20" maxlength="12" type="text" onchange="kitting_change('enbStaticTia');" value=""/></td>
+				</tr>
+				<tr>
+					<th colspan="2" width="10%">IKE PSK</th>
+					<td width="90%">
+						<span style="position:relative;">
+							<input id="ikePSK" style="font-size: 10px;" size="40" maxlength="64" type="text" onchange="kitting_change('ikePSK');" value=""/>
+						</span>
+					</td>
+				</tr>
+			</table>
+			<table align="left" width="100%" id="t01" style="line-height: 15px; font-size: 10px;">
+				<tr>
+					<th rowspan="2" width="10%">Local
+						<div style="position: relative;">
+							<!--input id="localIfEnable" style="font-size: 10px;" size="2" maxlength="1" type="text" onchange="kitting_change('localIfEnable');" value=""-->
+							<select id="localIfEnable" type="text" onchange="kitting_change('localIfEnable');">
+								<option value="" selected disabled>[Local]</option>
+								<option value="0">Disable</option>
+								<option value="1">Enable</option>
+							</select>
+						</div>
+					</th>
+					<th width="10%">Interface</th>
+					<th width="20%">IPv4 Address</th>
+					<th width="20%">IPv4 Subnet Mask</th>
+					<th width="40%">IPv6 Address</th>
+				<tr>
+					<td><input id="localInterface" style="font-size: 10px;" size="10" maxlength="10" type="text" onchange="kitting_change('localInterface');" value=""/></td>
+					<td><input id="localIP" style="font-size: 10px;" size="20" maxlength="40" type="text" onchange="kitting_change('localIP');" value=""/></td>
+					<td><input id="localNetMask" style="font-size: 10px;" size="20" maxlength="40" type="text" onchange="kitting_change('localNetMask');" value=""/></td>
+					<td><input id="localIPv6" style="font-size: 10px;" size="40" maxlength="70" type="text" onchange="kitting_change('localIPv6');" value=""/></td>
+				</tr>
+			</table>
+			<table align="left" width="100%" id="t01" style="line-height: 15px; font-size: 10px;">
+				<tr>
+					<th width="20%">NTP Server Enable</th>
+					<td width="80%">
+						<div style="position: relative;">
+						<select id="enableNtpServer" type="text" onchange="kitting_change('enableNtpServer');">
+							<option value="" selected disabled>[NTP Server]</option>
+							<option value="0">Disable</option>
+							<option value="1">Enable</option>
+						</select>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<div class='source' id='kitting_message'><small>Change --> Save --> Apply -->(Restart)</small></div>
+			<div style="text-align:left;">
+				<span style="position: relative;">
+					<button type="button" id="upload" onclick="popup_upload();">File Upload</button>
+				</span>
+			</div>
+		</div>
+
+		<a id="leftMove" class="prev" onclick="plusSlides(-1)" style="color:#D5D8DC; display:none">&#10094;</a>
+		<a id="rightMove" class="next" onclick="plusSlides(1)" style="color:#D5D8DC; display:none">&#10095;</a>
+	</div>
+	<div id="movePage" style="position:absolute; left:50%; bottom:10%; text-align:center; display:none">
+		<span class="dot" onclick="currentSlide(1)" title="Main"></span> 
+		<span class="dot" onclick="currentSlide(2)" title="Basic Info"></span> 
+		<span class="dot" onclick="currentSlide(3)" title="Alarm"></span> 
+		<span class="dot" onclick="currentSlide(4)" title="Status"></span> 
+		<span class="dot" onclick="currentSlide(5)" title="EUCAST"></span> 
+		<span id="moveKitting" class="dot" onclick="currentSlide(6)" style="display:none" title="Kitting"></span> 
+	</div>
+
+	<map name="navmap">
+		<area shape="rect" coords="0,0,70,100" alt="Home" target="_self" onclick="currentSlide(1);">
+		<area shape="rect" coords="70,0,120,50" alt="Config" target="_self" onclick="currentSlide(2);">
+		<area shape="rect" coords="120,0,170,50" alt="Alarm" target="_self" onclick="currentSlide(3);">
+		<area shape="rect" coords="170,0,220,50" alt="Radio" target="_self" onclick="currentSlide(4);">
+		<area shape="rect" coords="70,50,120,100" alt="Config" target="_self" onclick="currentSlide(2);">
+		<area shape="rect" coords="120,50,170,100" alt="Alarm" target="_self" onclick="currentSlide(3);">
+		<area shape="rect" coords="170,50,220,100" alt="Radio" target="_self" onclick="currentSlide(4);">
+		<area shape="rect" coords="220,0,290,150" alt="Eucast" target="_self" onclick="currentSlide(5);">
+	</map>
+
+	<script>
+		var user_was_verified = 0;
+		var user_id = "none"
+		var radio_on = 0;
+		var currentAlarmCnt = 0;
+		var criticalAlamCnt = 0;
+		var majorAlamCnt = 0;
+		var minorAlamCnt = 0;
+		var myTimer;
+		var soundoff = 0;
+		var kitting_enabled = 0;
+		var alarm_scroll_enabled = 0;
+
+		var slideIndex = 1;
+		showSlides(slideIndex);
+
+		function refreshSlide(period) {
+			if(myTimer != 0) {
+				clearInterval(myTimer);
+			}
+			myTimer = setInterval(myClock, 1000);
+			var c = period;
+
+			function myClock() {
+				--c;
+				if (c == 0) {
+					clearInterval(myTimer);
+					showSlides(slideIndex);
+				}
+			}
+		}
+
+		function plusSlides(n) {
+			var sIndex = slideIndex + n;
+			if(kitting_enabled == 0) {
+				if (sIndex >= 6) // at_kitting
+					sIndex = 1;
+				else if (sIndex == 0)
+					sIndex = 5;
+			}
+			slideIndex = sIndex;
+			showSlides(slideIndex);
+		}
+
+		function currentSlide(n) {
+			showSlides(slideIndex = n);
+		}
+
+		function showSlides(n) {
+			var i;
+			var slides = document.getElementsByClassName("mySlides");
+			var dots = document.getElementsByClassName("dot");
+			if (n > slides.length) {slideIndex = 1}    
+			if (n < 1) {slideIndex = slides.length}
+			for (i = 0; i < slides.length; i++) {
+				slides[i].style.display = "none";  
+			}
+			for (i = 0; i < dots.length; i++) {
+				dots[i].className = dots[i].className.replace(" active", "");
+			}
+			slides[slideIndex-1].style.display = "block";  
+			dots[slideIndex-1].className += " active";
+
+			if(slideIndex == 1) { // at_home
+				audioonoff(); get_led(); update_status('simradio'); update_status('gps');
+				refreshSlide(10);
+			}
+			else if(slideIndex == 2) { // at_config
+				config_reset();
+			}
+			else if(slideIndex == 3) { // at_alarm
+				refresh_alarm();
+			}
+			else if(slideIndex == 4) { // at_status
+				update_status('radio');
+				update_status('cell');
+				update_status('antenna');
+			}
+			else if(slideIndex == 6) { // at_kitting
+				kitting_reset();
+			}
+		}
+
+		document.onkeydown = checkKey;
+		function checkKey(e) {
+			e = e || window.event;
+
+			if (e.keyCode == '112') { // F1 Key
+				// alert("Help Key Preseed!!");
+				var queryString = "?slide=" + slideIndex;
+				var url = "help_en.html" + queryString;
+				var name = "LTE Mangement Help";
+				var option = "width = 800, height = 750, top = 100, left = 200, location = no"
+				window.open(url, name, option);
+			}
+			if(user_was_verified == 0) {
+				return;
+			}
+
+			if (e.keyCode == '37') { // left arrow
+				plusSlides(-1);
+			}
+			else if (e.keyCode == '39') { // right arrow
+				plusSlides(1);
+			}
+			else if (e.keyCode == '38') {
+				// up arrow
+			}
+			else if (e.keyCode == '40') {
+				// down arrow
+			}
+			else if (e.keyCode == '36') { // home
+				currentSlide(1);
+			}
+			else if (e.keyCode == '35') { // end
+				if(kitting_enabled == 1)
+					currentSlide(6);
+				else
+					currentSlide(5);
+			}
+		}
+
+		function sleep(milliseconds) {
+			const date = Date.now();
+			let currentDate = null;
+			do {
+				currentDate = Date.now();
+			} while (currentDate - date < milliseconds);
+		}
+
+		function validateIPaddress(ipaddress)
+		{
+			if(/((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))/.test(ipaddress))
+			{
+				return (true);
+			}
+			return (false);
+		}
+
+		function get_browser() {
+			var b = "";
+			var ua = window.navigator.userAgent;
+			if(ua.indexOf('MSIE') > 0 || ua.indexOf('Trident') > 0)
+				b = "IE";
+			else if(ua.indexOf('Opera') > 0 || ua.indexOf('OPR') > 0)
+				b = "Opera";
+			else if(ua.indexOf('Firefix') > 0)
+				b = "Firefox";
+			else if(ua.indexOf('Safari') > 0) {
+				if(ua.indexOf('Chrome') > 0)
+					b = "Chrome";
+				else
+					b = "Safari";
+			}
+			return b;
+		}
+
+		window.onbeforeunload = function (e) {
+			var e = e || window.event;
+
+			logout_user(user_id);
+
+			// For IE and Firefox
+			if (e) {
+				e.returnValue = 'Leaving the page';
+			}
+
+			// For Safari
+			return 'Leaving the page';
+		};
+
+		function idleLogout() {
+			var t;
+			window.onload = resetTimer;
+			// window.onmousemove = resetTimer;
+			window.onmousedown = resetTimer;  // catches touchscreen presses as well
+			window.ontouchstart = resetTimer; // catches touchscreen swipes as well
+			window.onclick = resetTimer;      // catches touchpad clicks as well
+			window.onkeypress = resetTimer;
+			window.onkeydown = resetTimer;
+			window.addEventListener('scroll', resetTimer, true); // improved; see comments
+
+			function logout() {
+				var btn = document.getElementById("usersubmit");
+				if(user_was_verified) {
+					alert("You are now logged out.")
+					logout_user(user_id);
+					user_was_verified = 0;
+				}
+				btn.value = "Login";
+				btn.innerHTML = "Login";
+				btn.onclick = function(){
+					verify_user();
+				}
+				$("username").enable();
+				$("userpasswd").enable();
+				user_verified.setAttribute("style","color:red");
+				user_verified.update("not ");
+				login_done.update("after login");
+				currentSlide(1); // goto home
+			}
+
+			function resetTimer() {
+				clearTimeout(t);
+				t = setTimeout(logout, 600000);  // time is in milliseconds
+			}
+		}
+		idleLogout();
+
+		// functions related to user verification
+		function update_user(usr) {
+			if (usr.result == 1) {
+				var btn = document.getElementById("usersubmit");
+				user_id = usr.user;
+				user_was_verified = 1;
+				$("username").disable();
+				$("userpasswd").disable();
+				btn.value = "Logout";
+				btn.innerHTML = "Logout";
+				btn.onclick = function() {
+					var r = confirm("want to logout really?.");
+					if (r == true) {
+						logout_user(user_id);
+						user_was_verified = 0;
+					}
+				}
+				$("refreshConf").enable();
+				$("refreshAlarm").enable();
+				$("refreshStatus").enable();
+				$("showNbrWin").enable();
+				$("restartSystem").enable();
+				$("saveHistAlarm").enable();
+				$("saveCurrAlarm").enable();
+				user_verified.setAttribute("style","color:blue");
+				user_verified.update("");
+				login_done.update("");
+				$('movePage').show();
+				$('leftMove').show();
+				$('rightMove').show();
+				if(kitting_enabled == 1) {
+					$('moveKitting').show();
+					$('at_kitting').show();
+				}
+				else {
+					$('moveKitting').hide();
+					$('at_kitting').hide();
+				}
+			}
+			else {
+				var btn = document.getElementById("usersubmit");
+				if (usr.result == 2) {
+					alert("User was locked, Pls retry a minute later");
+				}
+				else if (usr.result == 3) {
+					alert("User was login,\n Pls retry a minute later");
+				}
+				else if (usr.result == 4) {
+					alert("User was logout.");
+				}
+				else {
+					alert("Not registered User or wrong Password.");
+				}
+				btn.value = "Login";
+				btn.innerHTML = "Login";
+				btn.onclick = function(){
+					verify_user();
+				}
+				$("username").enable();
+				$("userpasswd").enable();
+				$("reset_conf").disable();
+				$("refreshConf").disable();
+				$("write_conf").disable();
+				$("apply_conf").disable();
+				$("refreshAlarm").disable();
+				$("refreshStatus").disable();
+				$("showNbrWin").disable();
+				$("restartSystem").disable();
+				$("saveHistAlarm").disable();
+				$("saveCurrAlarm").disable();
+				user_verified.setAttribute("style","color:red");
+				user_verified.update("not ");
+				login_done.update("after login");
+				user_was_verified = 0;
+				$('movePage').hide();
+				$('leftMove').hide();
+				$('rightMove').hide();
+				$('moveKitting').hide();
+				$('at_kitting').hide();
+				$("username").value = '';
+				$("userpasswd").value = '';
+			}
+		}
+		function verify_user() {
+			var x = document.createElement("INPUT");
+			x.setAttribute("type", "submit");
+			var id = $("username").value;
+			var pw = $("userpasswd").value;
+			if (id.length == 0) {
+				return;
+			}
+			params = {cmd: 'login', user: id, passwd: pw};
+			new Ajax.Request(
+				'/cgi-bin/user',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+						}
+						else {
+							update_user(json);
+						}
+					},
+					onFailure: function() {
+						alert("an error occured while user verification.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+		function pw_enterkey() {
+			if(window.event.keyCode == 13) {
+				verify_user();
+			}
+		}
+		function logout_user(id) {
+			if (id.length == 0) {
+				return;
+			}
+			params = {cmd: 'logout', user: id};
+			new Ajax.Request(
+				'/cgi-bin/user',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+						}
+						else {
+							update_user(json);
+						}
+					},
+					onFailure: function() {
+						alert("an error occured while user verification.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+
+		// functions related the alarm vacl audit
+		var aud = document.getElementById("alarmAudio");
+		function stop_audio() {
+			aud.src="";
+		}
+		function start_audio(target) {
+			if(soundoff == 1) {
+				aud.src="";
+			}
+			else if(target == 'criticalAudio') {
+				aud.src="sounds/critical_alarm1.mp3";
+			}
+			else if(target == 'majorAudio') {
+				aud.src = "sounds/major_alarm1.mp3";
+			}
+			else if(target == 'minorAudio') {
+				aud.src = "sounds/minor_alarm1.mp3";
+			}
+		}
+		function audioonoff() {
+			var checkBox = document.getElementById("soundOnOff");
+			if(checkBox.checked == true) {
+				soundoff = 0;
+			} else {
+				soundoff = 1;
+				stop_audio();
+			}
+		}
+
+		// functions related the configuration
+		function update_config(config) {
+			if (config.ManagementMode == 1) {
+				$("config_message").update("<img src=\"images/progress.gif\"> Contrlling by EMS(Element Management System)...");
+			}
+			else if (config.ManagementMode == 2) {
+				$("config_message").update("<img src=\"images/progress.gif\"> (If conneted to EMS)Controlling by EMS or Use the internal confiuration files...");
+			}
+			else {
+				$("config_message").update("Managed onl by the internal configuraion files.");
+			}
+			if( config.status == 1) {
+                var enbCellId = config.ECI * 1;
+				$("enb_bands").update(config.Bands);
+				$("enb_eci").value = enbCellId;
+				$("enb_enbID").update(enbCellId >>> 8);
+				$("enb_pci").value = config.PCI;
+				$("enb_tac").value = config.TAC;
+				$("enb_earfcn_ul").value = config.Uplink.EARFCN;
+				$("enb_bw_ul").update(config.Uplink.Bandwidth);
+				$("enb_earfcn_dl").value = config.Downlink.EARFCN;
+				$("enb_bw_dl").update(config.Downlink.Bandwidth);
+				$("enb_ip_addr").value = config.Network.ip;
+				$("enb_def_gw").value = config.Network.gw;
+				document.getElementById("enb_cell1_enable").value = config.Cell.enable;
+				$("enb_tx1_atten").value = config.Cell.atten1;
+				$("enb_tx2_atten").value = config.Cell.atten2;
+				$("plmnid").value = config.EPC.PLMNID;
+				$("s1siglinks").value = config.EPC.S1SigLinkServerList;
+				$("enb_sw_version").update(config.Version);
+			}
+			else {
+				alert("Failed to get the configuration inforamtion.");
+			}
+			$("enb_bands").readonly = true;
+			$("enb_bw_ul").readonly = true;
+			$("enb_bw_dl").readonly = true;
+			$("enb_eci").readonly = false;
+			$("enb_pci").readonly = false;
+			$("enb_tac").readonly = false;
+			$("enb_earfcn_ul").readonly = false;
+			$("enb_bw_ul").readonly = false;
+			$("enb_earfcn_dl").readonly = false;
+			$("enb_bw_dl").readonly = false;
+			$("enb_ip_addr").readonly = false;
+			$("plmnid").readonly = false;
+			$("s1siglinks").readonly = false;
+		}
+		function run_config_cmd(command) {
+			if (user_was_verified == 0) {
+				return;
+			}
+			if (command == "reset") {
+				$("reset_conf").enable();
+				$("refreshConf").enable();
+				$("write_conf").disable();
+				$("apply_conf").disable();
+				params = {user: user_id, verified: user_was_verified, cmd: command};
+			}
+			else if (command == "refresh") {
+				$("refreshConf").enable();
+				$("reset_conf").enable();
+				$("write_conf").enable();
+				$("apply_conf").disable();
+				params = {user: user_id, verified: user_was_verified, cmd: command};
+			}
+			else if (command == "write") {
+				$("refreshConf").enable();
+				$("reset_conf").disable();
+				$("write_conf").disable();
+				$("apply_conf").enable();
+				params = {user: user_id, verified: user_was_verified, cmd: command};
+			}
+			else if (command == "apply") {
+				$("reset_conf").disable();
+				$("write_conf").disable();
+				$("apply_conf").disable();
+				params = {user: user_id, verified: user_was_verified, cmd: command};
+			}
+			else {
+				return;
+			}
+			new Ajax.Request(
+				'/cgi-bin/config',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+							$("reset_conf").enable();
+							$("refreshConf").enable();
+							$("write_conf").disable();
+							$("apply_conf").disable();
+						}
+						else {
+							update_config(json);
+						}
+					},
+					onFailure: function() {
+			            if ((command != "write") && (command != "apply")) {
+						    alert("an error occured while loading config.");
+                        }
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+		function config_refresh() {
+			run_config_cmd('refresh');
+		}
+		function config_reset() {
+			run_config_cmd('reset');
+		}
+		function config_write() {
+			run_config_cmd('write');
+		}
+		function config_apply() {
+			var r = confirm("Press a button!\nEither OK or Cancel.\nThe sysem will be restarted!!!! if pressed OK.");
+			if (r == true) {
+				run_config_cmd('apply');
+			}
+		}
+		function config_change(id) {
+			if (user_was_verified == 0) {
+				return;
+			}
+			$("write_conf").enable();
+			$("apply_conf").disable();
+			if (id == 'enb_cell1_enable' || id == 'enb_tx1_atten' || id == 'enb_tx2_atten') {
+				// var enb_enable = $('enb_cell1_enable').value;
+				var enbEnable= document.getElementById("enb_cell1_enable");
+				var enb_enable = enbEnable.options[enbEnable.selectedIndex].value;
+				var atten1 = $('enb_tx1_atten').value;
+				var atten2 = $('enb_tx2_atten').value;
+				params = {user: user_id, verified: user_was_verified, CELL1_ENABLE: enb_enable, TX1_ATTEN: atten1, TX2_ATTEN: atten2};
+			}
+			else if (id == 'plmnid' || id == 's1siglinks') {
+				var plmn_id = $('plmnid').value;
+				var s1addr = $('s1siglinks').value;
+				if (validateIPaddress(s1addr) == false) {
+					alert("You have entered an invalid IP address!")
+					$("write_conf").disable();
+					return;
+				}
+				params = {user: user_id, verified: user_was_verified,PLMNID: plmn_id, S1SigLinkServerList: s1addr};
+			}
+			else {
+				var uplink_earfcn = $('enb_earfcn_ul').value;
+				var downlink_earfcn = $('enb_earfcn_dl').value;
+				var cellid = $('enb_eci').value;
+				var phycellid = $('enb_pci').value;
+				var tac = $('enb_tac').value;
+				var ipaddr = $('enb_ip_addr').value;
+				/*
+				if (validateIPaddress(ipaddr) == false) {
+					alert("You have entered an invalid IP address!")
+					$("write_conf").disable();
+					return;
+				}*/
+				var gateway = $('enb_def_gw').value;
+				if (validateIPaddress(gateway) == false) {
+					alert("You have entered an invalid IP address!")
+					$("write_conf").disable();
+					return;
+				}
+				params = {user: user_id, verified: user_was_verified, UL: uplink_earfcn, DL: downlink_earfcn, ECI: cellid, PCI: phycellid, TAC: tac, IP: ipaddr, GW: gateway};
+			}
+			new Ajax.Request(
+				'/cgi-bin/config',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+							$("reset_conf").enable();
+							$("refreshConf").enable();
+							$("write_conf").enable();
+							$("apply_conf").disable();
+						}
+						else {
+							update_config(json);
+						}
+					},
+					onFailure: function() {
+						alert("an error occured while updating config.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+
+		// Functions related to enb alarm
+		function enable_alarm_scroll() {
+			var checkBox = document.getElementById("enableAlarmScroll");
+			if(checkBox.checked == true) {
+				//alarmDisplay.setAttribute("style","");
+				$('alarmDisplay').show();
+				alarm_scroll_enabled = 1;
+			}
+			else {
+				//alarmDisplay.setAttribute("style","display:none");
+				$('alarmDisplay').hide();
+				alarm_scroll_enabled = 0;
+			}
+		}
+		function enable_ieee1588_enable() {
+			var checkBox = document.getElementById("enableIeeeStatus");
+			if(checkBox.checked == true) {
+				$('ieee1588Status').show();
+			}
+			else {
+				$('ieee1588Status').hide();
+			}
+		}
+		function count_alarm(alarm) {
+			var alarmProblem= "";
+			currentAlarmCnt = 0;
+			criticalAlamCnt = 0;
+			majorAlamCnt = 0;
+			minorAlamCnt = 0;
+			currentAlarmCnt = alarm.alarmCount;
+			$("alarmCnt").update(currentAlarmCnt);
+			for(i = 0; i < currentAlarmCnt; i++) {
+				if(alarm[i+""].severity == "Critical")
+					criticalAlamCnt++;
+				else if(alarm[i+""].severity == "Major")
+					majorAlamCnt++;
+				else
+					minorAlamCnt++;
+				alarmProblem += '['+alarm[i+""].identifier+']' + alarm[i+""].problem + '(' + alarm[i+""].location +')' + ". ";
+			}
+			$("criticalAlarm").update(criticalAlamCnt);
+			$("majorAlarm").update(majorAlamCnt);
+			$("minorAlarm").update(minorAlamCnt);
+			$("alarmCnt").readonly = true;
+			$("criticalAlarm").readonly = true;
+			$("majorAlarm").readonly = true;
+			$("minorAlarm").readonly = true;
+			if(criticalAlamCnt)
+				start_audio('criticalAudio');
+			else if(majorAlamCnt)
+				start_audio('majorAudio');
+			else if(minorAlamCnt)
+				start_audio('minorAudio');
+			else
+				stop_audio();
+
+			if(currentAlarmCnt) {
+				if(alarm_scroll_enabled == 0) {
+					return;
+				}
+				alarmList.setAttribute("style","color:red; font-size:100%;");
+				$("alarmList").update(alarmProblem);
+			}
+			else {
+				alarmList.setAttribute("style","color:blue; font-size:100%;");
+				$("alarmList").update("No Alarms.");
+			}
+		}
+		function update_alarm(alarm) {
+			document.getElementById('cur_alarm').contentWindow.location.reload();
+			document.getElementById('file_alarm').contentWindow.location.reload();
+			currentAlarmCnt = alarm.alarmCount;
+			$("refreshAlarm").enable();
+			$("alarm_message").update();
+		}
+		function get_alarm(command) {
+			$("alarmCnt").readonly = false;
+			$("criticalAlarm").readonly = false;
+			$("majorAlarm").readonly = false;
+			$("minorAlarm").readonly = false;
+			params = {user: user_id, verified: user_was_verified,cmd: command};
+			new Ajax.Request(
+				'/cgi-bin/alarm',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if(command == 'refresh') {
+							update_alarm(json);
+						}
+						else if(command == 'current') {
+							count_alarm(json);
+						}
+						else {
+							$("refreshAlarm").enable();
+						}
+					},
+					onFailure: function() {
+						alert("an error occured while getting alarm.")
+						alarmList.setAttribute("style","color:red; font-size:70%;");
+						$("alarmList").update("Fail to get alarms...");
+					},
+					onComplete: function() {
+						$("refreshAlarm").enable();
+						$("alarm_message").update();
+					}
+				}
+			);
+		}
+		function current_alarm() {
+			get_alarm('current');
+		}
+		function refresh_alarm() {
+			if (user_was_verified == 0) {
+				$("alarm_message").update("User was not verified!!");
+				return;
+			}
+			$("refreshAlarm").disable();
+			$("alarm_message").update("<img src=\"images/progress.gif\"> Refreshing Alalrm Infoation...");
+			get_alarm('refresh');
+		}
+
+		// Functions related to Radio status
+		function update_page(status) {
+			$("radioStatus").update(status.radio.state);
+			if ((status.radio.state == "READY") || (status.radio.state == "INITIALIZED")) {
+				$("radioStatus").update("<img src=\"images/status_led_green_blinking.gif\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else if (status.radio.state == "ON") {
+				$("radioStatus").update("<img src=\"images/status_led_green.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else if (status.radio.state == "OFF") {
+				$("radioStatus").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			$("radioStatus").readonly = true;
+			if (user_was_verified == 0) {
+				$("status_message").update("User was not verified!!");
+				return;
+			}
+			/* Not used
+			$("rfsdk_configuration").update(status.radio.configuration);
+			$("rfsdk_revision").update(status.revision);
+			$("dfe_clock").update(status.configuration.useCase.dfeConfig.dfeClock);
+			$("dfe_cfr_rate").update(status.configuration.useCase.dfeConfig.cfrRate);
+			$("dfe_dpd_rate").update(status.configuration.useCase.dfeConfig.dpdRate);
+			$("dfe_jesd_rate").update(status.configuration.useCase.dfeConfig.jesdSettings.jesdRate);
+			*/
+			$("radio_status").update(status.radio.state);
+			if(status.radio.uplink.band != null) {
+				$("ul_band").update(status.radio.uplink.band);
+			}
+			else {
+				$("ul_band").update('-');
+			}
+			if(status.radio.uplink.channel != null) {
+				$("ul_cn").update(status.radio.uplink.channel);
+			}
+			else {
+				$("ul_cn").update('-');
+			}
+			$("ul_freq").update(status.radio.uplink.frequency.toFixed(1));
+			if(status.radio.downlink.band != null) {
+				$("dl_band").update(status.radio.downlink.band);
+			}
+			else {
+				$("dl_band").update('-');
+			}
+			if(status.radio.downlink.channel != null) {
+				$("dl_cn").update(status.radio.downlink.channel);
+			}
+			else {
+				$("dl_cn").update('-');
+			}
+			$("dl_freq").update(status.radio.downlink.frequency.toFixed(1));
+			if (status.radio.state == "READY") {
+				$("ul_cn").readonly = false;
+				$("dl_cn").readonly = false;
+			} // TODO Add support for TDD configuration
+			radio_on = 0;
+			if (status.radio.state == "INITIALIZED") {
+				$("ul_cn").readonly = false;
+				$("dl_cn").readonly = false;
+			}
+			if (status.radio.state == "ON") {
+				radio_on = 1;
+			}
+			if (status.radio.state == "OFF") {
+				$("ul_cn").readonly = false;
+				$("dl_cn").readonly = false;
+			}
+			$("refreshStatus").enable();
+			$("status_message").update();
+		}
+		function update_radio(status) {
+			$("radioStatus").update(status.radio.state);
+			if ((status.radio.state == "READY") || (status.radio.state == "INITIALIZED")) {
+				$("radioStatus").update("<img src=\"images/status_led_green_blinking.gif\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else if (status.radio.state == "ON") {
+				$("radioStatus").update("<img src=\"images/status_led_green.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else if (status.radio.state == "OFF") {
+				$("radioStatus").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			$("radioStatus").readonly = true;
+		}
+		function update_cell(status) {
+			if (user_was_verified == 0) {
+				$("status_message").update("User was not verified!!");
+				return;
+			}
+			document.getElementById("cellEnable").value = status.cell.enable;
+			$("tx1Atten").value = (status.cell.atten1);
+			$("tx2Atten").value = (status.cell.atten2);
+			$("status_message").update();
+			$("refresh_cell").enable();
+			$("cellEnableSet").disable();
+			$("tx1AttenSet").disable();
+			$("tx2AttenSet").disable();
+		}
+		function update_gps(status) {
+			document.getElementById('gpsStatus').contentWindow.location.reload();
+			document.getElementById('ieee1588Status').contentWindow.location.reload();
+		}
+		function update_antenna(status) {
+			$("status_message").update();
+			$("refreshAntenna").enable();
+			if(status.status == 1) {
+				document.getElementById("ant1en").value = status.antenna.en1;
+				document.getElementById("ant2en").value = status.antenna.en2;
+				$("ant1pwr").update(status.antenna.pwr1);
+				$("ant2pwr").update(status.antenna.pwr2);
+			}
+			else {
+				alert("Failed to get the antenna status!!");
+			}
+			$("radioStatus").readonly = true;
+		}
+		function update_status(command) {
+			if(command == 'radio') {
+				$("refreshStatus").disable();
+				$("ul_cn").readonly = true;
+				$("dl_cn").readonly = true;
+				$("status_message").update("<img src=\"images/progress.gif\"> Refreshing Radio Status...");
+			}
+			else if(command == 'cell') {
+				$("refresh_cell").disable();
+				$("status_message").update("<img src=\"images/progress.gif\"> Refreshing Cell Status...");
+			}
+			else if(command == 'antenna') {
+				$("refreshAntenna").disable();
+				$("status_message").update("<img src=\"images/progress.gif\"> Refreshing Antenna Status...");
+			}
+			params = {user: user_id, verified: user_was_verified, cmd: command};
+			new Ajax.Request(
+				'/cgi-bin/status',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if(command == 'radio')
+							update_page(json);
+						else if(command == 'simradio')
+							update_radio(json);
+						else if(command == 'cell')
+							update_cell(json);
+						else if(command == 'gps')
+							update_gps(json);
+						else if(command == 'antenna')
+							update_antenna(json);
+					},
+					onFailure: function() {
+						$("radioStatus").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+						alert("an error occured while loading status.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+		function change_cell_set(id) {
+			if (user_was_verified == 0) {
+				$("status_message").update("User was not verified!!");
+				return;
+			}
+			if(id == 'cellEnableSet') {
+				$("cellEnableSet").enable();
+			}
+			else if(id == 'tx1AttenSet') {
+				if (radio_on == 1) {
+					$("tx1AttenSet").enable();
+				}
+			}
+			else if(id == 'tx2AttenSet') {
+				if (radio_on == 1) {
+					$("tx2AttenSet").enable();
+				}
+			}
+		}
+		function change_status(id) {
+			if (user_was_verified == 0) {
+				$("status_message").update("User was not verified!!");
+				return;
+			}
+			var result = 0;
+			if(id == 'cellEnable') {
+				$("cellEnableSet").disable();
+				var enbEnable = document.getElementById("cellEnable");
+				var enable = enbEnable.options[enbEnable.selectedIndex].value;
+				params = {user: user_id, verified: user_was_verified, cellEnable: enable};
+				result = confirm("Will change Cell Status?\nPress OK if confirmed");
+			}
+			else if(id == 'tx1Atten') {
+				var att1 = $('tx1Atten').value;
+				$("tx1AttenSet").disable();
+				params = {user: user_id, verified: user_was_verified, tx1Atten: att1};
+				result = confirm("Will change Tx1 Attenuation?\nPress OK if confirmed");
+			}
+			else if(id == 'tx2Atten') {
+				var att2 = $('tx2Atten').value;
+				$("tx2AttenSet").disable();
+				params = {user: user_id, verified: user_was_verified, tx2Atten: att2};
+				result = confirm("Will change Tx2 Attenuation?\nPress OK if confirmed");
+			}
+			else if(id == 'ant1En') {
+				var antEnable = document.getElementById("ant1en");
+				var en = antEnable.options[antEnable.selectedIndex].value
+				params = {user: user_id, verified: user_was_verified, ant1En: en};
+				result = confirm("Will change Antenna1 Status?\nPress OK if confirmed");
+			}
+			else if(id == 'ant2En') {
+				var antEnable = document.getElementById("ant2en");
+				var en = antEnable.options[antEnable.selectedIndex].value
+				params = {user: user_id, verified: user_was_verified, ant2En: en};
+				result = confirm("Will change Antenna2 Status?\nPress OK if confirmed");
+			}
+			if(result == 0) {
+				return;
+			}
+			new Ajax.Request(
+				'/cgi-bin/status',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						//update_cell(json);
+					},
+					onFailure: function() {
+						alert("an error occured while loading status.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+		function change_and_update_antenna(port) {
+			change_status(port);
+			sleep(15000);
+			update_status('antenna');
+		}
+		// Functions related to led
+		function update_led(sts) {
+			if(sts.status == "0") {
+				$("stsLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				$("almLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				$("syncLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				$("bhLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				retrun;
+			}
+			if(sts.led.status == "0") {
+				//stsLed.setAttribute("style","color:grey text-align:center; rotate:90;");
+				$("stsLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else if(sts.led.status == "4") {
+				//stsLed.setAttribute("style","color:green text-align:center; rotate:90;");
+				$("stsLed").update("<img src=\"images/status_led_green.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else {
+				//stsLed.setAttribute("style","color:green text-align:center; rotate:90;");
+				$("stsLed").update("<img src=\"images/status_led_green_blinking.gif\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			if(sts.led.alarm1 == "0") {
+				$("almLed").update("<img src=\"images/status_led_green.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				$("alarmCnt").update(0);
+				$("criticalAlarm").update(0);
+				$("majorAlarm").update(0);
+				$("minorAlarm").update(0);
+				alarmList.setAttribute("style","color:blue; font-size:70%;");
+				$("alarmList").update("No Alarms.");
+				stop_audio();
+			}
+			else {
+				$("almLed").update("<img src=\"images/status_led_red.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				current_alarm();
+			}
+			if(sts.led.sync == "0") {
+				$("syncLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else if(sts.led.sync == "4") {
+				$("syncLed").update("<img src=\"images/status_led_green.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else {
+				$("syncLed").update("<img src=\"images/status_led_green_blinking.gif\"style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			if(sts.led.backhaul == "0") {
+				$("bhLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+			}
+			else {
+				if(sts.led.alarm2 == "0") {
+					$("bhLed").update("<img src=\"images/status_led_green.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				}
+				else {
+					$("bhLed").update("<img src=\"images/status_led_red.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+				}
+			}
+		}
+		function get_led() {
+			params = {user: user_id, verified: user_was_verified};
+			new Ajax.Request(
+				'/cgi-bin/led',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						update_led(json);
+					},
+					onFailure: function() {
+						$("stsLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+						$("almLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+						$("syncLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+						$("bhLed").update("<img src=\"images/status_led_white.png\" style=\"transform:rotate(90deg);\" width=\"100%\">");
+						alert("an error occured while getting led status.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+
+		// functions related to kitting
+		function enable_kitting() {
+			var checkBox = document.getElementById("enable_kitting");
+			if(checkBox.checked == true) {
+				kitting_enabled = 1;
+				if (user_was_verified == 1) {
+					$('moveKitting').show();
+					$('at_kitting').show();
+				}
+			}
+			else {
+				kitting_enabled = 0;
+				$('moveKitting').hide();
+				$('at_kitting').hide();
+			}
+		}
+		function update_kitting(kitting) {
+			if (user_was_verified == 0) {
+				return;
+			}
+			if(kitting.status == 1) {
+				$("emsURL").value = (kitting.ems.url);
+				$("emsUser").value = (kitting.ems.user);
+				$("emsPass").value = (kitting.ems.passwd);
+				document.getElementById("enbIfEnable").value = kitting.network.enable;
+				$("enbIP").value = (kitting.network.ipAddress);
+				$("enbNetMask").value = (kitting.network.netMask);
+				$("enbGW").value = (kitting.network.gateway);
+				document.getElementById("ipsecEnable").value = kitting.ipsec.enable;
+				$("SGW1").value = (kitting.ipsec.SecGWServer1);
+				$("SGW2").value = (kitting.ipsec.SecGWServer2);
+				$("SGW3").value = (kitting.ipsec.SecGWServer3);
+				$("enbRightID").value = (kitting.ipsec.rightID);
+				$("ikePSK").value = (kitting.ipsec.ikePSK);
+				$("ikdeIdDomain").value = (kitting.ipsec.ikeIdDomain);
+				$("enbStaticTia").value = (kitting.ipsec.staticTia);
+				document.getElementById("vlanEnable").value = kitting.vlan.enable;
+				$("vlanID").value = (kitting.vlan.vlanId);
+				document.getElementById("localIfEnable").value = kitting.local.enable;
+				$("localInterface").value = (kitting.local.interface);
+				$("localIP").value = (kitting.local.ipAddress);
+				$("localNetMask").value = (kitting.local.netMask);
+				$("localIPv6").value = (kitting.local.ip6Address);
+				document.getElementById("enableNtpServer").value = kitting.NtpServerEnable;
+			}
+			else {
+				alert("Fail to get kitting parameters");
+			}
+		}
+		function run_kitting_cmd(command) {
+			if (user_was_verified == 0) {
+				$("kitting_message").update("User was not verified!!");
+				return;
+			}
+			$('read_kitting').enable();
+			$('write_kitting').disable();
+			$('apply_kitting').disable();
+			$('restart_kitting').disable();
+			if (command == "update") {
+				$('read_kitting').enable();
+				$('write_kitting').enable();
+				$('apply_kitting').enable();
+				$('restart_kitting').disable();
+			}
+			else if (command == "apply") {
+				$('read_kitting').enable();
+				$('write_kitting').enable();
+				$('apply_kitting').enable();
+				$('restart_kitting').enable();
+				params = {user: user_id, verified: user_was_verified, cmd: command};
+			}
+			else if ((command == "reset") || (command == "read") || (command == "reboot")) {
+			}
+			else {
+				return;
+			}
+			params = {user: user_id, verified: user_was_verified, cmd: command};
+			new Ajax.Request(
+				'/cgi-bin/kitting',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						update_kitting(json);
+					},
+					onFailure: function() {
+						if ((command == "reset") || (command == "read")) {
+							alert("an error occured while loading kitting.");
+						}
+					},
+					onComplete: function() {
+					}
+				}
+			);
+		}
+		function kitting_reset(kitting) {
+			run_kitting_cmd('reset');
+		}
+		function kitting_read(kitting) {
+			run_kitting_cmd('read');
+		}
+		function kitting_write(kitting) {
+			run_kitting_cmd('update');
+		}
+		function kitting_apply(kitting) {
+			run_kitting_cmd('apply');
+		}
+		function kitting_restart(kitting) {
+			var result = confirm("Press a button!\nEither OK or Cancel.\nThe sysem will be restarted!!!! if pressed OK.");
+			if(result) {
+				run_kitting_cmd('reboot');
+			}
+		}
+		function kitting_change(para) {
+			var para_a, para_b, para_c, para_d, para_e, para_f, para_g, para_h;
+
+			if (para == 'emsURL' || para == 'emsUser' || para == 'emsPass') {
+				para_a = $('emsURL').value;
+				para_b = $('emsUser').value;
+				para_c = $('emsPass').value;
+				params = {user: user_id, verified: user_was_verified, emsURL: para_a, emsUser: para_b, emsPass: para_c};
+			}
+			else if (para == 'enbIfEnable' || para == 'enbIP' || para == 'enbNetMask' || para == 'enbGW') {
+				var locEnable= document.getElementById("enbIfEnable");
+				para_a = locEnable.options[locEnable.selectedIndex].value
+				para_b = $('enbIP').value;
+				para_c = $('enbNetMask').value;
+				para_d = $('enbGW').value;
+				params = {user: user_id, verified: user_was_verified, enbIfEnable: para_a, enbIP: para_b, enbNetMask: para_c, enbGW: para_d};
+			}
+			else if (para == 'ipsecEnable' || para == 'SGW1' || para == 'SGW2' || para == 'SGW3' || para == 'enbRightID' || para == 'ikePSK' || para == 'ikdeIdDomain' || para == 'enbStaticTia') {
+				var secEnable= document.getElementById("ipsecEnable");
+				para_a = secEnable.options[secEnable.selectedIndex].value
+				para_b = $('SGW1').value;
+				para_c = $('SGW2').value;
+				para_d = $('SGW3').value;
+				para_e = $('enbRightID').value;
+				para_f = $('ikePSK').value;
+				para_g = $('ikdeIdDomain').value;
+				para_h = $('enbStaticTia').value;
+				params = {user: user_id, verified: user_was_verified, ipsecEnable: para_a, SGW1: para_b, SGW2: para_c, SGW3: para_d, enbRightID: para_e, ikePSK: para_f, ikdeIdDomain: para_g, enbStaticTia: para_h};
+			}
+			else if (para == 'vlanEnable' || para == 'vlanID') {
+				var vlanEnable = document.getElementById("vlanEnable");
+				para_a = vEnable.options[vEnable.selectedIndex].value
+				para_b = $('vlanID').value;
+				params = {user: user_id, verified: user_was_verified, vlanEnable: para_a, vlanID: para_b};
+			}
+			else if (para == 'localIfEnable' || para == 'localInterface' || para == 'localIP' || para == 'localNetMask' || para == 'localIPv6') {
+				var localEnable= document.getElementById("localIfEnable");
+				para_a  = localEnable.options[localEnable.selectedIndex].value;
+				para_b = $('localInterface').value;
+				para_c = $('localIP').value;
+				para_d = $('localNetMask').value;
+				para_e = $('localIPv6').value;
+				params = {user: user_id, verified: user_was_verified, localIfEnable: para_a, localInterface: para_b, localIP: para_c, localNetMask: para_d, localIPv6 : para_e};
+			}
+			else if (para == 'enableNtpServer') {
+				var ntpEnable= document.getElementById("enableNtpServer");
+				para  = ntpEnable.options[ntpEnable.selectedIndex].value;
+				params = {user: user_id, verified: user_was_verified, enableNtpServer: para };
+			}
+			else {
+				return;
+			}
+			new Ajax.Request(
+				'/cgi-bin/kitting',
+				{
+					method: 'get',
+					requestHeaders: {Accept: 'application/json'},
+					parameters: params,
+					onSuccess: function(transport, json) {
+						var response = transport.responseText || "no response text";
+						var json = JSON.parse(response);
+						if ("status" in json && "message" in json) {
+						}
+						else {
+							update_kitting(json);
+						}
+					},
+					onFailure: function() {
+						alert("an error occured while loading kitting.");
+					},
+					onComplete: function() {
+					}
+				}
+			);
+			$('read_kitting').enable();
+			$('write_kitting').enable();
+		}
+
+		// Related to Neighbor List
+		function popup_nbrwin() {
+			var queryString = "?mypci=" + $('enb_pci').value;;
+			var url = "neighbor2_en.html" + queryString;
+			var name = "Neighbor List";
+			var option = "width = 500, height = 500, top = 100, left = 200, location = no"
+			window.open(url, name, option);
+		}
+		// Related to System Restart
+		function popup_restart() {
+			var result = confirm("Press a button!\nEither OK or Cancel.\nThe sysem will be restarted!!!! if pressed OK.");
+			if(result) {
+				run_config_cmd('apply');
+			}
+		}
+
+		// Related to save a file
+		function pad2(n) { return n < 10 ? '0' + n : n }
+		function downloadURI(uri, name)
+		{
+			var link = document.createElement("a");
+			var date = new Date();
+			link.download = date.getFullYear().toString() + pad2(date.getMonth() + 1) + pad2(date.getDate()) + pad2(date.getHours()) + pad2(date.getMinutes()) + '_' + name;
+			link.href = uri;
+			link.click();
+		}
+
+		function downloadIE(uri, fileName) {
+			window.win = open(uri);
+			setTimeout('win.document.execCommand("SaveAs")', 100);
+			setTimeout('win.close()', 500);
+		}
+		function popup_savefile(filename) {
+			if(get_browser() == 'IE') {
+				alert("IE detected!! pls use Chrome, Safari or Firefox!!");
+				downloadIE('data/'+filename, filename);
+			}
+			else {
+				downloadURI('data/'+filename, filename);
+			}
+		}
+
+		// Related to upload file
+		function popup_upload() {
+			var url = "upload_en.html"
+			var name = "File Upload";
+			var option = "width = 500, height = 350, top = 100, left = 200, location = no"
+			window.open(url, name, option);
+		}
+
+		// TTT
+		if (user_was_verified == 1) {
+			$('refreshConf').enable();
+			$('refreshAlarm').enable();
+			$('refreshStatus').enable();
+		}
+		else {
+			$('refreshConf').disable();
+			$('refreshAlarm').disable();
+			$('refreshStatus').disable();
+		}
+	</script>
+</body>
+</html> 

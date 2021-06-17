@@ -1,0 +1,525 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+
+import os
+import sys
+import logging
+import rfsdk
+import json
+import time
+import os.path
+import filecmp
+import shutil
+import re
+import subprocess
+import tempfile
+
+import session
+
+WWW_LOG_DIR = '/var/log/www/'
+GPS_STS_FILE = '/srv/www/data/gps_status.csv'
+IEEE1588_STS_FILE = '/srv/www/data/ieee1588_status.csv'
+GPS_MON_PROC = 'gps_monitor'
+IEEE1588_MON_PROC = 'ieee1588_mon'
+
+CLI_GET_CELL_ENABLE='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+        'Show Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE\n'
+
+CLI_CELL_ON='Set OAM_USER_INTF_RESP_TIMEOUT 60\n' \
+        'Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE 1\n'
+CLI_CELL_OFF='Set OAM_USER_INTF_RESP_TIMEOUT 10\n' \
+        'Config InternetGatewayDevice Services FAPService FAPControl LTE eNBState X_VENDOR_CELL1_ENABLE 0\n'
+
+SHELL_CMD_PA_POWER='/usr/sbin/test_pa 7 value\n'
+SHELL_CMD_PA_VSWR='/usr/sbin/test_pa 7 vswr\n'
+
+CLI_ANT_CMD='Set OAM_USER_INTF_RESP_TIMEOUT 10\n' \
+        'Config InternetGatewayDevice Services FAPService CellConfig LTE RAN PHY AntennaInfo '
+
+CLI_GET_ANT_ATTEN='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+        'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN PHY AntennaInfo X_VENDOR_ANTENNA_PORT1_TX_ATTEN\n' \
+        'Show Config InternetGatewayDevice Services FAPService CellConfig LTE RAN PHY AntennaInfo X_VENDOR_ANTENNA_PORT2_TX_ATTEN\n'
+
+CLI_GET_S1AP_STATUS='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+        'Show Stats L3 S1AP All\n'
+
+enb_cell1_enable=''
+ant1_tx_atten=''
+ant2_tx_atten=''
+
+ant1_en='0'
+ant2_en='0'
+ant1_pwr='-80'
+ant2_pwr='-80'
+ant1_vswr='1.00'
+ant2_vswr='1.00'
+
+ant1_en_set='0'
+ant2_en_set='0'
+
+active_mme=0
+mme_status=[[0 for col in range(15)] for row in range(5)]
+
+def report_status(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    print "   \"cell\": {"
+    print "       \"enable\": \"%s\"," % (enb_cell1_enable)
+    print "       \"atten1\": \"%s\"," % (ant1_tx_atten)
+    print "       \"atten2\": \"%s\"" % (ant2_tx_atten)
+    print "   }"
+    print "}"
+
+def report_gps_status(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def report_antenna_status(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    print "   \"antenna\": {"
+    print "       \"en1\": %d," % int(ant1_en)
+    print "       \"en2\": %d," % int(ant2_en)
+    print "       \"pwr1\": \"%s\"," % (ant1_pwr)
+    print "       \"pwr2\": \"%s\"," % (ant2_pwr)
+    print "       \"vswr1\": \"%s\"," % (ant1_vswr)
+    print "       \"vswr2\": \"%s\"" % (ant2_vswr)
+    print "   }"
+    print "}"
+
+def report_s1ap_status(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    if active_mme > 0 :
+        print "   \"active\": %d," % (active_mme)
+        if active_mme > 0 :
+            print "   \"mme\": ["
+            for i in range(0, active_mme):
+                print "       {"
+                print "           \"ID\": %d," % int(mme_status[i][0])
+                print "           \"Name\": \"%s\"," % (mme_status[i][1])
+                print "           \"NumOfUE\": %d," % int(mme_status[i][2])
+                print "           \"ServedGummies\": %d," % int(mme_status[i][3])
+                print "           \"RelateiveMMECapacity\": %d" % int(mme_status[i][4])
+                if (i+1) == active_mme :
+                   print "       }"
+                else:
+                   print "       },"
+            print "   ]"
+    else:
+        print "   \"active\": %d" % (active_mme)
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def isProcessRunning(processname):
+    tmp = os.popen("ps -A").read()
+    proccount = tmp.count(processname)
+    if proccount > 0:
+        return True
+    return False
+
+def read_cell_status():
+    global enb_cell1_enable, ant1_tx_atten, ant2_tx_atten
+
+    enb_cell1_enable = '0'
+    try:
+        # create tempoary CLI command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_GET_CELL_ENABLE);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'InternetGatewayDevice':
+                value = temp[6].split('=')
+                value[0] = value[0].replace(" ","")
+                value[1] = value[1].replace(" ","")
+                if value[0] == 'X_VENDOR_CELL1_ENABLE':
+                    enb_cell1_enable = value[1]
+
+        # remove tempoary CLI command file
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An OS error occured during the execution of the cell status command.")
+    except:
+        report_error("An error occured during the execution of the cell status command.")
+
+def set_cell_status(enable):
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        if enable == '1':
+            tn.write(CLI_CELL_ON);
+        else:
+            tn.write(CLI_CELL_OFF);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        time.sleep(10)
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An OS error occured during the execution of the cell status command.")
+    except:
+        report_error("An error occured during the execution of the cell status command.")
+
+def read_gps_status():
+    prc_state = 0
+    try:
+        # GPS Status
+        prc_state = isProcessRunning(GPS_MON_PROC)
+        if not prc_state:
+            cmdline = 'echo "Not working GPS monitor ..." >' + GPS_STS_FILE
+        elif os.path.exists('/spico/running/logs/gps_monitor.log'):
+            cmdline = 'tail -n 1 /spico/running/logs/gps_monitor.log >' + GPS_STS_FILE
+        else:
+            cmdline = 'echo "No GPS monitor Log" >' + GPS_STS_FILE
+        proc = subprocess.Popen(cmdline,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+        )
+        # IEEE1588 Status
+        prc_state = isProcessRunning(IEEE1588_MON_PROC)
+        if not prc_state:
+            cmdline1 = 'echo "Not working IEEE1588 monitor ..." >' + IEEE1588_STS_FILE
+        elif os.path.exists('/spico/running/logs/ieee1588_mon.log'):
+            cmdline1 = 'tail -n 3 /spico/running/logs/ieee1588_mon.log >' + IEEE1588_STS_FILE
+        else:
+            cmdline1 = 'echo "No IEEE1588 monitor Log" >' + IEEE1588_STS_FILE
+        proc = subprocess.Popen(cmdline1,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+        )
+
+    except OSError:
+        report_error("An OS error occured during the execution of the gps status command.")
+    except:
+        report_error("An error occured during the execution of the gps status command.")
+
+def read_afe_atten():
+    global enb_cell1_enable, ant1_tx_atten, ant2_tx_atten
+
+    ant1_tx_atten = '0'
+    ant2_tx_atten = '0'
+    try:
+        # create tempoary CLI command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_GET_ANT_ATTEN);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'InternetGatewayDevice':
+                value = temp[9].split('=')
+                value[0] = value[0].replace(" ","")
+                value[1] = value[1].replace(" ","")
+                if value[0] == 'X_VENDOR_ANTENNA_PORT1_TX_ATTEN':
+                    ant1_tx_atten = str(float(value[1]) / 10)
+                elif value[0] == 'X_VENDOR_ANTENNA_PORT2_TX_ATTEN':
+                    ant2_tx_atten = str(float(value[1]) / 10)
+
+        # remove tempoary CLI command file
+        os.remove(tmpcmd)
+    except OSError:
+        report_error("An OS error occured during the execution of the afe atten command.")
+    except:
+        report_error("An error occured during the execution of the afe atten command.")
+
+def set_afe_atten(index, att):
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        atten = int(float(att) * 10);
+        if index == 0:
+            tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT1_TX_ATTEN ' + str(atten) + '\n');
+        elif index == 1:
+            tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT2_TX_ATTEN ' + str(atten) + '\n');
+        else:
+            tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT1_TX_ATTEN ' + str(atten) + '\n');
+        tn.close()
+
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        time.sleep(1)
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An OS error occured during the execution of the antenna atten command.")
+    except:
+        report_error("An error occured during the execution of the antenna atten command.")
+
+def set_ant_enable(index, en):
+    try:
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        if index == 0:
+            if en == 0:
+                tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT1_ENABL 0\n');
+            else:
+                tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT1_ENABL 1\n');
+        elif index == 1:
+            if en == 0:
+                tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT2_ENABL 0\n');
+            else:
+                tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT2_ENABL 1\n');
+        else:
+            if en == 0:
+                tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT1_ENABL 0\n');
+            else:
+                tn.write(CLI_ANT_CMD + 'X_VENDOR_ANTENNA_PORT1_ENABL 1\n');
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+
+        time.sleep(10)
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An OS error occured during the execution of the antenaa set command.")
+    except:
+        report_error("An error occured during the execution of the antenna set command.")
+   
+def read_antenna_power():
+    global ant1_en, ant2_en, ant1_pwr, ant2_pwr
+    try:
+        proc = subprocess.Popen(SHELL_CMD_PA_POWER,
+            shell=True,
+            stdin=subprocess.PIPE,
+		    stdout=subprocess.PIPE
+            )
+
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            value = line.split(':')
+            if 'PA 0' in value[0]:
+                ant1_pwr = value[1]
+                temp = value[0].split('(')
+                onoff = temp[1].split(')')
+                ant1_en = onoff[0]
+            elif 'PA 1' in value[0]:
+                ant2_pwr = value[1]
+                temp = value[0].split('(')
+                onoff = temp[1].split(')')
+                ant2_en = onoff[0]
+    except OSError:
+        report_error("An OS error occured during the execution of the antenna status command.")
+    except:
+        report_error("An error occured during the execution of the antenna status command.")
+
+def read_antenna_vswr():
+    global ant1_vswr, ant2_vswr
+    try:
+        proc = subprocess.Popen(SHELL_CMD_PA_VSWR,
+            shell=True,
+            stdin=subprocess.PIPE,
+		    stdout=subprocess.PIPE
+            )
+
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            value = line.split(':')
+            if 'PA 0' in value[0]:
+                ant1_vswr = value[1]
+            elif 'PA 1' in value[0]:
+                ant2_vswr = value[1]
+    except OSError:
+        report_error("An OS error occured during the execution of the antenna status command.")
+    except:
+        report_error("An error occured during the execution of the antenna status command.")
+
+def read_antenna_status():
+    read_antenna_power()
+    read_antenna_vswr()
+
+def read_s1ap_status():
+    global active_mme
+    try:
+        # create tempoary CLI command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_GET_S1AP_STATUS);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+        i = 0
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            temp = line.split('.')
+            if temp[0] == 'Show':
+                value = temp[4].split('=')
+                value[0] = value[0].replace(" ","")
+                value[1] = value[1].replace(" ","")
+                if value[0] == 'ActiveMME':
+                    active_mme = int(value[1])
+                if active_mme > 0:
+                    if value[0] == 'MMEId':
+                        mme_status[i][0] = int(value[1])
+                    if value[0] == 'MMEName':
+                        mme_status[i][1] = value[1]
+                    if value[0] == 'NumberofActiveUE':
+                        mme_status[i][2] = int(value[1])
+                    if value[0] == 'NumberofServedGUMMEIs':
+                        mme_status[i][3] = int(value[1])
+                    if value[0] == 'RelativeMMECapacity':
+                        mme_status[i][4] = int(value[1])
+                        i = i+1
+
+        # remove tempoary CLI command file
+        os.remove(tmpcmd)
+
+    except OSError:
+        report_error("An OS error occured during the execution of the s1ap status command.")
+    except:
+        report_error("An error occured during the execution of the s1ap status command.")
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'status.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/status =================================")
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and 'verified' in query:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the status")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+if "cmd" in query and query['cmd'] in ['radio', 'simradio', 'cell', 'gps', 'antenna', 's1ap']:
+    try:
+        if query['cmd'] == 'radio':
+            print "Content-type: application/json"
+            print
+            if not os.path.exists("/etc/radio/config"):
+                if os.path.exists("/etc/radio/2x2-2xLTE20-SC-JESD3b-SD-AIDlpbk"):
+                    os.symlink("2x2-2xLTE20-SC-JESD3b-SD-AIDlpbk", "/etc/radio/config")
+                elif os.path.exists("/etc/radio/SC-FDD-LTE20-ZIF"):
+                    os.symlink("SC-FDD-LTE20-ZIF", "/etc/radio/config")
+            radio = rfsdk.Radio("LTE")
+            print radio.pprint(radio.radio_status(full=True))
+        elif query['cmd'] == 'simradio':
+            print "Content-type: application/json"
+            print
+            if not os.path.exists("/etc/radio/config"):
+                if os.path.exists("/etc/radio/2x2-2xLTE20-SC-JESD3b-SD-AIDlpbk"):
+                    os.symlink("2x2-2xLTE20-SC-JESD3b-SD-AIDlpbk", "/etc/radio/config")
+                elif os.path.exists("/etc/radio/SC-FDD-LTE20-ZIF"):
+                    os.symlink("SC-FDD-LTE20-ZIF", "/etc/radio/config")
+            radio = rfsdk.Radio("LTE")
+            print radio.pprint(radio.radio_status(full=False))
+        elif query['cmd'] == 'cell':
+            read_cell_status()
+            read_afe_atten()
+            report_status('Cell Status update')
+        elif query['cmd'] == 'gps':
+            read_gps_status()
+            report_gps_status('GPS Status update')
+        elif query['cmd'] == 'antenna':
+            read_antenna_status()
+            report_antenna_status('Antenna Status update')
+        elif query['cmd'] == 's1ap':
+            read_s1ap_status()
+            report_s1ap_status('S1AP Status')
+        else:
+            report_error("This should never happen. Please report that there is a bug in the 'status' CGI script.")
+    except KeyboardInterrupt:
+        report_error("The execution of the status command timed out after 30 seconds.")
+    except:
+        report_error("An error occured during the execution of the status command.")
+
+elif "cellEnable" in query:
+    enb_cell1_enable = query['cellEnable']
+    set_cell_status(enb_cell1_enable)
+    report_status('Cell Enable chanaged')
+elif "tx1Atten" in query:
+    ant1_tx_atten = query['tx1Atten']
+    set_afe_atten(0, ant1_tx_atten)
+    report_status('AFE Atten1 changed')
+elif "tx2Atten" in query:
+    ant2_tx_atten = query['tx2Atten']
+    set_afe_atten(1, ant2_tx_atten)
+    report_status('AFE Atten2 changed')
+elif "ant1En" in query:
+    ant1_en_set = query['ant1En']
+    set_ant_enable(0, int(ant1_en_set))
+    report_status('Antenna1 changed')
+elif "ant2En" in query:
+    ant2_en_set = query['ant2En']
+    set_ant_enable(1, int(ant2_en_set))
+    report_status('Antenna2 changed')
+else:
+    report_error("You must specify a valid command for the Status.")
+
+logging.shutdown()

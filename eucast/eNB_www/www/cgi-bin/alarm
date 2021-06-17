@@ -1,0 +1,189 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+import os
+import sys
+import logging
+import json
+import os.path
+import filecmp
+import shutil
+import subprocess
+import csv
+import tempfile
+
+import session
+
+WWW_LOG_DIR = '/var/log/www/'
+
+ENB_ALAM_LOG = "/spico/running/logs/AlarmLog.csv"
+ALARM_LOG_FILE = "/srv/www/data/AlarmLog.csv"
+CLI_ALARM_CMD='Set OAM_USER_INTF_RESP_TIMEOUT 5\n' \
+                'Show Alarm CurrentAlarm\n'
+CURRENT_ALARM_FILE = "/srv/www/data/CurrentAlarm.csv"
+
+alarm_cnt = 0
+#L = [[0 for cols in range(m)]for rows in range(n)]
+alarm_list = [[0 for cols in range(11)] for rows in range(100)]
+
+def report_success(alarm_list, message):
+    global alarm_cnt
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    if alarm_cnt > 0:
+        print "   \"alarmCount\": %d," % (alarm_cnt)
+        for index in range(0, alarm_cnt):
+            print "    \"%d\": {" % (index)
+            print "        \"identifier\": \"%s\"," % (alarm_list[index][0])
+            print "        \"raisedTime\": \"%s\"," % (alarm_list[index][1])
+            print "        \"changedTime\": \"%s\"," % (alarm_list[index][2])
+            print "        \"managedObject\": \"%s\"," % (alarm_list[index][3])
+            print "        \"eventType\": \"%s\"," % (alarm_list[index][4])
+            print "        \"cause\": \"%s\"," % (alarm_list[index][5])
+            print "        \"problem\": \"%s\"," % (alarm_list[index][6])
+            print "        \"severity\": \"%s\"," % (alarm_list[index][7])
+            print "        \"addText\": \"%s\"," % (alarm_list[index][8])
+            print "        \"addInfo\": \"%s\"," % (alarm_list[index][9])
+            print "        \"location\": \"%s\"" % (alarm_list[index][10])
+            if index == (alarm_cnt - 1) :
+                print "    }"
+            else:
+                print "    },"
+    else:
+        print "   \"alarmCount\": 0"
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def refresh_alarm_history():
+    if os.path.exists(ENB_ALAM_LOG):
+        if os.path.exists(ALARM_LOG_FILE):
+            if filecmp.cmp(ENB_ALAM_LOG, ALARM_LOG_FILE) == False:
+                shutil.copy(ENB_ALAM_LOG, ALARM_LOG_FILE) 
+                logging.info("Alaram File was changed!!")
+            else:
+                logging.info("Alaram File was not changed!!")
+            os.chmod(ALARM_LOG_FILE, 0o644)
+        else:
+            logging.warning("Alarm File %s not exit!!", ALARM_LOG_FILE)
+            shutil.copy(ENB_ALAM_LOG, ALARM_LOG_FILE) 
+    else:
+        logging.warning("Alarm File %s not exit!!", ENB_ALAM_LOG)
+
+def update_current_alarm():
+    global alarm_cnt
+    global alarm_list
+    
+    try:
+        # create temporary CLI command file
+        tmpcmd = tempfile.mktemp()
+        tn  = open(tmpcmd, 'w')
+        tn.write(CLI_ALARM_CMD);
+        tn.close()
+
+        proc = subprocess.Popen('cd /spico/running/L3; ./lte_oamCli -f %s' % tmpcmd,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )
+        cnt = 0
+        lines = proc.stdout.readlines()
+        for line in lines:
+            line = line.rstrip()
+            if 'InternetGatewayDevice' in line:
+                value = line.split('=')
+                value[0] = value[0].replace(" ","")
+                value[0] = value[0].replace("\t","")
+                value[1] = value[1].strip()
+                value[1] = value[1].replace("\t","")
+                if 'AlarmIdentifier' in value[0]:
+                    alarm_list[alarm_cnt][0] = value[1]
+                    alarm_cnt = alarm_cnt + 1
+                elif 'AlarmRaisedTime' in value[0]:
+                    alarm_list[cnt][1] = value[1]
+                elif 'AlarmChangedTime' in value[0]:
+                    alarm_list[cnt][2] = value[1]
+                elif 'ManagedObjectInstance' in value[0]:
+                    alarm_list[cnt][3] = value[1]
+                elif 'EventType' in value[0]:
+                    alarm_list[cnt][4] = value[1]
+                elif 'ProbableCause' in value[0]:
+                    alarm_list[cnt][5] = value[1]
+                elif 'SpecificProblem' in value[0]:
+                    alarm_list[cnt][6] = value[1]
+                elif 'PerceivedSeverity' in value[0]:
+                    alarm_list[cnt][7] = value[1]
+                elif 'AdditionalText' in value[0]:
+                    alarm_list[cnt][8] = value[1]
+                elif 'AdditionalInformation' in value[0]:
+                    alarm_list[cnt][9] = value[1]
+                elif 'X_VENDOR_ALARM_LOC' in value[0]:
+                    alarm_list[cnt][10] = value[1]
+                    cnt = cnt + 1
+
+        # remove temporary CLI command file
+        os.remove(tmpcmd)
+
+        # write Current Alarm csv file
+        f = open(CURRENT_ALARM_FILE, 'w')
+        wr = csv.writer(f)
+        wr.writerow(['AlmID', 'RaisedTime', 'ChangedTime', 'ProbableCause', 'Problem', 'Severity','AdditionalText', 'Location'])
+        wr.writerow(['-----', '----------', '-----------', '-------------', '-------', '--------','--------------', '--------'])
+
+        for cnt in range(0, alarm_cnt):
+            wr.writerow([alarm_list[cnt][0], alarm_list[cnt][1], alarm_list[cnt][2], alarm_list[cnt][5], alarm_list[cnt][6], alarm_list[cnt][7], alarm_list[cnt][8], alarm_list[cnt][10]])
+
+        if alarm_cnt == 0:
+            wr.writerow(['No Alarm Entries!!!'])
+        else:
+            wr.writerow(['Total Alarm Entries', alarm_cnt])
+        f.close()
+        os.chmod(CURRENT_ALARM_FILE, 0o644)
+
+        report_success(alarm_list, "Current Alarm was gathered.")
+
+    except OSError:
+        logging.error("An OS error occured during the execution of the alarm command.")
+    except:
+        logging.error("An error occured during the execution of the alarm command.")
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'alarm.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/alarm =================================")
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and 'verified' in query:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the alarm")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+if "cmd" in query and query['cmd'] in ['refresh', 'current', 'history']:
+    if query['cmd'] == 'refresh':
+        refresh_alarm_history()
+        update_current_alarm()
+    elif query['cmd'] == 'current':
+        update_current_alarm()
+    elif query['cmd'] == 'history':
+        refresh_alarm_history()
+
+logging.shutdown()

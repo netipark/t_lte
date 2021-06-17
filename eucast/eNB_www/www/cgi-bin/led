@@ -1,0 +1,127 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+import os
+import sys
+import logging
+import rfsdk
+import json
+import time
+import os.path
+import filecmp
+import shutil
+import re
+import subprocess
+
+import session
+
+WWW_LOG_DIR = '/var/log//www/'
+
+pwrLed=''
+bhLed=''
+stsLed=''
+alm1Led=''
+alm2Led=''
+syncLed=''
+stsLed=''
+
+def report_status(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    print "   \"led\": {"
+    print "       \"power\": \"%s\"," % (pwrLed)
+    print "       \"backhaul\": \"%s\"," % (bhLed)
+    print "       \"status\": \"%s\"," % (stsLed)
+    print "       \"alarm1\": \"%s\"," % (alm1Led)
+    print "       \"alarm2\": \"%s\"," % (alm2Led)
+    print "       \"sync\": \"%s\"" % (syncLed)
+    print "   }"
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def read_led_status():
+    global pwrLed, bhLed, stsLed, alm1Led, alm2Led, syncLed
+
+    try:
+        if os.path.exists('/usr/sbin/show_fpga_reg'):
+            # LED On/Off
+            proc = subprocess.Popen('/usr/sbin/show_fpga_reg 3',
+                shell=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE
+                )
+            line = proc.stdout.readline()
+            onoff = int(line, 16)
+            pwrLed = onoff >> 5 & 1
+            bhLed = onoff >> 4 & 1
+            stsLed = onoff >> 3 & 1
+            alm2Led = onoff >> 2 & 1
+            alm1Led = onoff >> 1 & 1
+            syncLed = onoff & 1
+
+            # LED blinking
+            proc = subprocess.Popen('/usr/sbin/show_fpga_reg 19',
+                shell=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE
+                )
+            line = proc.stdout.readline()
+            blink = int(line, 16)
+            stsBlink = blink >> 6 & 3
+            alm2Blink = blink >> 4 & 3
+            alm1Blink = blink >> 2 & 3
+            synBlink = blink & 3
+
+            pwrLed *= 4 
+            bhLed *= 4
+            if stsLed:
+                stsLed += stsBlink
+            if alm2Led:
+                alm2Led += alm2Blink
+            if alm1Led:
+                alm1Led += alm1Blink
+            if syncLed:
+                syncLed += synBlink
+
+            report_status('LED Status update')
+
+    except OSError:
+        report_error("An OS error occured during the execution of the LED status command.")
+    except:
+        report_error("An error occured during the execution of the LED status command.")
+
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'status.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/led =================================")
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and 'verified' in query:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the alarm")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+read_led_status()
+
+logging.shutdown()

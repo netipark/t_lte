@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# We determine the FPGA revision, this is in order to figure out which
+# radio scripts to invoke.
+#
+RADIO_TOOLS=/home/root/radio_tools
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+(sleep 5;halt -t now) </dev/null >/dev/null 2>&1 &
+echo Content-type: application/json
+echo
+echo "{"
+echo "   \"command\": \"magic\","
+echo "   \"status\": 0"
+echo "}"

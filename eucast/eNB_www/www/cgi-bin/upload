@@ -1,0 +1,91 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import  cgi, os, sys
+import shutil
+import  cgitb; cgitb.enable()
+
+UPLOAD_DIR = '../upload/'
+PKG_INSTALL_DIR= '/spico_mgmt/'
+up_fn=''
+KITTING_DIR= '/spico/config/'
+KITTING_FILE_NAME='eNodeB_systemsetup.cfg'
+KITTING_FILE=KITTING_DIR+KITTING_FILE_NAME
+
+# get the version from filename
+def get_file_version(fname):
+    if len(fname) < 24:
+        return
+
+    if 'EU_SPICO' in fname:
+        # EU_SPICO_01_00_00.tar.gz
+        ver=fname.split('_')
+        pat=ver[4].split('.')
+        major = ver[2]
+        minor = ver[3]
+        patch = pat[0]
+        version = major+'_'+minor+'_'+patch
+        return(version)
+    else:
+        return
+
+# Upload the file
+def save_uploaded_file():
+    form = cgi.FieldStorage()
+    if not form.has_key('file'):
+        return
+    form_file = form['file']
+    if not form_file.file:
+        return
+    if not form_file.filename:
+        return
+
+    uploaded_file_path = os.path.join(UPLOAD_DIR, os.path.basename(form_file.filename))
+    with file(uploaded_file_path, 'wb') as fout:
+        while True:
+            chunk = form_file.file.read(100000)
+            if not chunk:
+                break
+            fout.write (chunk)
+
+    return form_file.filename
+
+# Main
+print 'Content-Type: text/html; charset=UTF-8'
+print
+print '''
+   <html>
+    <head>
+    </head>
+   <body>
+   '''
+up_fn = save_uploaded_file()
+# move to install directory
+if up_fn == None:
+    print '<h3>파일(%s)을 찾지못하였습니다.</h3>' % up_fn
+else:
+    version = get_file_version(up_fn)
+    if version == None:
+        fn_type = up_fn.split('.')
+        #if fn_type[0] == 'eNodeB_systemsetup':
+        if 'eNodeB_systemsetup' in fn_type[0] :
+            if os.path.exists(KITTING_FILE):
+                if os.path.exists(KITTING_FILE+'.bak'):
+                    os.remove(KITTING_FILE+'.bak')
+                shutil.move(KITTING_FILE, KITTING_FILE+'.bak')
+            shutil.move(UPLOAD_DIR+up_fn, KITTING_FILE)
+            print '<h3 id="upload_message">설치정보 파일업로드 완료</h3>'
+	    print '<button type="button" id="install_pkg" style="font-size: 10px;" onclick="upload_cmd(\'%s\');" >설정파일 적용</button>' % ("confApply")
+            print '<div id="install_message"></div>'
+        else:
+            print '<h3 id="upload_message">/srv/www/upload/%s 파일업로드 완료</h3>' % up_fn 
+    else:
+        if os.path.exists(PKG_INSTALL_DIR+up_fn):
+            os.remove(PKG_INSTALL_DIR+up_fn)
+        shutil.move(UPLOAD_DIR+up_fn, PKG_INSTALL_DIR)
+        print '<h3 id="upload_message">PKG 파일(버전 %s)업로드 완료</h3>' % version
+	print '<button type="button" id="install_pkg" style="font-size: 10px;" onclick="run_install(\'%s\');" >PKG %s 설치</button>' % (version, version)
+        print '<div id="install_message"></div>'
+print '''
+    </body>
+    </html>
+    '''

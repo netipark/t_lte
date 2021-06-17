@@ -1,0 +1,152 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2020 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+
+import os
+import sys
+import logging
+import json
+import time
+import os.path
+import shutil
+import subprocess
+import tempfile
+import urllib
+
+import session
+
+WWW_LOG_DIR = '/var/log/www/'
+WHITE_LIST_FILE='/spico/config/whitelist.cfg'
+WHITE_LIST_CMD='/spico_mgmt/spico_whitelist.sh'
+
+white_cnt = 0
+white_list = ["255.255.255.255/24"]*100
+
+def report_white_list(white_list, message):
+    global white_cnt
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    if white_cnt > 0 :
+        print "    \"whCount\": %d," % (white_cnt)
+        print "    \"list\": ["
+        for index in range(0, white_cnt):
+            print "    {"
+            print "    \"index\": %d," % (index+1)
+            print "    \"address\": \"%s\"" % (white_list[index])
+            if index == (white_cnt - 1) :
+                print "    }"
+            else:
+                print "    },"
+        print "    ]"
+    else:
+        print "   \"whCount\": 0"
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+def read_white_list():
+    global white_cnt
+    if not os.path.exists(WHITE_LIST_FILE):
+       white_cnt = 0
+    else:
+        f = open(WHITE_LIST_FILE, 'r')
+        lines = f.readlines()
+        f.close()
+        white_cnt = 0
+        for line in lines:
+            if not '#' in line[0] and len(line) > 6:
+                white_list[white_cnt] = line.rstrip('\n')
+                white_cnt += 1
+
+def config_white_list():
+    global white_cnt
+    try:
+        txt="# Accesss List\n"
+        tmpAccess = tempfile.mktemp()
+        tn = open(tmpAccess, 'w')
+        white_cnt = 0
+        for index in range(0, 10):    
+            if len(white_list[index]) :
+                white_cnt += 1
+                txt += white_list[index] + "\n"
+        tn.write(txt);
+
+        tn.close()
+
+        # move temporary file to the configuation file
+        shutil.move(tmpAccess, WHITE_LIST_FILE)
+
+    except OSError:
+        report_error("An error occured during the execution of the apply whitelist1.")
+    except:
+        report_error("An error occured during the execution of the apply whitelit.")
+
+def apply_white_list():
+    subprocess.call(WHITE_LIST_CMD)
+    return 0
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'whitelist.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/whitelist =================================")
+
+read_white_list()
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and query['verified']:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the whitelist")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+if "cmd" in query and query['cmd'] in ['read', 'apply']:
+    try:
+        if query['cmd'] == 'read':
+            report_white_list(white_list, "Current White list was gathered.")
+        elif query['cmd'] == 'apply':
+            apply_white_list()
+            report_white_list(white_list, "White list was applied.")
+        else:
+            report_error("This should never happen. Please report that there is a bug in the 'whitelist' CGI script.")
+    except KeyboardInterrupt:
+        report_error("The execution of the status command timed out after 30 seconds.")
+    except:
+        report_error("An error occured during the execution of the whitelist command.")
+
+elif "ACL1" in query and "ACL2" in query and "ACL3" in query and "ACL4" in query and "ACL5" in query and "ACL6" in query and "ACL7" in query and "ACL8" in query and "ACL9" in query and "ACL10" in query:
+    white_list[0] = urllib.unquote(query['ACL1'].encode('ascii')).decode('utf-8')
+    white_list[1] = urllib.unquote(query['ACL2'].encode('ascii')).decode('utf-8')
+    white_list[2] = urllib.unquote(query['ACL3'].encode('ascii')).decode('utf-8')
+    white_list[3] = urllib.unquote(query['ACL4'].encode('ascii')).decode('utf-8')
+    white_list[4] = urllib.unquote(query['ACL5'].encode('ascii')).decode('utf-8')
+    white_list[5] = urllib.unquote(query['ACL6'].encode('ascii')).decode('utf-8')
+    white_list[6] = urllib.unquote(query['ACL7'].encode('ascii')).decode('utf-8')
+    white_list[7] = urllib.unquote(query['ACL8'].encode('ascii')).decode('utf-8')
+    white_list[8] = urllib.unquote(query['ACL9'].encode('ascii')).decode('utf-8')
+    white_list[9] = urllib.unquote(query['ACL10'].encode('ascii')).decode('utf-8')
+    logging.info("1: "+ white_list[0] +", 2: " + white_list[1] + ", 3: "+ white_list[2] + ", 4: "+ white_list[3] +", 5: " + white_list[4] + ", 6: "+ white_list[5] +", 7: " + white_list[6] + ", 8: "+ white_list[7] +", 9: " + white_list[8] + ", 10: " + white_list[9])
+    config_white_list()
+    report_white_list(white_list, "White list was configured.")
+
+else:
+    report_error("You must specify a valid command for the whitelist.")
+
+logging.shutdown()

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+	<title>LTE eNodeB Management Help</title>
+	<script type="text/javascript" src="javascripts/prototype.js"></script>
+	<link rel="icon" href="eucasticon.ico" type="image/x-icon"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+	<style>
+		table {
+			border-collapse: collapse;
+		}
+		table, th {
+			padding: 10px;
+			align: center;
+			text-align: center;
+			background: #ccc;
+			border: 1px solid black;
+		}
+		table, td {
+			padding: 10px;
+			align: center;
+			text-align: center;
+			background: #efefef;
+			border: 1px solid #ccc;
+		}
+		/* switch box */
+		.switch {
+			position: relative;
+			display: inline-block;
+			width: 50px;
+			height: 24px;
+		}
+		.switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #ccc;
+			-webkit-transition: .4s;
+			transition: .4s;
+		}
+		.slider:before {
+			position: absolute;
+			content: "";
+			height: 16px;
+			width: 16px;
+			left: 4px;
+			bottom: 4px;
+			background-color: white;
+			-webkit-transition: .4s;
+			transition: .4s;
+		}
+		input:checked + .slider {
+			background-color: #2196F3;
+		}
+		input:focus + .slider {
+			box-shadow: 0 0 1px #2196F3;
+		}
+		input:checked + .slider:before {
+			-webkit-transform: translateX(26px);
+			-ms-transform: translateX(26px);
+			transform: translateX(26px);
+		}
+		/* Rounded sliders */
+		.slider.round {
+			border-radius: 34px;
+		}
+		.slider.round:before {
+			border-radius: 50%;
+		}
+	</style>
+</head>
+
+<body style='display: block'>
+	<h1 style="position: relative;">
+		LTE eNodeB Management Help
+	</h1>
+	<hr>
+	<span style="position: absolute; top:20px; right:20px; text-align:right;">
+		<button "button" id='closeNbr' onclick="close_help()">Close</button>
+	</span>
+	<!-- Main Help -->
+	<section id="helpHome" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">Main Page</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_main.png">
+			<p>
+				&#8227; On the main screen, you can check the status of the entire base station.<br/>
+				&#8227; Please login to use all features.<br/>
+				&#9786; To login, enter your user and password and click the Login button.<br/>
+				<img align="center" style="height:auto; width:500px;" src="images/help/help_login_before.png"><br/>
+				&#9786; When you complete the login, it will be displayed as below and you can move to other pages freely by left and right keys.<br/>
+				<img align="center" style="height:auto; width:500px;" src="images/help/help_login_after.png"><br/>
+				&#8227; The overall status of the base station can be checked by the colored icon on the status bar.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Radio State<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Grean On: Radio output is On.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green Blinking: Initialization in progress to emit radio power.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green Off: Radio output is Off.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Service State<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green On: LTE service is On.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green Off: LTE service is Off.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Alarm State<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green On: No alarm raised.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Red On: Alarm raised.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Sync State<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green On: GPS Lock.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green Blinking: GPS Tracking.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green Off: GPS Unlock.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; GPS status can be checked in detail in the GPS status bar.<br/>
+				<img align="center" style="position:relative; left:50px; height:auto; width:600px;" src="images/help/help_main_gps.png"><br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Link State<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Green On: Backhaul Link Staus, (IOPS) Connected Pulic Network.<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; Red On: (IOPS) Conneted Local Network<br/>
+				&#8227; At the bottom of the page, checkbox for additional information.<br/>
+				<img align="center" style="position:relative; left:50px; height:auto; width:300px;" src="images/help/help_kitting_checked.png"><br/>
+				&nbsp;&nbsp;&nbsp;&#9733; The slide for eNodeB Kitting can be moved by checking the "kitting Enable(last slide)" checkbox in the main window..<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; When alarms occurred you can check the details of the alarm by checking the "Alarm Bar Enable" checkbox..<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Config Help -->
+	<section id="helpConfig" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">eNodeB Basic Inforamtion</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_basic_info.png">
+			<p>
+				&#8227; In eNodeB Basic Information, you can check or change the basic settings of eNodeB.<br/>
+				&#8227; You can check eNodeB's IP address, operating frequency, ECI(CellIdentity), PCI(PhyCellID),<br/>
+				&nbsp;&nbsp;&nbsp; and you can check the neighbor cell information by clicking the neighbor cell button.<br/>
+				&nbsp;&nbsp;&nbsp; A new window will pop up with the neighbor cell information as shown below.<br/>
+				<img align="center" style="height:auto; width:300px;" src="images/help/help_config_nbr.png"><br/>
+				&#8227; Also, if eNodB cannot be connected to the EMS, it can be used the internal parameter of eNodeB.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; You can change the frequency, ECP, or PCI, etc.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; To apply, please click "Save"&#8594;"Apply(Restart)" button sequentially.<br/>
+				&#8227; If you want to restart eNodeB without any changing the settings, click the "System Restart" button..<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Alarm Help -->
+	<section id="helpAlarm" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">eNodeB Alarm Information</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_alarm.png">
+			<p>
+				&#8227; In eNodeB Aalrm Information, you can check the current alarm of eNodeB and also chek the alarm history.<br/>
+				&#8227; To refresh the alarm information, pls click "Alarm Refresh" button.<br/>
+				&#8227; Also you can save the current alarm information and the alarm history.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; To save the current alarm information, pls click "Save Current Alarm" button.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; To save the alarm history, pls click "Save Alarm History" button.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; The files are will be saved as csv file.<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Status Help -->
+	<section id="helpStatus" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">eNodeB Radio Status</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_radio.png">
+			<p>
+				&#8227; In eNodeB Radio Status, you can check the radio transmission status of eNodeB.
+				You can stop or start the radio transmisstion and change the attenuateion to decrease the output power.<br/>
+				&#8227; To refresh the radio status, pls click "Status Refresh" button.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; The information displayed in "Status" is the current radio output status..<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; The radio output status will be displayed "Reset", "Initialized", "ON", or "OFF"<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; It is a status that radio transmission is available when radio output status is displayed as "ON".<br/>
+				&#8227; To change the cell status, enter the values in the table below and click the Set button.<br/>
+				<img align="center" style="height:auto; width:500px;" src="images/help/help_radio_cell_conf.png"><br/>
+				&nbsp;&nbsp;&nbsp;&#9786; The "Set" button is activated by inputting the changed value for each item..<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; To turn on/off radio transmission, enter 1(On)) or 0(off) as the “Enable” item.<br/>
+				&nbsp;&nbsp;&nbsp;&#9786; To adjust the radio power level, enter the attenuation value for each antenna.<br/>
+			</p>
+		</div>
+	</section>
+	<!-- Eucast Help -->
+	<section id="helpTrademark" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">(주) 유캐스트</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_eucast_log.png">
+			<p>&#8227; Introduce EUCAST.</p>
+		</div>
+	</section>
+	<!-- Kitting Help -->
+	<section id="helpKitting" style="overflow:auto; height:550px; display:none;">
+		<div style="text-align:left;">
+			<h3 style="position: relative;">eNodeB Kitting Parameter</h3>
+			<img align="center" style="height:300px; width:auto;" src="images/help/help_kitting.png">
+			<p>
+				&#8227; The kitting parameter window is for setting up the information necessary for installation when installing eNodeB.<br/>
+				&#8227; The kitting parameter window can be moved by checking the "Kitting Enable(last slide)" checkbox in the main window.<br/>
+				<img align="center" style="position:relative; left:50px; height:auto; width:300px;" src="images/help/help_kitting_checked.png"><br/>
+				&#8227; The main parameters to be set when installing eNodeB are as follows:.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; EMS URL: URL of EMS to be registerd eNodeB<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv4 case: http://192.168.61.8:48708<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv6 case: http://<span style="color:red;">[</span>2001:db8:1000:baba:ae16:2dff:fe8c:179d<span style="color:red;">]</span>:48708<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; IPAddress: eNodeB IP address<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv4 case: 192.168.61.141<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv6 case: 2001:db8:1000:baba:cc4:7e00:100:742 혹은 2001:db8:1000:baba:cc4:7e00:100:742<span style="color:red;">/120</span><br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Default Gateway: eBodeB Gateway Address<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv4 case: 192.168.61.1<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp; IPv6 case: 2001:db8:1000:baba::1<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; Subnt Mask(in case of IPv4): eNodeB IP Subnet Maske(eg: 255.255.255.0)<br/>
+				&#8227; Other parameters can be set according to the installation network environment.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; On VLAN network environment, configure VLAN parameters.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; On IPsec network environment, configure IPsec parameters.<br/>
+				&nbsp;&nbsp;&nbsp;&#9733; If needed IOPS operation, Rectifier management, or RET mamagement, It should be cofigured the local network parameters. Normally you can use the parameter set as the default.<br/>
+				&#8227; To apply the configured the parameters, please click "Save"&#8594;"Apply"&#8594;"Restart" button sequentially.<br/>
+			</p>
+		</div>
+	</section>
+	<hr>
+	<div class='source' id='help_message'>
+		<a>&#169; EUCAST Co., Ltd. All rights reserved</a>
+	</div>
+
+	<script>
+		var helpIndex = 0;
+
+		var queryString = decodeURIComponent(window.location.search);
+		queryString = queryString.substring(1);
+		var queries = queryString.split("&");
+		for (var i = 0; i < queries.length; i++) {
+			var query = queries[i].split("=");
+			if(query[0] == 'slide') {
+				helpIndex = Number(query[1]);
+			}
+		}
+		showHelp(helpIndex);
+
+		function plusHelp(n) {
+			var sIndex = helpIndex += n;
+
+			if(sIndex < 1) helpIndex = 7;
+			else if(sIndex > 7) helpIndex = 1;
+
+			showHelp(helpIndex);
+		}
+		function currentHelp(n) {
+			showHelp(helpIndex = n);
+		}
+
+		function showHelp(n) {
+			if(n < 1) helpIndex = 7;
+			else if(n > 7) helpIndex = 1;
+
+			// First Hide all help
+			$("helpHome").hide();
+			$("helpConfig").hide();
+			$("helpAlarm").hide();
+			$("helpStatus").hide();
+			$("helpTrademark").hide();
+			$("helpKitting").hide();
+
+			if(helpIndex == 1) { $("helpHome").show(); }
+			else if(helpIndex == 2) { $("helpConfig").show(); }
+			else if(helpIndex == 3) { $("helpAlarm").show(); }
+			else if(helpIndex == 4) { $("helpStatus").show(); }
+			else if(helpIndex == 5) { $("helpTrademark").show(); }
+			else if(helpIndex == 7) { $("helpKitting").show(); }
+			else { $("helpHome").show(); }
+		}
+
+		document.onkeydown = checkKey;
+		function checkKey(e) {
+			e = e || window.event;
+			if (e.keyCode == '37') { // left arrow
+				plusHelp(-1);
+			}
+			else if (e.keyCode == '39') { // right arrow
+				plusHelp(1);
+			}
+		}
+
+		function close_help() {
+			window.close();
+			self.close();
+		}
+	</script>
+</body>
+</html>

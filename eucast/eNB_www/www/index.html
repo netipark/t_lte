@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+	<title>EUCAST LTE eNodeB Management</title>
+	<script type="text/javascript" src="javascripts/prototype.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Page-Enter" content="revealTrans(Duration=**,Transition=?)">
+	<style>
+	</style>
+</head>
+
+<body>
+	<select name="language" id="selectLang" style="position:absolute; right:1px" onchange="select_lang();">
+		<option value="" selected disabled>Language</option>
+		<option value="ko">한국어</option>
+		<option value="en">English</option>
+		<option value="jp">日本語</option>
+	</select>
+	<iframe id="MainFrame" src="index_ko.html" width="90%" height="700" frameborder="0" srolling="auto">
+	</iframe>
+	<script>
+		var curLang = "";
+		var queryString = decodeURIComponent(window.location.search);
+		queryString = queryString.substring(1);
+		var queries = queryString.split("&");
+		for (var i = 0; i < queries.length; i++) {
+			var query = queries[i].split("=");
+			if(query[0] == 'lang') {
+				curLang = query[1];
+			}
+		}
+
+		if(curLang == "") {
+			var userLang = navigator.language || navigator.userLanguage; 
+			// alert ("The language is: " + userLang);
+			if(userLang == 'ko-KR' || userLang == 'ko-kr' || userLang == 'ko') {
+				curLang = "ko";
+			}
+			else if(userLang == 'ja-JP' || userLang == 'ja-jp' || userLang == 'ja') {
+				curLang = "jp";
+			}
+			else {
+				curLang = "en";
+			}
+		}
+		document.getElementById("selectLang").value = curLang;
+
+		function change_lang(lang) {
+			if(lang == "en") {
+				curLang = "en";
+				$('MainFrame').src = "index_en.html";
+			}
+			else if(lang == "jp") {
+				curLang = "jp";
+				$('MainFrame').src = "index_jp.html";
+			}
+			else {
+				curLang = "ko";
+				$('MainFrame').src = "index_ko.html";
+			}
+		}
+
+		function select_lang() {
+			var langSelect = document.getElementById("selectLang");
+			var curLang = langSelect.options[langSelect.selectedIndex].value;
+
+			if(curLang == 'ko') {
+				change_lang('ko');
+			}
+			else if(curLang == 'jp') {
+				change_lang('jp');
+			}
+			else {
+				change_lang('en');
+			}
+		}
+
+		change_lang(curLang);
+	</script>
+</body>
+</html> 

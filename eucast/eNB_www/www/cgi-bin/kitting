@@ -1,0 +1,364 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2018 EUCAST Co, Ltd. - http://www.eu-cast.com/
+#
+import os
+import sys
+import logging
+import time
+import os.path
+import filecmp
+import shutil
+import re
+import subprocess
+import urllib
+
+import session
+ 
+WWW_LOG_DIR = '/var/log/www/'
+
+FS_SPICO = '/spico/'
+ENB_CONFIG_DIR = FS_SPICO + 'config/'                                                                                                
+ENB_MGMT_DIR='/spico_mgmt/'
+
+ENB_CONFIG_FILE = ENB_CONFIG_DIR + 'eNodeB_systemsetup.cfg'
+ENB_TEMP_CONFIG_FILE = '/srv/www/data/' + 'kitting.cfg'
+ENB_CONFIG_UPDATE=ENB_MGMT_DIR + 'spico_config_update.sh'
+
+PKG_INSTALL_DIR='/spico_mgmt/'
+PKG_INSTALL_CMD = PKG_INSTALL_DIR+'spico_install.sh'
+
+enbIP = "0.0.0.0"
+enbNetMask = "0.0.0.0"
+enbGW = "0.0.0.0"
+
+localIfEnable = '0'
+localInterface = 'eth1'
+localIP = '192.168.20.2'
+localNetMask = '255.255.255.0'
+localIPv6 = 'fd21:6a46:397b:4c1d::2/122'
+enableNtpServer = '0'
+
+def report_success(message):
+    logging.info(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 1,"
+    print "   \"ems\": {"
+    print "       \"url\": \"%s\"," % (emsURL)
+    print "       \"user\": \"%s\"," % (emsUser)
+    print "       \"passwd\": \"%s\"" % (emsPass)
+    print "   },"
+    print "   \"network\": {"
+    print "       \"enable\": %d," % int(enbIfEnable)
+    print "       \"ipAddress\": \"%s\"," % (enbIP)
+    print "       \"netMask\": \"%s\"," % (enbNetMask)
+    print "       \"gateway\": \"%s\"" % (enbGW)
+    print "   },"
+    print "   \"ipsec\": {"
+    print "       \"enable\": %d," % int(ipsecEnable)
+    print "       \"SecGWServer1\": \"%s\"," % (SGW1)
+    print "       \"SecGWServer2\": \"%s\"," % (SGW2)
+    print "       \"SecGWServer3\": \"%s\"," % (SGW3)
+    print "       \"rightID\": \"%s\"," % (enbRightID)
+    print "       \"ikePSK\": \"%s\"," % (ikePSK)
+    print "       \"ikeIdDomain\": \"%s\"," % (ikdeIdDomain)
+    print "       \"staticTia\": \"%s\"" % (enbStaticTia)
+    print "   },"
+    print "   \"vlan\": {"
+    print "       \"enable\": %d," % int(vlanEnable)
+    print "       \"vlanId\": \"%s\"" % (vlanID)
+    print "   },"
+    print "   \"local\": {"
+    print "       \"enable\": %d," % int(localIfEnable)
+    print "       \"interface\": \"%s\"," % (localInterface)
+    print "       \"ipAddress\": \"%s\"," % (localIP)
+    print "       \"netMask\": \"%s\"," % (localNetMask)
+    print "       \"ip6Address\": \"%s\"" % (localIPv6)
+    print "   },"
+    print "   \"NtpServerEnable\": %d," % int(enableNtpServer)
+    print "   \"criticalParams\": %d" % int(enableCriticalParams)
+    print "}"
+
+def report_error(message):
+    logging.error(message)
+    print "Content-type: application/json"
+    print
+    print "{"
+    print "   \"status\": 0,"
+    print "   \"message\": \"%s\"" % (message,)
+    print "}"
+
+
+def get_enb_config_value(fname, para):
+    f = open(fname, 'r')
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        line = line.strip('\n')
+        line = line.split('=')
+        if not '#' in line[0] and para == line[0]:
+            return line[1]
+    return ""
+
+def read_conf_file(fname):
+    global emsURL, emsUser, emsPass
+    global enbIfEnable, enbIP, enbNetMask, enbGW
+    global ipsecEnable, SGW1, SGW2, SGW3, enbRightID, ikePSK, ikdeIdDomain, enbStaticTia
+    global vlanEnable, vlanID
+    global localIfEnable, localInterface, localIP, localNetMask, localIPv6
+    global enableNtpServer, enableCriticalParams
+    if not os.path.exists(fname):
+        return
+
+    emsURL = get_enb_config_value(fname, "URL")
+    emsUser = get_enb_config_value(fname, "Username")
+    emsPass = get_enb_config_value(fname, "Password")
+    enbIfEnable = get_enb_config_value(fname, "Enable")
+    if enbIfEnable == "":
+        enbIfEnable = '0'
+    enbIP = get_enb_config_value(fname, "IPInterfaceIPAddress")
+    enbNetMask = get_enb_config_value(fname, "IPInterfaceSubnetMask")
+    enbGW = get_enb_config_value(fname, "X_VENDOR_DEFAULT_GATEWAY")
+    ipsecEnable = get_enb_config_value(fname, "X_VENDOR_SEC_GW_ENABLE")
+    SGW1 = get_enb_config_value(fname, "SecGWServer1")
+    SGW2 = get_enb_config_value(fname, "SecGWServer2")
+    SGW3 = get_enb_config_value(fname, "SecGWServer3")
+    enbRightID = get_enb_config_value(fname, "rightid")
+    ikePSK = get_enb_config_value(fname, "X_VENDOR_IKEPSK")
+    ikdeIdDomain = get_enb_config_value(fname, "X_VENDOR_IKE_ID_DOMAIN")
+    enbStaticTia = get_enb_config_value(fname, "X_VENDOR_StaticTia")
+    vlanEnable = get_enb_config_value(fname, "X_VENDOR_VLAN_ENABLE")
+    vlanID = get_enb_config_value(fname, "X_VENDOR_VLAN_TAG")
+    localIfEnable = get_enb_config_value(fname, "LocalNetworkEnable")
+    if localIfEnable == "":
+        localIfEnable = '0'
+    localInterface = get_enb_config_value(fname, "LocalNetInterface")
+    if localInterface == "":
+        localInterface = 'eth1'
+    localIP = get_enb_config_value(fname, "LocalIPAddress")
+    if localIP == "":
+        localIP = '192.168.20.2'
+    localNetMask = get_enb_config_value(fname, "LocalSubnetMask")
+    if localNetMask == "":
+        localNetMask = '255.255.255.0'
+    localIPv6 = get_enb_config_value(fname, "LocalIPv6Address")
+    if localIPv6 == "":
+        localIPv6 = 'fd21:6a46:397b:4c1d::2/122'
+    enableNtpServer = get_enb_config_value(fname, "NtpServerEnable")
+    if enableNtpServer == "":
+        enableNtpServer = '0'
+    enableCriticalParams = get_enb_config_value(fname, "ENABLE_CRITICAL_PARAMETERS")
+    if enableCriticalParams == "":
+        enableCriticalParams = '0'
+
+def update_enb_config_value(fname, para, value):
+    subprocess.call(['/srv/www/shellscripts/config_value_update.sh', para, value, fname])
+    return value
+
+def update_conf_file(fname):
+    global emsURL, emsUser, emsPass
+    global enbIfEnable, enbIP, enbNetMask, enbGW
+    global ipsecEnable, SGW1, SGW2, SGW3, enbRightID, ikePSK, ikdeIdDomain, enbStaticTia
+    global vlanEnable, vlanID
+    global localIfEnable, localInterface, localIP, localNetMask, localIPv6
+    global enableNtpServer, enableCriticalParams
+    if not os.path.exists(fname):
+        return
+    update_enb_config_value(fname, 'URL', emsURL)
+    update_enb_config_value(fname, 'Username', emsUser)
+    update_enb_config_value(fname, 'Password', emsPass)
+    update_enb_config_value(fname, 'Enable', enbIfEnable)
+    update_enb_config_value(fname, 'IPInterfaceIPAddress', enbIP)
+    update_enb_config_value(fname, 'IPInterfaceSubnetMask', enbNetMask)
+    update_enb_config_value(fname, 'X_VENDOR_DEFAULT_GATEWAY', enbGW)
+    update_enb_config_value(fname, 'X_VENDOR_SEC_GW_ENABLE', ipsecEnable)
+    update_enb_config_value(fname, 'SecGWServer1', SGW1)
+    update_enb_config_value(fname, 'SecGWServer2', SGW2)
+    update_enb_config_value(fname, 'SecGWServer3', SGW3)
+    update_enb_config_value(fname, 'rightid', enbRightID)
+    update_enb_config_value(fname, 'X_VENDOR_IKEPSK', ikePSK)
+    update_enb_config_value(fname, 'X_VENDOR_IKE_ID_DOMAIN', ikdeIdDomain)
+    update_enb_config_value(fname, 'X_VENDOR_StaticTia', enbStaticTia)
+    update_enb_config_value(fname, 'X_VENDOR_VLAN_ENABLE', vlanEnable)
+    update_enb_config_value(fname, 'X_VENDOR_VLAN_TAG', vlanID)
+    update_enb_config_value(fname, 'LocalNetworkEnable', localIfEnable)
+    update_enb_config_value(fname, 'LocalNetInterface', localInterface)
+    update_enb_config_value(fname, 'LocalIPAddress', localIP)
+    update_enb_config_value(fname, 'LocalSubnetMask', localNetMask)
+    update_enb_config_value(fname, 'LocalIPv6Address', localIPv6)
+    update_enb_config_value(fname, 'NtpServerEnable', enableNtpServer)
+    update_enb_config_value(fname, 'ENABLE_CRITICAL_PARAMETERS', enableCriticalParams)
+
+def reboot_system():
+    os.system('/sbin/reboot')
+    #os.system('sync;sync;sync;reboot')
+
+if not os.path.exists(WWW_LOG_DIR):
+    os.mkdir(WWW_LOG_DIR)
+
+logging.basicConfig(filename=(WWW_LOG_DIR + 'kitting.log'), format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/kitting =================================")
+
+if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+    shutil.copyfile(ENB_CONFIG_FILE, ENB_TEMP_CONFIG_FILE)
+
+try:
+    read_conf_file(ENB_TEMP_CONFIG_FILE)
+except KeyboardInterrupt:
+    logging.info("The execution of the kitting command timed out after 30 seconds.")
+except:
+    logging.info("An error occured during the execution of the kitting command.")
+
+query = {}
+if "QUERY_STRING" in os.environ:
+    query_string = os.environ['QUERY_STRING']
+    for element in query_string.split("&"):
+        (var, val) = element.split("=")
+        query[var] = val
+
+session.read_user()
+if "user" in query and 'verified' in query:
+    logging.info("User: "+ query['user'] + " verified(" + query['verified'] +") and requeste the kitting")
+    if query['verified'] == '1':
+        session.update_user(query['user'], True)
+
+if "cmd" in query and query['cmd'] in ['reset', 'read', 'update', 'apply', 'reboot']:
+    try:
+        if query['cmd'] == 'reset':
+            if not os.path.exists(ENB_CONFIG_FILE):
+                report_error("Not exists the template kitting file.")
+            else:
+                if filecmp.cmp(ENB_TEMP_CONFIG_FILE, ENB_CONFIG_FILE) == False:
+                    shutil.copyfile(ENB_CONFIG_FILE, ENB_TEMP_CONFIG_FILE)
+                read_conf_file(ENB_TEMP_CONFIG_FILE)
+                report_success("Kitting Reset")
+        elif query['cmd'] == 'read':
+            if not os.path.exists(ENB_CONFIG_FILE):
+                report_error("Not exists the template kitting file.")
+            else:
+                read_conf_file(ENB_CONFIG_FILE)
+                update_conf_file(ENB_TEMP_CONFIG_FILE)
+                report_success("Kitting Refresh")
+        elif query['cmd'] == 'update':
+            if not os.path.exists(ENB_CONFIG_FILE):
+                report_error("Not exists the kitting file.")
+            else:
+                update_conf_file(ENB_CONFIG_FILE)
+                report_success("Kitting Update")
+        elif query['cmd'] == 'apply':
+            if not os.path.exists(ENB_CONFIG_UPDATE):
+                report_error("Not exists the configuration udpate script.")
+            else:
+                report_success("Kitting Apply")
+                subprocess.call(ENB_CONFIG_UPDATE)
+        elif query['cmd'] == 'reboot':
+                report_success("Restart to apply")
+                reboot_system()
+        else:
+            report_error("This should never happen. Please report that there is a bug in the 'kitting' CGI script.")
+    except KeyboardInterrupt:
+        report_error("The execution of the kitting command timed out after 30 seconds.")
+    except:
+        report_error("An error occured during the execution of the kitting command.")
+
+elif "emsURL" in query and "emsUser" in query and "emsPass" in query:
+    try:
+        emsURL = urllib.unquote(query['emsURL'].encode('ascii')).decode('utf-8')
+        emsUser = query['emsUser']
+        emsPass = query['emsPass']
+        if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+            report_error("Not exists the template kitting file.")
+        else:
+            update_conf_file(ENB_TEMP_CONFIG_FILE)
+            report_success("ems kitting change")
+    except:
+        report_error("An error occured during the execution of the ems kitting change command.")
+
+elif "enbIfEnable" in query and "enbIP" in query and "enbNetMask" in query and "enbGW" in query:
+    try:
+        enbIfEnable = query['enbIfEnable']
+        enbIP = urllib.unquote(query['enbIP'].encode('ascii')).decode('utf-8')
+        enbNetMask = query['enbNetMask']
+        enbGW = urllib.unquote(query['enbGW'].encode('ascii')).decode('utf-8')
+        if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file(ENB_TEMP_CONFIG_FILE)
+            report_success("netwrok kitting change")
+    except:
+        report_error("An error occured during the execution of the network config change command.")
+
+elif "ipsecEnable" in query and "SGW1" in query and "SGW2" in query and "SGW3" in query and "enbRightID" in query and "ikePSK" in query and "ikdeIdDomain" in query and "enbStaticTia" in query:
+    try:
+        ipsecEnable = query['ipsecEnable']
+        SGW1 = urllib.unquote(query['SGW1'].encode('ascii')).decode('utf-8')
+        SGW1 = urllib.unquote(query['SGW2'].encode('ascii')).decode('utf-8')
+        SGW1 = urllib.unquote(query['SGW3'].encode('ascii')).decode('utf-8')
+        enbRightID = urllib.unquote(query['enbRightID'].encode('ascii')).decode('utf-8')
+        ikePSK = query['ikePSK']
+        ikdeIdDomain = urllib.unquote(query['ikdeIdDomain'].encode('ascii')).decode('utf-8')
+        enbStaticTia = urllib.unquote(query['enbStaticTia'].encode('ascii')).decode('utf-8')
+        if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file(ENB_TEMP_CONFIG_FILE)
+            report_success("ipsec kitting change")
+    except:
+        report_error("An error occured during the execution of the ipsec config change command.")
+
+elif "vlanEnable" in query and "vlanID" in query:
+    try:
+        vlanEnable = query['vlanEnable']
+        vlanID = query['vlanID']
+        if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file(ENB_TEMP_CONFIG_FILE)
+            report_success("vlan kitting change")
+    except:
+        report_error("An error occured during the execution of the vlan config change command.")
+
+elif "localIfEnable" in query and "localInterface" in query and "localIP" in query and "localNetMask" in query and "localIPv6" in query:
+    try:
+        localIfEnable = query['localIfEnable']
+        localInterface = urllib.unquote(query['localInterface'].encode('ascii')).decode('utf-8')
+        localIP = query['localIP']
+        localNetMask = query['localNetMask']
+        localIPv6 = urllib.unquote(query['localIPv6'].encode('ascii')).decode('utf-8')
+        if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file(ENB_TEMP_CONFIG_FILE)
+            report_success("local kitting change")
+    except:
+        report_error("An error occured during the execution of the local config change command.")
+elif "enableNtpServer" in query:
+    try:
+        enableNtpServer = query['enableNtpServer']
+        if not os.path.exists(ENB_TEMP_CONFIG_FILE):
+            report_error("Not exists the template conf file.")
+        else:
+            update_conf_file(ENB_TEMP_CONFIG_FILE)
+            report_success("enableNtpServer kitting change")
+    except:
+        report_error("An error occured during the execution of the enableNtpServer config change command.")
+
+elif "install" in query:
+    try:
+        version = query['install']
+        if os.path.exists(PKG_INSTALL_CMD):
+            # execute PKG installation
+            if version != None:
+                os.chdir(PKG_INSTALL_DIR)
+                subprocess.call([PKG_INSTALL_CMD, 'install', version])
+                report_success("success PKG installation")
+            else:
+                report_error("Invalid filename")
+    except:
+        report_error("An error occured during the execution of the PKG install command.")
+else:
+    report_error("You must specify a valid command for the kitting.")
+
+logging.shutdown()

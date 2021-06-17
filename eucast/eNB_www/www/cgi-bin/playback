@@ -1,0 +1,121 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/
+#
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#
+#    Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#    Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the
+#    distribution.
+#
+#    Neither the name of Texas Instruments Incorporated nor the names of
+#    its contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+#  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+#  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+#  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+import os
+import sys
+import logging
+import rfsdk
+import time
+import urllib
+
+def report_success(playback, message):
+	logging.info(message)
+	status = playback.status()
+	if playback.alive():
+		status['alive'] = True
+	else:
+		status['alive'] = False
+	status['status'] = 1
+	print "Content-type: application/json"
+	print
+	print playback.pprint(status)
+
+def report_error(message):
+	logging.error(message)
+	print "Content-type: application/json"
+	print
+	print "{"
+	print "   \"status\": 0,"
+	print "   \"message\": \"%s\"" % (message,)
+	print "}"
+
+# Parse the CGI query parameters
+logging.basicConfig(filename='/srv/www/logs/playback.log', format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.info("=== /cgi-bin/playback ==================================")
+query = {}
+if "QUERY_STRING" in os.environ:
+	query_string = os.environ['QUERY_STRING']
+	for element in query_string.split("&"):
+		try:
+			(var, val) = element.split("=")
+			query[var] = urllib.unquote(val) #support of url-encoded characters like %2F (== slash)
+		except:
+			# An invalid value has been passed as a parameter
+			logging.error("invalid CGI parameter '%s' (should be in the form name=value)" % (element,))
+			
+
+if "cmd" in query and query['cmd'] in ['status', 'capture', 'load']:
+	try:
+		if query['cmd'] == 'status':
+			config = rfsdk.RadioConfig()
+			playback = rfsdk.Playback(config)
+			report_success(playback, "Reporting DSP Playback status")
+		elif query['cmd'] == 'capture':
+			config = rfsdk.RadioConfig()
+			playback = rfsdk.Playback(config)
+			playback.capture()
+			playback.save(1, 1, "/srv/www/data/rx0.bin")
+			playback.save(1, 2, "/srv/www/data/rx1.bin")
+			if config.useCase.dfeConfig.rx[2].valid == 1:
+				playback.save(2, 1, "/srv/www/data/rx2.bin")
+			if config.useCase.dfeConfig.rx[3].valid == 1:
+				playback.save(2, 2, "/srv/www/data/rx3.bin")
+			report_success(playback, "Reporting DSP Playback status")
+		elif query['cmd'] == 'load':
+			if "axc" in query and "pattern" in query:
+				if not os.path.exists("/usr/share/radio/patterns/%s" % (query["pattern"],)):
+					report_error("pattern '%s' not found" % (query["pattern"],))
+				elif not query["axc"] in ["0", "1", "2", "3"]:
+					report_error("invalid axc number '%s' (must be one of [0, 1, 2, 3])" % (query["axc"],))
+				else:
+				 	carrier = int(query["axc"])/2+1
+				 	antenna = int(query["axc"])%2+1
+					config = rfsdk.RadioConfig()
+					playback = rfsdk.Playback(config)
+					playback.load(carrier, antenna, "/usr/share/radio/patterns/%s" % (query["pattern"],))
+					report_success(playback, "Reporting DSP Playback status")
+			else:
+				# We are missing some parameters.
+				report_error("missing axc or pattern parameter")
+		else:
+			# Cannot happen.
+			report_error("This should never happen. Please report that there is a bug in the 'radio' CGI script.")
+	except KeyboardInterrupt:
+		report_error("The execution of the radio command timed out after 30 seconds.")
+	except:
+		report_error("An error occured during the execution of the radio command.")
+
+else:
+	report_error("You must specify a valid command for the Radio.")
+logging.shutdown()
