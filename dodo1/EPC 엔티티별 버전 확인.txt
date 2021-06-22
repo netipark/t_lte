@@ -21,12 +21,12 @@ SGW
 ONSGW
 on_sgw.conf
 1
-vONSGW_21.06.08_13:46:19
+vONSGW_21.06.22_09:06:46
 PGW	
 ONPGW
 on_pgw.conf
 1
-vONPGW_21.06.18_16:16:11
+vONPGW_21.06.22_09:05:32
 PCRF	
 ONPCRF
 on_pcrf.conf
