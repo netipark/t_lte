@@ -18,9 +18,10 @@
   <OAM_PmXmlStoragePath>/logs</OAM_PmXmlStoragePath>
   <!--   Self Address of eNodeB. Used by Operator   -->
   <HeNB_Address>1.1.1.1</HeNB_Address>
+  <BCP_SWITCHOVER_COUNT>9</BCP_SWITCHOVER_COUNT>
   <eNB_HW_Property>
-  	<!--    Allowed values for hw_type; 0 APPLETON, 1 HAWKING  2 LAMARR 3 HERCULES    -->
-		<hw_type>2</hw_type>
+    <!--    Allowed values for hw_type; 0 APPLETON, 1 HAWKING  2 LAMARR 3 HERCULES    -->
+    <hw_type>2</hw_type>
   </eNB_HW_Property>
   <eNB_software_path>/spico</eNB_software_path>
   <eNB_Processes> 
@@ -2446,7 +2447,7 @@
       <rntiStartRange>1</rntiStartRange>
       <!--    Indicates the maximum RNTI value to be supported    -->
       <!--    Range: 1-4082, Default: 350    -->
-      <rntiEndRange>306</rntiEndRange>
+      <rntiEndRange>506</rntiEndRange>
       <RArnti>
         <!--    Indicates the starting value of Random Access RNTI to be supported    -->
         <!--    Range: , Default: 1    -->
@@ -2492,7 +2493,7 @@
     </No_of_cores>
     <!--    Indicates the maximum number of UEs supported    -->
     <!--    Range: , Default: 255    -->
-    <Max_no_of_ue>136</Max_no_of_ue>
+    <Max_no_of_ue>250</Max_no_of_ue>
     <!--    Indicates the maximum number of eNBs supported    -->
     <!--    Range: , Default: 255    -->
     <Max_no_of_enbs>1</Max_no_of_enbs>
@@ -3265,7 +3266,18 @@
         <!--    Indicates the average number of UM DRB's per UE  which will be used by Layer2 for allocating memory    -->
         <!--   Range: 0-8, Default: 1    -->
         <avgNumUmLcPerUE>1</avgNumUmLcPerUE>
+        <!-- Following 3 params are read only when MBMS is configured -->
+        <!-- Range: 0-59999, default: 1 -->
+        <embmsMaxSyncPeriod>1024</embmsMaxSyncPeriod>
+        <!-- Range: 0-10 -->
+        <embmsSyncSeqDuration>2</embmsSyncSeqDuration>
+        <!-- For FDD:1 TDD:0 -->
+        <embmsSyncMarginTimer>1</embmsSyncMarginTimer>
       </MACParams>
+      <EGTPUParams>
+        <!-- Until how many MSP's SYNC can buffer data from network Range 1 to 2 -->
+        <maxMspToBeBuffered>1</maxMspToBeBuffered>
+      </EGTPUParams>
     </L2params>
     <L3Params>
       <!--    Indicates the default Log level with which L3 layer is initialized    -->
@@ -3618,6 +3630,53 @@
           <x2ap_mobility_setting_change_retry_cnt>3</x2ap_mobility_setting_change_retry_cnt>
         </procedural_timers>
       </X2AP>
+      <M2AP>
+        <!-- IP address type either IPv4 or IPv6 -->
+        <IPType>IPv4</IPType>
+        <!-- Max. 3 addresses can be given at a time -->
+        <numIPAddr>1</numIPAddr>
+        <!-- Comma seperated IP address acc. to IPType(IPv4/IPv6) -->
+        <IPAddr>172.16.81.55</IPAddr>
+        <!-- MCE port no. 36443 is fixed -->
+        <Port>36443</Port>
+        <!-- Log level of M2AP layer:
+            0: FATAL, 1: ERROR, 2: WARNING, 3: INFO, 4: DETAILED,
+            5: ASN, 6: DETAILED_ALL, 7: NONE -->
+        <logLevel>1</logLevel>
+        <!-- This counter value depends on how many times operator want
+            to try for ENB config update if NO response is received
+            from MCE
+            Range: 0 to 255 -->
+        <eNBConfigUpdateRetryCount>5</eNBConfigUpdateRetryCount>
+        <!-- This counter value depends on how many times operator want
+            to try for M2 setup if NO response is received from MCE
+            Range: 0 to 255 -->
+        <M2SetupRetryCount>5</M2SetupRetryCount>
+        <!-- This timer value depends on how much time M2AP module shall
+            wait for response while interacting with Layer2 module
+            Range: 0 to 65535(in ms) -->
+        <M2APL2GuardTimer>10000</M2APL2GuardTimer>
+        <!-- This timer value depends on the ENB config update
+            procedure, when ENB UPDATE is triggered and how much time
+            it will take to complete the update at MCE . This should be
+            tuned accordingly, Range: 0 65535(in ms) -->
+        <eNBConfigUpdateGuardTimer>10000</eNBConfigUpdateGuardTimer>
+        <!-- This timer value depends on the MCE reset procedure, when
+            MCE reset is triggered and how much time eNB shoud wait for
+            acknowldgement from MCE to start the clearing activities.
+            This should be tuned accordingly, Range: 0 to 65535(in ms) -->
+        <M2APResetGuardTimer>10000</M2APResetGuardTimer>
+        <!-- This timer value depends on the M2AP setup procedure, when
+            M2 SETUP is triggered and how much time it will take to
+            complete the setup. This should be tuned accordingly,
+            Range: 0 to 65535(in ms) -->
+        <M2APSetupGuardTimer>10000</M2APSetupGuardTimer>
+        <!-- This timer value depends on eMBMS SIB's modificaton, when
+            eMBMS SIB's(SIB2 and SIB13) modified and how much time it
+            will take to complete the request. This should be tuned
+            accordingly, Range: 0 to 65535(in ms) -->
+        <M2APRRMGuardTimer>60000</M2APRRMGuardTimer>
+      </M2AP>
     </L3Params>
     <RRMparams>
       <!--   Logging Enable or Disable    -->
@@ -3717,11 +3776,32 @@
         <!--    Threshold for number of active UEs. When threshold is reached or the number of UE exceeds the threshold value, report will be send to the OAM    -->
         <!--    Range: 0-255, Default: 5   -->
         <threshold_value>5</threshold_value>
+	 <!--    BUG ID 75 FIXED + -->
+        <!--    auto_switch_on_off for enabling autonomous switch off configue. -->
+        <!--    When threshold is reached or the number of UE exceeds the threshold value, report will be send to the OAM    -->
+        <!--    Range: 0-3, Default: 0   -->
+        <!--    Range: 0- Disable   -->
+        <!--    Range: 1- Enable autonomous switch off for Active UE count  -->
+        <!--    Range: 2- Enable autonomous switch off for Load level  -->
+        <!--    Range: 3- Enable  autonomous switch off for both -->
         <auto_switch_on_off>0</auto_switch_on_off>
+        <!--    Threshold for Load level. When threshold is reached or the load level is less than the threshold value, report will be send to the OAM    -->
+        <!--    Range: 0-100, Default: 0   -->
+        <loadlevelthreshold>0</loadlevelthreshold>
+        <!--    auto_switch_off_timer - Timer to triggered the cell switch off autonomous when switch on/off cause is met. (Interval unit is in Secs)    -->
+        <!--    Range: 0-65535, Default: 0    -->
+        <auto_switch_off_timer>0</auto_switch_off_timer>
+        <!--    Self switch on timer - This timer is triggered when cellis switched off autonomously. (Interval unit is in Secs)    -->
+        <!--    Range: 60-65535, Default: 60    -->
+		<self_switch_on_timer>60</self_switch_on_timer>
+	 <!--    BUG ID 75 FIXED - -->
       </son_es_params>
       <!--    Indicates Mobility Robustness Optimization is Enabled or Disabled    -->
       <!--    Range: 0-1, 0: Disable, 1: Enable, Default: 1   -->
       <mro_enable_disable>1</mro_enable_disable>
+      <!--    Indicates SON ANR is Enabled or Disabled    -->
+      <!--    Range: 0-1, 0: Disable, 1: Enable, Default: 1   -->
+      <son_anr_enable_disable>1</son_anr_enable_disable>
       <!--    Indicates Mobility Load Balancing is Enabled or Disabled    -->
       <!--    Range: 0-1, 0: Disable, 1: Enable, Default: 1   -->
       <mlb_enable_disable>1</mlb_enable_disable>

@@ -39,11 +39,12 @@
     <ProductClass>LTE</ProductClass>
     <SerialNumber>EE0B0100193010019</SerialNumber>
     <HardwareVersion>0.0.0</HardwareVersion>
-    <SoftwareVersion>02.03.17</SoftwareVersion>
+    <SoftwareVersion>02.05.10</SoftwareVersion>
     <ModemFirmwareVersion>0.0.0</ModemFirmwareVersion>
     <AdditionalSoftwareVersion>0.0.0</AdditionalSoftwareVersion>
     <UpTime>1</UpTime>
-    <FirstUseDate>1970-01-01T00:00:00-00:00</FirstUseDate> <!-- RM#2747 changed default value -->
+	<!-- RM#2747 changed default value -->
+    <FirstUseDate>1970-01-01T00:00:00-00:00</FirstUseDate>
     <ProcessStatus>
       <CpuUsage>1</CpuUsage>
     </ProcessStatus>
@@ -75,6 +76,12 @@
     <SYSTEM_ANALYSER_IP_ADDRESS>90.96.15.137</SYSTEM_ANALYSER_IP_ADDRESS>
     <L1_IP_ADDRESS>90.96.15.137</L1_IP_ADDRESS>
   </LoggerIP>
+  <L2L3_INTF_MSG_CAPTURE>
+    <!-- This will Enable/Disable L2-L3Messages on 30888 : 0-Disable 1-Enable -->
+    <Enable>0</Enable>
+    <!-- This will tell which logging mode . 0-Network Logging 1-File Logging -->
+    <Logging_Mode>0</Logging_Mode>
+  </L2L3_INTF_MSG_CAPTURE>
   <LANDevice>
     <LANHostConfigManagement>
       <!-- CRITICAL_PARAMS CHANGES START -->
@@ -125,7 +132,7 @@
           </IPv6Forwarding>
         </Router>
       </Routing>
-      <IPInterfaceNumberOfEntries>5</IPInterfaceNumberOfEntries>
+      <IPInterfaceNumberOfEntries>6</IPInterfaceNumberOfEntries>
       <X_VENDOR_VlanEnable>0</X_VENDOR_VlanEnable>
       <IPInterface>
         <Enable>1</Enable>
@@ -223,9 +230,30 @@
         <X_VENDOR_MTU_SIZE>1500</X_VENDOR_MTU_SIZE>
         <X_VENDOR_VlanTag>5</X_VENDOR_VlanTag>
       </IPInterface>
+<!-- s.eMBMS Local IP Interface -->
+      <IPInterface>
+        <Enable>1</Enable>
+        <!-- IP address as per the definition in TR-098 specs; IPv4 or IPv6 -->
+        <IPInterfaceIPAddress>90.96.15.137</IPInterfaceIPAddress>
+        <!-- IPPrefix as per the definition in TR-098 specs; IPv4 or IPv6 -->
+        <IPInterfaceSubnetMask>255.255.255.240</IPInterfaceSubnetMask>
+        <!-- only one value 'Static' is stupported -->
+        <IPInterfaceAddressingType>Static</IPInterfaceAddressingType>
+        <!-- value 0: for ENB local IP address, value 1: for S1AP local IP address,
+             value 2: for X2AP IP address,      value 3: for eGTPU local IP address,
+			 value 4: for M2AP Local IP Address
+          Interface Type Can be Comma seperated if same IP Configure to Multiple Interfaces -->
+        <X_VENDOR_INTERFACE_TYPE>4</X_VENDOR_INTERFACE_TYPE>
+        <!-- value 3223 for S1AP, value 3221 for X2AP, 15210 used by the TR069 agent, not used for eGTPU
+          Port Number Should be Comma seperated corresponding to comma seperated values of Interface type -->
+        <X_VENDOR_SOURCE_PORT_NUMBER>36443</X_VENDOR_SOURCE_PORT_NUMBER>
+        <X_VENDOR_MTU_SIZE>1500</X_VENDOR_MTU_SIZE>
+        <X_VENDOR_VlanTag>5</X_VENDOR_VlanTag>
+      </IPInterface>
+<!-- e.eMBMS Local IP Interface -->
       <X_VENDOR_LOCAL_INTERFACE>
         <LocalInterfaceEnable>0</LocalInterfaceEnable>
-        <LocalInterfaceName>eth0:1</LocalInterfaceName>
+        <LocalInterfaceName>eth1</LocalInterfaceName>
         <LocalIPAddress>192.168.20.2</LocalIPAddress>
         <LocalSubnetMask>255.255.255.0</LocalSubnetMask>
       </X_VENDOR_LOCAL_INTERFACE>
@@ -351,7 +379,7 @@
     <!-- b.RAS-2-1~6 Smart Logging - CR21 -->
     <SmartLog>
       <!-- s.SPICO_#2211 -->
-      <Enable>1</Enable>
+      <Enable>0</Enable>
       <Periodic_Reporting>3600</Periodic_Reporting>
       <!-- e.SPICO_#2211 -->
     </SmartLog>
@@ -498,12 +526,17 @@
             <!-- If this parameter has lesser number of comma saperated values then the number of MME's, -->
             <!-- last release entry will be mapped to all the remaining MME's after 1 to 1 mapping.-->
             <X_VENDOR_RELOFMME>2</X_VENDOR_RELOFMME>
-  	    <!-- CRITICAL_PARAMS CHANGES START -->
+            <!-- CRITICAL_PARAMS CHANGES START -->
     	    <X_VENDOR_GWSW_GARP_ENABLE>1</X_VENDOR_GWSW_GARP_ENABLE>
             <!-- CRITICAL_PARAMS CHANGES ENDS -->
             <!-- [SPICO_DATAMODEL, X2_CONNECTION_NUM] kwpark 20150904, L3-11-19 start -->
             <X_VENDOR_X2_CONNECTION_NUM>32</X_VENDOR_X2_CONNECTION_NUM>
             <!-- [SPICO_DATAMODEL, X2_CONNECTION_NUM] kwpark 20150904, L3-11-19 end -->
+            <!-- [EMBMS] start -->
+            <X_VENDOR_M2AP_IPType>0</X_VENDOR_M2AP_IPType>
+            <X_VENDOR_M2AP_IPAddress>1.1.1.1</X_VENDOR_M2AP_IPAddress>
+            <X_VENDOR_M2AP_Port>36443</X_VENDOR_M2AP_Port>
+            <!-- [EMBMS] end -->
           </Gateway>
           <!-- for IOPS start -->
           <X_VENDOR_IOPS>
@@ -585,6 +618,10 @@
             <qci_delta_power_mask>0</qci_delta_power_mask>
             <qci_delta_power_mask>0</qci_delta_power_mask>
             <qci_delta_power_mask>0</qci_delta_power_mask>
+            <qci_delta_power_mask>0</qci_delta_power_mask>
+            <qci_delta_power_mask>0</qci_delta_power_mask>
+            <qci_delta_power_mask>0</qci_delta_power_mask>
+            <qci_delta_power_mask>0</qci_delta_power_mask>
           </ul_power_mask>
           <rntp_report_config_info>
             <rntp_report_required>0</rntp_report_required>
@@ -623,7 +660,7 @@
       <AccessMgmt>
         <LTE>
           <AccessMode>OpenAccess</AccessMode>
-          <MaxUEsServed>128</MaxUEsServed>
+          <MaxUEsServed>250</MaxUEsServed>
           <MaxCSGMembers>1</MaxCSGMembers>
           <MaxNonCSGMembers>1</MaxNonCSGMembers>
           <!-- Parameter not being used by LTE OAM -->
@@ -634,6 +671,9 @@
           <!-- s.RM#2549 set NULL -->
           <HNBName> </HNBName>
           <!-- e.RM#2549 set NULL -->
+          <!-- The following parameter is exclusively used by
+               MBSFN configuration -->
+          <X_VENDOR_ENB_NAME>EUCAST-eNodeb</X_VENDOR_ENB_NAME>
           <!--Enum type value femto : 1 ; macro :0 -->
           <X_VENDOR_CELL_TYPE>1</X_VENDOR_CELL_TYPE>
         </LTE>
@@ -653,9 +693,9 @@
             <!-- To include ZUC integrity algorithm add 128-EIA3 -->
             <AllowedIntegrityProtectionAlgorithmList>128-EIA2,128-EIA1,EIA0</AllowedIntegrityProtectionAlgorithmList>
             <X_VENDOR_COUNT_WRAP_AROUND_THRESHOLD_VALUE>4294967295</X_VENDOR_COUNT_WRAP_AROUND_THRESHOLD_VALUE>
-	    <!-- s.SPICO_#2719 -->
+	        <!-- s.SPICO_#2719 -->
             <X_VENDOR_PDCP_INTEGRITY_THRESHOLD_COUNTER>3</X_VENDOR_PDCP_INTEGRITY_THRESHOLD_COUNTER>
-	    <!-- e.SPICO_#2719 -->
+	        <!-- e.SPICO_#2719 -->
             <TAC>2304</TAC>
             <EAID>21</EAID>
             <X_VENDOR_EAID2>0</X_VENDOR_EAID2>
@@ -668,9 +708,12 @@
             <X_VENDOR_REDIRECT_ENABLE>1</X_VENDOR_REDIRECT_ENABLE>
             <X_VENDOR_REDIRECT_NUM_USER_CEILING>32</X_VENDOR_REDIRECT_NUM_USER_CEILING>
             <!-- e.REDIR-4-1, e.REDIR-4-2  PH1.4C Redirect Feature -->
+            <!-- s.dedicated resource -->
+		    <X_VENDOR_Reuse_Dedicated_Resource_Enable>1</X_VENDOR_Reuse_Dedicated_Resource_Enable>
+            <!-- e.dedicated resource -->
             <MaxPLMNListEntries>6</MaxPLMNListEntries>
             <PLMNListNumberOfEntries>3</PLMNListNumberOfEntries>
-            <QoSNumberOfEntries>9</QoSNumberOfEntries>
+            <QoSNumberOfEntries>13</QoSNumberOfEntries>
             <QoS>
 	      <!-- yup add CELLCFGLTE-EPCQOS -->
               <Enable>0</Enable>
@@ -1269,6 +1312,281 @@
               <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>80</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
               <X_VENDOR_SRVCC_OP_REQUIRED>0</X_VENDOR_SRVCC_OP_REQUIRED>
             </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>65</QCI>
+              <Type>GBR</Type>
+              <Priority>2</Priority>
+              <PacketDelayBudget>75</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>2</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>46</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>3</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>3</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>4</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>1</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>0</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>0</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>65</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>65</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>8</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>0</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>1</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>3</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>2</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>40</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>60</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>1</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>66</QCI>
+              <Type>GBR</Type>
+              <Priority>2</Priority>
+              <PacketDelayBudget>100</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>2</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>46</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>3</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>3</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>4</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <!-- Max value among all QCIs is taken -->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>1</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>0</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>0</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>65</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>65</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>8</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>2</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>1</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>3</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>2</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>40</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>60</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>1</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>69</QCI>
+              <Type>Non-GBR</Type>
+              <Priority>1</Priority>
+              <PacketDelayBudget>60</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>6</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>56</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>4</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>6</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>3</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>1</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <!-- Max value among all QCIs is taken -->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>2</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>0</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>0</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>65</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>65</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>8</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>7</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>1</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>0</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>4</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>3</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>40</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>60</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>0</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
+            <QoS>
+              <Enable>0</Enable>
+              <QCI>70</QCI>
+              <Type>Non-GBR</Type>
+              <Priority>6</Priority>
+              <PacketDelayBudget>200</PacketDelayBudget>
+              <X_VENDOR_TTI_BUNDLING>0</X_VENDOR_TTI_BUNDLING>
+              <X_VENDOR_PACKETERRORLOSSRATE>6</X_VENDOR_PACKETERRORLOSSRATE>
+              <X_VENDOR_DSCP>8</X_VENDOR_DSCP>
+              <X_VENDOR_SPS_CONFIG_ENABLED>0</X_VENDOR_SPS_CONFIG_ENABLED>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>3</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_DL>
+              <X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>4</X_VENDOR_NUMBER_OF_CONF_SPS_PROCESSES>
+              <X_VENDOR_MAX_SPS_HARQ_RETX>3</X_VENDOR_MAX_SPS_HARQ_RETX>
+              <X_VENDOR_EXPLICIT_RELEASE_AFTER>4</X_VENDOR_EXPLICIT_RELEASE_AFTER>
+              <X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>3</X_VENDOR_SEMI_PERSIST_SCHED_INTERVAL_UL>
+              <X_VENDOR_IMPLICIT_RELEASE_AFTER>3</X_VENDOR_IMPLICIT_RELEASE_AFTER>
+              <X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>-86</X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT>
+              <X_VENDOR_LOSSLESS_HO_REQUIRED>1</X_VENDOR_LOSSLESS_HO_REQUIRED>
+              <!-- maximum time for which UE may remain inactive without sending/receiving UL/DL data-->
+              <!-- Max value among all QCIs is taken -->
+              <X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>10</X_VENDOR_UE_INACTIVITY_TIMER_CONFIG>
+              <X_VENDOR_SUPPORTED_RAT>0</X_VENDOR_SUPPORTED_RAT>
+              <!-- RLC_MODE is 1=UM_MODE,2=AM_MODE-->
+              <X_VENDOR_RLC_MODE>2</X_VENDOR_RLC_MODE>
+              <X_VENDOR_SN_LEN_DL_RLC>0</X_VENDOR_SN_LEN_DL_RLC>
+              <X_VENDOR_SN_LEN_UL_RLC>0</X_VENDOR_SN_LEN_UL_RLC>
+              <X_VENDOR_DL_PARAM_T_REORDERING_AM>65</X_VENDOR_DL_PARAM_T_REORDERING_AM>
+              <X_VENDOR_DL_PARAM_T_REORDERING_UM>65</X_VENDOR_DL_PARAM_T_REORDERING_UM>
+              <X_VENDOR_UL_AM_POLL_BYTE>4</X_VENDOR_UL_AM_POLL_BYTE>
+              <X_VENDOR_MAX_RETX_THRESHOLD>8</X_VENDOR_MAX_RETX_THRESHOLD>
+              <X_VENDOR_DISCARD_TIMER>7</X_VENDOR_DISCARD_TIMER>
+              <X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>0</X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>1</X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED>
+              <X_VENDOR_RLC_UM_PDCP_SN_SIZE>0</X_VENDOR_RLC_UM_PDCP_SN_SIZE>
+              <X_VENDOR_ROHC_PARAMS>
+                <ENABLE_ROHC>0</ENABLE_ROHC>
+                <MAX_CID>15</MAX_CID>
+                <ROHC_PROFILES>
+                  <ROHC_PROFILE0X0001>0</ROHC_PROFILE0X0001>
+                  <ROHC_PROFILE0X0002>0</ROHC_PROFILE0X0002>
+                  <ROHC_PROFILE0X0003>0</ROHC_PROFILE0X0003>
+                  <ROHC_PROFILE0X0004>0</ROHC_PROFILE0X0004>
+                  <ROHC_PROFILE0X0006>0</ROHC_PROFILE0X0006>
+                  <ROHC_PROFILE0X0101>0</ROHC_PROFILE0X0101>
+                  <ROHC_PROFILE0X0102>0</ROHC_PROFILE0X0102>
+                  <ROHC_PROFILE0X0103>0</ROHC_PROFILE0X0103>
+                  <ROHC_PROFILE0X0104>0</ROHC_PROFILE0X0104>
+                </ROHC_PROFILES>
+              </X_VENDOR_ROHC_PARAMS>
+              <!-- Maximum UL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_TX>4</X_VENDOR_MAX_HARQ_TX>
+              <!-- Maximum DL HARQ retransmissions-->
+              <X_VENDOR_MAX_HARQ_RETRANS>6</X_VENDOR_MAX_HARQ_RETRANS>
+              <!-- Below parameter is not currently used by RRM-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>0</X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF>
+              <!--Mapping of logical channel to logical channel group for BSR reporting-->
+              <!--INTEGER (0..3)-->
+              <X_VENDOR_LOGICAL_CHANNEL_GROUP>3</X_VENDOR_LOGICAL_CHANNEL_GROUP>
+              <X_VENDOR_SR_MASK_FLAG>0</X_VENDOR_SR_MASK_FLAG>
+              <X_VENDOR_SR_PROHIBIT_TIMER_R9>0</X_VENDOR_SR_PROHIBIT_TIMER_R9>
+              <X_VENDOR_SR_PERIODICITY_START_VAL>1</X_VENDOR_SR_PERIODICITY_START_VAL>
+              <X_VENDOR_SR_PERIODICITY_END_VAL>6</X_VENDOR_SR_PERIODICITY_END_VAL>
+              <!-- Below parameter is not currently used by RRM. It is read from rrm.cfg -->
+              <X_VENDOR_DSR_MAX_TRANSMISSIONS>4</X_VENDOR_DSR_MAX_TRANSMISSIONS>
+              <X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>40</X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT>
+              <X_VENDOR_DDL_PARAM_T_POLL_PDU>128</X_VENDOR_DDL_PARAM_T_POLL_PDU>
+              <X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>60</X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT>
+              <X_VENDOR_SRVCC_OP_REQUIRED>0</X_VENDOR_SRVCC_OP_REQUIRED>
+            </QoS>
             <PLMNList>
               <Enable>1</Enable>
               <IsPrimary>1</IsPrimary>
@@ -1294,10 +1612,13 @@
               <ac_BarringTime_MMTEL_Video>1</ac_BarringTime_MMTEL_Video>
               <ac_BarringForSpecialAC_MMTEL_Video>0</ac_BarringForSpecialAC_MMTEL_Video>
               <!-- AC_Barring Bypass_End kwpark 20161221, patch code for ACBypass of PH1.4 -->
+              <!-- s.dedicated resource -->
+	          <X_VENDOR_Dedicated_Resource_Usage>0</X_VENDOR_Dedicated_Resource_Usage>
+              <!-- e.dedicated resource -->
               <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
             </PLMNList>
             <PLMNList>
-              <Enable>0</Enable>                                                     
+              <Enable>1</Enable>                                                     
               <IsPrimary>0</IsPrimary>                                               
               <PLMNID>64F828</PLMNID>                                                
               <CellReservedForOperatorUse>1</CellReservedForOperatorUse>             
@@ -1321,10 +1642,13 @@
               <ac_BarringTime_MMTEL_Video>1</ac_BarringTime_MMTEL_Video>
               <ac_BarringForSpecialAC_MMTEL_Video>0</ac_BarringForSpecialAC_MMTEL_Video>
               <!-- AC_Barring Bypass_End kwpark 20161221, patch code for ACBypass of PH1.4 -->
+              <!-- s.dedicated resource -->
+	          <X_VENDOR_Dedicated_Resource_Usage>0</X_VENDOR_Dedicated_Resource_Usage>
+              <!-- e.dedicated resource -->
               <X_VENDOR_INSTANCE_ID>2</X_VENDOR_INSTANCE_ID>                         
             </PLMNList>
             <PLMNList>
-              <Enable>0</Enable>                                                     
+              <Enable>1</Enable>                                                     
               <IsPrimary>0</IsPrimary>                                               
               <PLMNID>64F838</PLMNID>                                                
               <CellReservedForOperatorUse>1</CellReservedForOperatorUse>             
@@ -1348,6 +1672,9 @@
               <ac_BarringTime_MMTEL_Video>1</ac_BarringTime_MMTEL_Video>
               <ac_BarringForSpecialAC_MMTEL_Video>0</ac_BarringForSpecialAC_MMTEL_Video>
               <!-- AC_Barring Bypass_End kwpark 20161221, patch code for ACBypass of PH1.4 -->
+              <!-- s.dedicated resource -->
+	          <X_VENDOR_Dedicated_Resource_Usage>0</X_VENDOR_Dedicated_Resource_Usage>
+              <!-- e.dedicated resource -->
               <X_VENDOR_INSTANCE_ID>3</X_VENDOR_INSTANCE_ID>                         
             </PLMNList>
           </EPC>
@@ -1475,10 +1802,11 @@
                 <X_VENDOR_ANTENNA_PORT4_TX_ATTEN>0</X_VENDOR_ANTENNA_PORT4_TX_ATTEN>
                 <X_VENDOR_PA_LOW_THRESHOLD>-35</X_VENDOR_PA_LOW_THRESHOLD>
                 <X_VENDOR_PA_VSWR_THRESHOLD>300</X_VENDOR_PA_VSWR_THRESHOLD>
+                <X_VENDOR_SYNC_TIME_ADVANCE>0</X_VENDOR_SYNC_TIME_ADVANCE>
               </AntennaInfo>
               <PDSCH>
                 <Pb>1</Pb>
-                <Pa>0</Pa>
+                <Pa>-300</Pa>
               </PDSCH>
               <SRS>
                 <SRSEnabled>0</SRSEnabled>
@@ -1499,7 +1827,7 @@
                 <DeltaPUCCHShift>ds1</DeltaPUCCHShift>
                 <NRBCQI>4</NRBCQI>
                 <NCSAN>0</NCSAN>
-                <N1PUCCHAN>62</N1PUCCHAN>
+                <N1PUCCHAN>28</N1PUCCHAN>
                 <CQIPUCCHResourceIndex>32</CQIPUCCHResourceIndex>
                 <!-- [SPICO_DATAMODEL, DIS-LTEPHY-PUCCH] kwpark 20150410, added to apply v1.43 -->
                 <K>1</K>
@@ -1530,17 +1858,55 @@
                 <DeltaPreambleMsg3>6</DeltaPreambleMsg3>
               </ULPowerControl>
               <MBSFN>
+                <MBSFN_SERVICE_AREA_CONFIG>
+                  <!-- Range: 0-1, 0: Disable, 1:Enable, Default: 0 -->
+                  <X_VENDOR_IS_EMBMS_ENABLED>0</X_VENDOR_IS_EMBMS_ENABLED>
+                  <!--Range: 0 to 65535 defined in 3GPP 36.443 Spec Under
+                           Section 9.2.1.20-->
+                  <X_VENDOR_MBSFN_SYNC_AREA_ID>0</X_VENDOR_MBSFN_SYNC_AREA_ID>
+                  <!--Comma separated integer values with range: 0 to 65535
+                      for each item as defined in 3GPP 23.003 Spec Under Section 15.3.
+                      Maximum values here can be upto 256 comma separated values.
+                      For Service Area Identifier value 0, which has special meaning should be configured here
+                      if operator wanted to support the same. -->
+                  <X_VENDOR_MBMS_SERVICE_AREA_ID>400</X_VENDOR_MBMS_SERVICE_AREA_ID>
+                </MBSFN_SERVICE_AREA_CONFIG>
+                <!-- Range: 0 to 10000, representing -6 dB to 4 dB in 0.001 dB steps -->
+                <X_VENDOR_MBMS_TRANSMISSION_POWER>0</X_VENDOR_MBMS_TRANSMISSION_POWER>
+                <X_VENDOR_RESERVED_CELL_POWER_OFFSET>0</X_VENDOR_RESERVED_CELL_POWER_OFFSET>
+                <!-- Range: 0 to 3 defined in 3GPP 36.331 Spec Under Section 6.3.6-->
                 <NeighCellConfig>1</NeighCellConfig>
-                <!-- Below configuration of MBSFN is currently not in use -->
-                <!-- Parameter not being used by LTE OAM -->
+                <!-- Range: 0-1, 0: Disable, 1:Enable, Default: 0 -->
+                <!-- The value of the following parameter decides whether the
+                       contents of SIB2 are operator defined.
+                       If the value of this parameter is 1, then the parameter
+                       values defined in SFConfig tag will be read and sent in
+                       SIB2. -->
+                <X_VENDOR_IS_SIB2_EMBMS_ENABLE>1</X_VENDOR_IS_SIB2_EMBMS_ENABLE>
+                <MaxSFConfigListEntries>1</MaxSFConfigListEntries>
+                <!-- The number of entries in the SFConfigList table -->
                 <SFConfigListNumberOfEntries>1</SFConfigListNumberOfEntries>
                 <SFConfigList>
-                  <!-- Parameter not being used by LTE OAM -->
+                  <Enable>0</Enable>
+                  <!--This parameter is applicable to TDD mode only. Defines
+                          the synchronization stratum level to which the MBSFN
+                          configuration applies -->
+                  <SyncStratumID>1</SyncStratumID>
                   <RadioFrameAllocationPeriod>1</RadioFrameAllocationPeriod>
-                  <!-- Parameter not being used by LTE OAM -->
-                  <RadioframeAllocationOffset>1</RadioframeAllocationOffset>
-                  <!-- Parameter not being used by LTE OAM -->
-                  <SubFrameAllocations>1</SubFrameAllocations>
+                  <RadioframeAllocationOffset>0</RadioframeAllocationOffset>
+                  <RadioframeAllocationSize>1</RadioframeAllocationSize>
+                  <!-- Comma-separated list (maximum length 64) of
+                      unsigned integers (value 0, or 1).The value of "1"
+                      indicates the position of sub-frames that is allocated to
+                      MBSFN within the radio frame.
+                      If RadioframeAllocationSize is 1 , then SubFrameAllocations
+                      should have 6 bit comma separated pattern.
+                      If RadioframeAllocationSize is 4 , then SubFrameAllocations
+                      should have 24 bit comma separated pattern.
+                      There is no spec defined default value, set it appropriately.
+                             -->
+                  <SubFrameAllocations>1,0,1,0,0,1</SubFrameAllocations>
+                  <X_VENDOR_INSTANCE_ID>1</X_VENDOR_INSTANCE_ID>
                 </SFConfigList>
               </MBSFN>
               <PRS>
@@ -1609,7 +1975,7 @@
                 <ShortDRXCycle>64</ShortDRXCycle>
                 <DRXShortCycleTimer>1</DRXShortCycleTimer>
                 <!-- Comma saparated list of applicable QCI's for this DRX profile -->
-                <X_VENDOR_APPLICABLE_QCI_LIST>1,2,3,4,5,6,7,8,9</X_VENDOR_APPLICABLE_QCI_LIST>
+                <X_VENDOR_APPLICABLE_QCI_LIST>1,2,3,4,5,6,7,8,9,65,66,69,70</X_VENDOR_APPLICABLE_QCI_LIST>
                 <!--  /*CSR 00053551 FIX START*/ -->
                 <X_VENDOR_DRX_COMMAND>FALSE</X_VENDOR_DRX_COMMAND>
                 <X_VENDOR_DRX_TIMER_PERCENTAGE>50</X_VENDOR_DRX_TIMER_PERCENTAGE>
@@ -2482,6 +2848,8 @@
           <!-- Parameter not being used by LTE OAM Start -->
           <X_VENDOR_S1AP_DSCP_VALUE>46</X_VENDOR_S1AP_DSCP_VALUE>
           <X_VENDOR_X2AP_DSCP_VALUE>46</X_VENDOR_X2AP_DSCP_VALUE>
+          <!-- DSCP value used in IP Header -->
+          <X_VENDOR_M2AP_DSCP_VALUE>46</X_VENDOR_M2AP_DSCP_VALUE>
           <!-- Parameter not being used by LTE OAM End -->
           <X_VENDOR_INIT_MAX_ATTEMPTS>10</X_VENDOR_INIT_MAX_ATTEMPTS>
           <!-- Init timeout to set in socket option at SCTP -->
@@ -2517,9 +2885,8 @@
       </X_VENDOR_SON>
     </FAPService>
   </Services>
-
-    <FaultMgmt>
-        <SupportedAlarmNumberOfEntries>164</SupportedAlarmNumberOfEntries>
+  <FaultMgmt>
+        <SupportedAlarmNumberOfEntries>169</SupportedAlarmNumberOfEntries>
         <SupportedAlarm>
             <!-- Index #01 -->
             <EventType>Equipment Alarm</EventType>
@@ -3399,7 +3766,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #83 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Input Abnormal</ProbableCause>
+            <ProbableCause>RECT AC Fail</ProbableCause>
             <SpecificProblem>Input voltage of RECT is abnormal.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3410,7 +3777,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #84 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Over Voltage</ProbableCause>
+            <ProbableCause>RECT DC Over Voltage</ProbableCause>
             <SpecificProblem>Output voltage of RECT exceeds threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3421,7 +3788,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #85 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Low Voltage</ProbableCause>
+            <ProbableCause>RECT DC Low Voltage</ProbableCause>
             <SpecificProblem>Output voltage of RECT lower than threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3432,7 +3799,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #86 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Over Current</ProbableCause>
+            <ProbableCause>RECT DC Over Current</ProbableCause>
             <SpecificProblem>Output current of RECT exceeds threshold.</SpecificProblem>
             <PerceivedSeverity>Critical</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3443,7 +3810,7 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #87 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Low Battery</ProbableCause>
+            <ProbableCause>RECT Battery Low Voltage</ProbableCause>
             <SpecificProblem>RECT Battery voltage lower than threshold.</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
@@ -3454,11 +3821,11 @@
     		<!-- DataModel v3.1 -->
             <!-- Index #88 -->
             <EventType>Equipment Alarm</EventType>
-            <ProbableCause>RECT Battery NFB</ProbableCause>
-            <SpecificProblem>RECT Battery NFB</SpecificProblem>
+            <ProbableCause>RECT Battery Abnormal</ProbableCause>
+            <SpecificProblem>RECT Battery Abnormal</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
-            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryNFB</ManagedObjectInstance>
+            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryAbnormal</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40116</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
         <SupportedAlarm>
@@ -3469,7 +3836,7 @@
             <SpecificProblem>RECTBattery is discharged.</SpecificProblem>
             <PerceivedSeverity>Major</PerceivedSeverity>
             <ReportingMechanism>0 Expedited</ReportingMechanism>
-            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryNFB</ManagedObjectInstance>
+            <ManagedObjectInstance>eNB.Hardware.Sysoam.RectBatteryDischrged</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40117</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
         <SupportedAlarm>
@@ -4000,8 +4367,8 @@
             <ManagedObjectInstance>eNB.Hardware.RadiOam.DuCpriLink#6IsNotUp</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40056</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
-        <!-- SPICO_RET, RET Alarms -->
         <SupportedAlarm>
+            <!-- 40300 ~ 40058 SPICO_RET, RET Alarms -->
             <!-- Index #139 -->
             <EventType>Communications</EventType>
             <ProbableCause>RET Mon Failure</ProbableCause>
@@ -4201,8 +4568,8 @@
             <ManagedObjectInstance>eNB.Software.Sysoam.PA1VSWR</ManagedObjectInstance>
             <X_VENDOR_ALARM_ID>40058</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
-        <!-- Alarm 40121~40126 are newly defined for SNMP Rectifier 20190520 jelee -->
         <SupportedAlarm>
+          <!-- Alarm 40121~40126 are newly defined for SNMP Rectifier 20190520 jelee -->
           <!-- Index #159 -->
           <EventType>Equipment Alarm</EventType>
           <ProbableCause>FAN Failure</ProbableCause>
@@ -4262,5 +4629,62 @@
           <ManagedObjectInstance>eNB.Hardware.Sysoam.RectFailure</ManagedObjectInstance>
           <X_VENDOR_ALARM_ID>40126</X_VENDOR_ALARM_ID>
         </SupportedAlarm>
+        <!-- start eMBMS  -->
+        <SupportedAlarm>
+            <!-- Index #165 -->
+            <!--OAM Internal Alarm-->
+            <EventType>Processing Error Alarm</EventType>
+            <ProbableCause>eMBMS System Failure</ProbableCause>
+            <SpecificProblem>eMBMS System Failure</SpecificProblem>
+            <PerceivedSeverity>Warning</PerceivedSeverity>
+            <ReportingMechanism>0 Expedited</ReportingMechanism>
+            <ManagedObjectInstance>eNB.Software.eMBMS.SystemFailure</ManagedObjectInstance>
+            <X_VENDOR_ALARM_ID>41007</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+            <!-- Index #166 -->
+            <!--OAM Internal Alarm-->
+            <EventType>Processing Error Alarm</EventType>
+            <ProbableCause>Configuration or Customization Error</ProbableCause>
+            <SpecificProblem>M2AP Provisioning Failure</SpecificProblem>
+            <PerceivedSeverity>Major</PerceivedSeverity>
+            <ReportingMechanism>0 Expedited</ReportingMechanism>
+            <ManagedObjectInstance>eNB.Software.Config.ProvisioningFailure</ManagedObjectInstance>
+            <X_VENDOR_ALARM_ID>41193</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+            <!-- Index #167 -->
+            <!--OAM Internal Alarm-->
+            <EventType>Communication Alarm</EventType>
+            <ProbableCause>Connection Establishment Error</ProbableCause>
+            <SpecificProblem>M2AP SCTP Association Failure</SpecificProblem>
+            <PerceivedSeverity>Major</PerceivedSeverity>
+            <ReportingMechanism>0 Expedited</ReportingMechanism>
+            <ManagedObjectInstance>eNB.CellConfig.eMBMS.M2AP.SCTP</ManagedObjectInstance>
+            <X_VENDOR_ALARM_ID>41194</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+            <!-- Index #168 -->
+            <!--OAM Internal Alarm-->
+            <EventType>Communication Alarm</EventType>
+            <ProbableCause>Connection Establishment Error</ProbableCause>
+            <SpecificProblem>RRC M2AP Connection Failure</SpecificProblem>
+            <PerceivedSeverity>Major</PerceivedSeverity>
+            <ReportingMechanism>0 Expedited</ReportingMechanism>
+            <ManagedObjectInstance>eNB.CellConfig.eMBMS.M2AP</ManagedObjectInstance>
+            <X_VENDOR_ALARM_ID>41195</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <SupportedAlarm>
+            <!-- Index #169 -->
+            <!--OAM Internal Alarm-->
+            <EventType>Environmental Alarm</EventType>
+            <ProbableCause>Underlying Resource Unavailable</ProbableCause>
+            <SpecificProblem>eMBMS Not Supported</SpecificProblem>
+            <PerceivedSeverity>Warning</PerceivedSeverity>
+            <ReportingMechanism>0 Expedited</ReportingMechanism>
+            <ManagedObjectInstance>eNB.CellConfig.eMBMS</ManagedObjectInstance>
+            <X_VENDOR_ALARM_ID>41196</X_VENDOR_ALARM_ID>
+        </SupportedAlarm>
+        <!-- end eMBMS  -->
     </FaultMgmt>
 </InternetGatewayDevice>
