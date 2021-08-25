@@ -13,6 +13,7 @@
         <xs:element ref="DeviceInfo"/>
         <xs:element ref="Time"/>
         <xs:element ref="LoggerIP"/>
+        <xs:element ref="L2L3_INTF_MSG_CAPTURE"/>
         <xs:element ref="LANDevice"/>
         <xs:element ref="FAP"/>
         <xs:element ref="Services"/>
@@ -520,6 +521,23 @@
       </xs:restriction>
     </xs:simpleType>
  </xs:element>
+
+<xs:element name="L2L3_INTF_MSG_CAPTURE">
+ <xs:complexType>
+  <xs:sequence>
+    <xs:element ref="Enable"/>
+    <xs:element ref="Logging_Mode"/>
+  </xs:sequence>
+ </xs:complexType>
+</xs:element>
+
+<xs:element name="Logging_Mode">
+  <xs:simpleType>
+    <xs:restriction base="xs:unsignedInt">
+	</xs:restriction>
+  </xs:simpleType>
+</xs:element>
+
 <xs:element name="LANDevice">
  <xs:complexType>
   <xs:sequence>
@@ -2163,7 +2181,7 @@
     <xs:sequence>
         <xs:element ref="cell_center_user_power_mask"/>
         <xs:element ref="cell_edge_user_power_mask"/>
-        <xs:element ref="qci_delta_power_mask" minOccurs = "0" maxOccurs = "9"/>
+        <xs:element ref="qci_delta_power_mask" minOccurs = "0" maxOccurs = "13"/>
     </xs:sequence>
  </xs:complexType>
 </xs:element>
@@ -2404,6 +2422,7 @@
           <xs:element ref="MaxResourceNonCSGMembers"/>
           <xs:element ref="CSGID" minOccurs = "0"/>
           <xs:element ref="HNBName"/>
+          <xs:element ref="X_VENDOR_ENB_NAME" minOccurs = "0"/>
           <xs:element ref="X_VENDOR_CELL_TYPE"/>
         </xs:sequence>
         <xs:sequence>
@@ -2484,7 +2503,7 @@
         <xs:element ref="SecGWServer1"/>
         <xs:element ref="SecGWServer2"/>
         <xs:element ref="SecGWServer3"/>
-	<xs:element ref="X_VENDOR_SEC_GW_ENABLE"/>
+	    <xs:element ref="X_VENDOR_SEC_GW_ENABLE"/>
         <xs:element ref="X_VENDOR_IKEInitialRetransmitInterval"/>
         <xs:element ref="X_VENDOR_IKE_ID_DOMAIN"/>
         <xs:element ref="X_VENDOR_VLAN_ENABLE"/>
@@ -2494,13 +2513,18 @@
         <xs:element ref="S1SigLinkServerList"/>
         <xs:element ref="S1ConnectionMode"/>
         <xs:element ref="S1SigLinkPort"/>
-	<xs:element ref="S1apEnbPort"/>   
-         <xs:element ref="X_VENDOR_NUMSTREAM"/>
+	    <xs:element ref="S1apEnbPort"/>
+        <xs:element ref="X_VENDOR_NUMSTREAM"/>
         <xs:element ref="X_VENDOR_RELOFMME"/>
         <xs:element ref="X_VENDOR_GWSW_GARP_ENABLE"/>
         <!-- [s.L3-11-19][SPICO_DATAMODEL, X2_CONNECTION_NUM] kwpark 20150904, L3-11-19 start -->
         <xs:element ref="X_VENDOR_X2_CONNECTION_NUM"/>
         <!-- [e.L3-11-19][SPICO_DATAMODEL, X2_CONNECTION_NUM] kwpark 20150904, L3-11-19 end -->
+        <!-- [EMBMS] start -->
+        <xs:element ref="X_VENDOR_M2AP_IPType"/>
+        <xs:element ref="X_VENDOR_M2AP_IPAddress"/>
+        <xs:element ref="X_VENDOR_M2AP_Port"/>
+        <!-- [EMBMS] end -->
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -2548,6 +2572,11 @@
   <xs:element name="X_VENDOR_LOCAL_MME_RELOFMME" type="xs:string"/>
   <xs:element name="X_VENDOR_LOCAL_MME_PREFER" type="xs:boolean" default="0"/>
   <!-- for IOPS end -->
+  <!-- [EMBMS] start -->
+  <xs:element name="X_VENDOR_M2AP_IPType" type="xs:unsignedInt"/>
+  <xs:element name="X_VENDOR_M2AP_IPAddress" type="xs:string"/>
+  <xs:element name="X_VENDOR_M2AP_Port" type="xs:unsignedInt"/>
+  <!-- [EMBMS] end -->
   <xs:element name="AccessMgmt">
     <xs:complexType>
       <xs:sequence>
@@ -2658,10 +2687,13 @@
         <xs:element ref="X_VENDOR_REDIRECT_ENABLE"/>
         <xs:element ref="X_VENDOR_REDIRECT_NUM_USER_CEILING"/>
         <!-- e.REDIR-4-1, e.REDIR-4-2  PH1.4C Redirect feature  -->
+        <!-- s.dedicated resource -->
+		<xs:element ref="X_VENDOR_Reuse_Dedicated_Resource_Enable"/>
+        <!-- e.dedicated resource -->
         <xs:element ref="MaxPLMNListEntries"/>
         <xs:element ref="PLMNListNumberOfEntries"/>
         <xs:element ref="QoSNumberOfEntries"/>
-        <xs:element ref="QoS" minOccurs="1" maxOccurs="9"/>
+        <xs:element ref="QoS" minOccurs="1" maxOccurs="13"/>
         <xs:element ref="PLMNList" minOccurs="1" maxOccurs="6"/>
       </xs:sequence>
     </xs:complexType>
@@ -2731,10 +2763,12 @@
     </xs:simpleType>
 </xs:element>
 <!-- e.REDIR-4-1,e.REDIR-4-2  PH1.4C Redirect feature  -->
+<!-- s.dedicated resource -->
+<xs:element name="X_VENDOR_Reuse_Dedicated_Resource_Enable" type="xs:boolean" default="false"/>
+<!-- e.dedicated resource -->
 <xs:element name="MaxPLMNListEntries" default="1">
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
-
         <xs:minInclusive value="0"/>
         <xs:maxInclusive value="65535"/>
       </xs:restriction>
@@ -2769,40 +2803,39 @@
         <xs:element ref="X_VENDOR_IMPLICIT_RELEASE_AFTER" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_P_ZERO_NOMINAL_PUSCH_PERSISTENT" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_LOSSLESS_HO_REQUIRED" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_UE_INACTIVITY_TIMER_CONFIG" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SUPPORTED_RAT" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_UE_INACTIVITY_TIMER_CONFIG" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SUPPORTED_RAT" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_RLC_MODE" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_SN_LEN_DL_RLC" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_SN_LEN_UL_RLC" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_DL_PARAM_T_REORDERING_AM"/> 
         <xs:element ref="X_VENDOR_DL_PARAM_T_REORDERING_UM"/> 
-	<xs:element ref="X_VENDOR_UL_AM_POLL_BYTE" />
-	<xs:element ref="X_VENDOR_MAX_RETX_THRESHOLD"/> 
-	<xs:element ref="X_VENDOR_DISCARD_TIMER"/>
-	<xs:element ref="X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED"/>
-	<xs:element ref="X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED"/> 
-    <xs:element ref="X_VENDOR_RLC_UM_PDCP_SN_SIZE" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_ROHC_PARAMS" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_MAX_HARQ_TX" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_MAX_HARQ_RETRANS" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUP" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_MASK_FLAG" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_PROHIBIT_TIMER_R9" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_PERIODICITY_START_VAL" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_SR_PERIODICITY_END_VAL" minOccurs = "0"/>
-	<xs:element ref="X_VENDOR_DSR_MAX_TRANSMISSIONS" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_UL_AM_POLL_BYTE" />
+        <xs:element ref="X_VENDOR_MAX_RETX_THRESHOLD"/> 
+        <xs:element ref="X_VENDOR_DISCARD_TIMER"/>
+        <xs:element ref="X_VENDOR_RLC_AM_STATUS_REPORT_REQUIRED"/>
+        <xs:element ref="X_VENDOR_RLC_AM_ENB_STATUS_REPORT_REQUIRED"/> 
+        <xs:element ref="X_VENDOR_RLC_UM_PDCP_SN_SIZE" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_ROHC_PARAMS" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_MAX_HARQ_TX" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_MAX_HARQ_RETRANS" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUPING_ON_OFF" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_LOGICAL_CHANNEL_GROUP" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_MASK_FLAG" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_PROHIBIT_TIMER_R9" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_PERIODICITY_START_VAL" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_SR_PERIODICITY_END_VAL" minOccurs = "0"/>
+        <xs:element ref="X_VENDOR_DSR_MAX_TRANSMISSIONS" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_DDL_PARAM_T_STATUES_PROHIBIT" minOccurs = "0"/>
         <xs:element ref="X_VENDOR_DDL_PARAM_T_POLL_PDU" />
         <xs:element ref="X_VENDOR_DDL_PARAM_T_POLL_RETRANSMIT"/>
         <xs:element ref="X_VENDOR_SRVCC_OP_REQUIRED"/>
-   </xs:sequence>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="Alias" default="1">
   <xs:simpleType>
       <xs:restriction base="xs:string">
-
         <xs:maxLength value="255"/>
         <xs:minLength value="1"/>
       </xs:restriction>
@@ -2812,7 +2845,7 @@
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
         <xs:minInclusive value="0"/>
-        <xs:maxInclusive value="9"/>
+        <xs:maxInclusive value="70"/>
       </xs:restriction>
     </xs:simpleType>
  </xs:element>
@@ -2855,6 +2888,8 @@
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
    <xs:enumeration value='50'/>
+   <xs:enumeration value='60'/>
+   <xs:enumeration value='75'/>
    <xs:enumeration value='100'/>
    <xs:enumeration value='150'/>
    <xs:enumeration value='200'/>
@@ -3226,7 +3261,7 @@
       <xs:enumeration value="0"/>
       <xs:enumeration value="5"/>
       <xs:enumeration value="10"/>
-          <xs:enumeration value="15"/>
+      <xs:enumeration value="15"/>
       <xs:enumeration value="20"/>
       <xs:enumeration value="25"/>
       <xs:enumeration value="30"/>
@@ -3422,6 +3457,9 @@
           <xs:element ref="ac_BarringTime_MMTEL_Video"/>
           <xs:element ref="ac_BarringForSpecialAC_MMTEL_Video"/>
           <!-- AC_Barring Bypass_End kwpark 20161221, patch code for ACBypass of PH1.4 -->
+          <!-- s.dedicated resource -->
+	      <xs:element ref="X_VENDOR_Dedicated_Resource_Usage"/>
+          <!-- e.dedicated resource -->
           <xs:element ref="X_VENDOR_INSTANCE_ID"/>
         </xs:sequence>
         <xs:sequence>
@@ -3453,6 +3491,16 @@
   <xs:element name="ac_BarringTime_MMTEL_Video" type="xs:unsignedInt" default="1"/>
   <xs:element name="ac_BarringForSpecialAC_MMTEL_Video" type="xs:unsignedInt" default="0"/>
   <!-- AC_Barring Bypass_End kwpark 20161221, patch code for ACBypass of PH1.4 -->
+  <!-- s.dedicated resource -->
+  <xs:element name="X_VENDOR_Dedicated_Resource_Usage" default="0">
+  <xs:simpleType>
+      <xs:restriction base="xs:integer">
+        <xs:minInclusive value="0"/>
+        <xs:maxInclusive value="100"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <!-- e.dedicated resource -->
 
   <xs:element name="RAN">
     <xs:complexType>
@@ -3582,7 +3630,7 @@
   <xs:simpleType>
       <xs:restriction base="xs:integer">
         <xs:minInclusive value="0"/>
-        <xs:maxInclusive value="6"/>
+        <xs:maxInclusive value="7"/>
       </xs:restriction>
     </xs:simpleType>
 </xs:element>
@@ -3964,6 +4012,7 @@
         <xs:element ref="X_VENDOR_ANTENNA_PORT4_TX_ATTEN"/>
         <xs:element ref="X_VENDOR_PA_LOW_THRESHOLD"/>
         <xs:element ref="X_VENDOR_PA_VSWR_THRESHOLD"/>
+        <xs:element ref="X_VENDOR_SYNC_TIME_ADVANCE"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -3988,6 +4037,7 @@
  <xs:element name="X_VENDOR_ANTENNA_PORT4_TX_ATTEN" type="xs:integer"/>
  <xs:element name="X_VENDOR_PA_LOW_THRESHOLD" type="xs:integer"/> 
  <xs:element name="X_VENDOR_PA_VSWR_THRESHOLD" type="xs:unsignedInt"/> 
+ <xs:element name="X_VENDOR_SYNC_TIME_ADVANCE" type="xs:integer"/>
   <xs:element name="PDSCH">
     <xs:complexType>
       <xs:sequence>
@@ -4364,34 +4414,146 @@
   <xs:element name="MBSFN">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="MBSFN_SERVICE_AREA_CONFIG"/>
+        <xs:element ref="X_VENDOR_MBMS_TRANSMISSION_POWER" minOccurs="0"/>
+        <xs:element ref="X_VENDOR_RESERVED_CELL_POWER_OFFSET" minOccurs="0"/>
         <xs:element ref="NeighCellConfig"/>
+        <xs:element ref="X_VENDOR_IS_SIB2_EMBMS_ENABLE"/>
+        <xs:element ref="MaxSFConfigListEntries"/>
         <xs:element ref="SFConfigListNumberOfEntries"/>
-        <xs:element ref="SFConfigList"/>
+        <xs:element ref="SFConfigList" minOccurs="0" maxOccurs = "8"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="X_VENDOR_ENB_NAME" default="EUCAST-eNodeb">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="150"/>
+          <xs:minLength value="1"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="MBSFN_SERVICE_AREA_CONFIG">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="X_VENDOR_IS_EMBMS_ENABLED"/>
+        <xs:element ref="X_VENDOR_MBSFN_SYNC_AREA_ID"/>
+        <xs:element ref="X_VENDOR_MBMS_SERVICE_AREA_ID"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+    <xs:element name="X_VENDOR_IS_EMBMS_ENABLED" type="xs:boolean" default="0"/>
+    <xs:element name="X_VENDOR_MBSFN_SYNC_AREA_ID" default="0">
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="65535"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:element>
+    <xs:element name="X_VENDOR_MBMS_SERVICE_AREA_ID" default="1">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+        <xs:pattern value="([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])((,([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])))*"/>
+          <xs:maxLength value="1535"/>  <!-- Max 256 numbers of max 5 digit
+                                             + max 255 comma characters -->
+          <xs:minLength value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:element>
+<xs:element name="X_VENDOR_MBMS_TRANSMISSION_POWER">
+  <xs:simpleType>
+      <xs:restriction base="xs:unsignedInt">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="10000"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:element>
+<xs:element name="X_VENDOR_RESERVED_CELL_POWER_OFFSET">
+  <xs:simpleType>
+      <xs:restriction base="xs:unsignedInt">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:element>
 <xs:element name="NeighCellConfig" default="1">
   <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
-
         <xs:minInclusive value="0"/>
         <xs:maxInclusive value="3"/>
       </xs:restriction>
     </xs:simpleType>
  </xs:element>
+   <xs:element name="X_VENDOR_IS_SIB2_EMBMS_ENABLE">
+    <xs:simpleType>
+      <xs:restriction base="xs:unsignedInt">
+        <xs:minInclusive value="0"/>
+        <xs:maxInclusive value="1"/>
+      </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+
+  <xs:element name="MaxSFConfigListEntries" type="xs:unsignedInt" default="1"/>
   <xs:element name="SFConfigListNumberOfEntries" type="xs:unsignedInt" default="1"/>
   <xs:element name="SFConfigList">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="Enable"/>
+        <xs:element ref="SyncStratumID" minOccurs="0"/>
         <xs:element ref="RadioFrameAllocationPeriod"/>
         <xs:element ref="RadioframeAllocationOffset"/>
+        <xs:element ref="RadioframeAllocationSize"/>
         <xs:element ref="SubFrameAllocations"/>
+        <xs:element ref="X_VENDOR_INSTANCE_ID"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="RadioFrameAllocationPeriod" type="xs:unsignedInt"   default="1"/>
-  <xs:element name="RadioframeAllocationOffset" type="xs:unsignedInt" default="1"/>
-  <xs:element name="SubFrameAllocations" type="xs:string" default="1"/>
+   <xs:element name="SyncStratumID" default="1">
+       <xs:simpleType>
+       <xs:restriction base="xs:unsignedInt">
+         <xs:minInclusive value="1"/>
+         <xs:maxInclusive value="8"/>
+       </xs:restriction>
+     </xs:simpleType>
+   </xs:element>
+    <xs:element name="RadioFrameAllocationPeriod">
+     <xs:simpleType>
+       <xs:restriction base="xs:unsignedInt">
+         <xs:enumeration value='1'/>
+         <xs:enumeration value='2'/>
+         <xs:enumeration value='4'/>
+         <xs:enumeration value='8'/>
+         <xs:enumeration value='16'/>
+         <xs:enumeration value='32'/>
+       </xs:restriction>
+     </xs:simpleType>
+    </xs:element>
+    <xs:element name="RadioframeAllocationOffset">
+     <xs:simpleType>
+       <xs:restriction base="xs:unsignedInt">
+         <xs:minInclusive value="0"/>
+         <xs:maxInclusive value="7"/>
+       </xs:restriction>
+     </xs:simpleType>
+    </xs:element>
+    <xs:element name="RadioframeAllocationSize">
+     <xs:simpleType>
+       <xs:restriction base="xs:unsignedInt">
+         <xs:enumeration value='1'/>
+         <xs:enumeration value='4'/>
+       </xs:restriction>
+     </xs:simpleType>
+    </xs:element>
+   <xs:element name="SubFrameAllocations">
+     <xs:simpleType>
+       <xs:restriction base="xs:string">
+       <xs:pattern value="([0-1])(,[0-1])*"/>
+         <xs:maxLength value="64"/>
+         <xs:minLength value="11"/>
+       </xs:restriction>
+     </xs:simpleType>
+    </xs:element>
   <xs:element name="PRS">
     <xs:complexType>
       <xs:sequence>
@@ -4671,7 +4833,6 @@
 <xs:element name="X_VENDOR_CONFIDENCE">
   <xs:simpleType>
       <xs:restriction base="xs:integer">
-
         <xs:minInclusive value="0"/>
         <xs:maxInclusive value="100"/>
       </xs:restriction>
@@ -5081,7 +5242,7 @@
     </xs:simpleType>
  </xs:element>
 
- <xs:element name="X_VENDOR_APPLICABLE_QCI_LIST" default="1,2,3,4,5,6,7,8,9">
+ <xs:element name="X_VENDOR_APPLICABLE_QCI_LIST" default="1,2,3,4,5,6,7,8,9,65,66,69,70">
     <xs:simpleType>
       <xs:restriction base="xs:string">
         <xs:maxLength value="255"/>
@@ -9558,6 +9719,7 @@
         <xs:element ref="ValCookieLife"/>
         <xs:element ref="X_VENDOR_S1AP_DSCP_VALUE" minOccurs="0"/>
         <xs:element ref="X_VENDOR_X2AP_DSCP_VALUE" minOccurs="0"/>
+        <xs:element ref="X_VENDOR_M2AP_DSCP_VALUE" minOccurs="0"/>
         <xs:element ref="X_VENDOR_INIT_MAX_ATTEMPTS"/>
         <xs:element ref="X_VENDOR_INIT_MAX_INIT_TIMEOUT"/>
         <xs:element ref="ASSOC"/>
@@ -9590,6 +9752,14 @@
      </xs:simpleType>
   </xs:element>
   <xs:element name="X_VENDOR_X2AP_DSCP_VALUE" default="46">
+     <xs:simpleType>
+        <xs:restriction base="xs:unsignedInt">
+           <xs:minInclusive value="0"/>
+           <xs:maxInclusive value="63"/>
+        </xs:restriction>
+     </xs:simpleType>
+  </xs:element>
+  <xs:element name="X_VENDOR_M2AP_DSCP_VALUE" default="46">
      <xs:simpleType>
         <xs:restriction base="xs:unsignedInt">
            <xs:minInclusive value="0"/>
